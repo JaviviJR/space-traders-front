@@ -1,0 +1,34 @@
+{
+  "name": "space-trader-front",
+  "dockerComposeFile": ["../docker/compose.yml"],
+  "service": "node",
+  "workspaceFolder": "/home/node/app",
+  "remoteUser": "node",
+  // El contenedor también se gestiona con ./dev.sh; no pararlo al cerrar VS Code
+  "shutdownAction": "none",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Vue.volar",
+        "vitest.explorer",
+        "ms-playwright.playwright",
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig",
+        "oxc.oxc-vscode",
+        "esbenp.prettier-vscode",
+        "syler.sass-indented",
+        "SimonSiefke.svg-preview",
+        "formulahendry.auto-close-tag",
+        "formulahendry.auto-complete-tag",
+        "formulahendry.auto-rename-tag",
+        "naumovs.color-highlight",
+        "usernamehw.errorlens",
+        "codezombiech.gitignore",
+        "eamodio.gitlens",
+        "ecmel.vscode-html-css",
+        "lokalise.i18n-ally",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}
