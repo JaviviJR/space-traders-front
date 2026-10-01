@@ -20,6 +20,7 @@ When unsure how a library API works, or when the version matters, check the offi
 
 - Vue, Vue Router, Vite and Vitest publish an `llms.txt` index of Markdown pages: `vuejs.org/llms.txt`, `router.vuejs.org/llms.txt`, `vite.dev/llms.txt`, `vitest.dev/llms.txt`. Fetch the specific page it links to. To search a whole site, download its `llms-full.txt` to the scratchpad and grep it instead of reading it into context.
 - Pinia, Vue Test Utils, Tailwind and Playwright have no `llms.txt`; use their regular docs (`pinia.vuejs.org`, `test-utils.vuejs.org`, `tailwindcss.com/docs`, `playwright.dev`).
+- When a dependency is added to `package.json` (by the user or by Claude), check whether its docs site publishes `/llms.txt`. If it does, add it to the first bullet; if not, add its regular docs URL to the second. Include this edit in the same change that adds the dependency.
 
 ## Commands
 
