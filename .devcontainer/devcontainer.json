@@ -2,8 +2,8 @@
   "name": "space-trader-front",
   "dockerComposeFile": ["../docker/compose.yml"],
   "service": "node",
-  "workspaceFolder": "/home/node/app",
-  "remoteUser": "node",
+  "workspaceFolder": "/home/ubuntu/app",
+  "remoteUser": "ubuntu",
   // El contenedor también se gestiona con ./dev.sh; no pararlo al cerrar VS Code
   "shutdownAction": "none",
   "customizations": {

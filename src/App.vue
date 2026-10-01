@@ -1,14 +1,11 @@
 <script setup lang="ts"></script>
 
 <template>
-  <h1 class="text-3xl font-bold text-green-600">You did it!</h1>
-  <p class="mt-2">
-    Visit
-    <a href="https://vuejs.org/" target="_blank" rel="noopener" class="text-blue-600 underline"
-      >vuejs.org</a
+  <main class="flex min-h-screen items-center justify-center bg-slate-950">
+    <h1
+      class="bg-linear-to-r from-indigo-400 to-cyan-300 bg-clip-text text-6xl font-bold tracking-tight text-transparent"
     >
-    to read the documentation
-  </p>
+      Hola mundo
+    </h1>
+  </main>
 </template>
-
-<style scoped></style>

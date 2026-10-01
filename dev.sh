@@ -11,7 +11,7 @@ Uso: ./dev <comando>
   up         Levanta el contenedor en segundo plano
   down       Para y elimina el contenedor
   build      Reconstruye la imagen
-  sh         Abre una shell bash como usuario normal (node)
+  sh         Abre una shell bash como usuario normal (ubuntu)
   sh-root    Abre una shell bash como root
 
 Cualquier otro comando se pasa directo a 'docker compose', p.ej:
@@ -27,8 +27,8 @@ case "$cmd" in
 	up) "${COMPOSE[@]}" up -d "$@" ;;
 	down) "${COMPOSE[@]}" down "$@" ;;
 	build) "${COMPOSE[@]}" build "$@" ;;
-	sh) "${COMPOSE[@]}" exec node sh ;;
-	sh-root) "${COMPOSE[@]}" exec -u root node sh ;;
+	sh) "${COMPOSE[@]}" exec node bash ;;
+	sh-root) "${COMPOSE[@]}" exec -u root node bash ;;
     logs) "${COMPOSE[@]}" logs -f "$@" ;;
 	""|help|-h|--help) usage ;;
     *) "${COMPOSE[@]}" "$cmd" "$@" ;;
