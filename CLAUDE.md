@@ -10,6 +10,17 @@ Tailwind is configured from CSS: the `@tailwindcss/vite` plugin is in `vite.conf
 
 Requires Node `^22.18.0 || >=24.12.0`.
 
+## Working mode: learning Vue
+
+The user is using this project to learn Vue.js while building it with Claude. Before any change to project files (Vue components, tests, config, Docker), show the proposed change in chat first: the code, which file, and why, explaining the Vue concepts involved (e.g. `ref` vs `reactive`, props, emits, Pinia stores, routes). Write those explanations in Spanish. When a decision comes from an installed skill, say which skill and why it recommends it. Then invite questions, answer them, and apply the change only once the user says they have no more doubts. Reading files and running tests, lint or build need no confirmation.
+
+## Official docs
+
+When unsure how a library API works, or when the version matters, check the official docs before writing code. They take precedence over installed skills. Cite the page when a proposal relies on them.
+
+- Vue, Vue Router, Vite and Vitest publish an `llms.txt` index of Markdown pages: `vuejs.org/llms.txt`, `router.vuejs.org/llms.txt`, `vite.dev/llms.txt`, `vitest.dev/llms.txt`. Fetch the specific page it links to. To search a whole site, download its `llms-full.txt` to the scratchpad and grep it instead of reading it into context.
+- Pinia, Vue Test Utils, Tailwind and Playwright have no `llms.txt`; use their regular docs (`pinia.vuejs.org`, `test-utils.vuejs.org`, `tailwindcss.com/docs`, `playwright.dev`).
+
 ## Commands
 
 - Node isn't installed on the host; run these inside the container (`./dev.sh sh`). Also run `npm ci` there: `node_modules` holds platform-specific native binaries (rolldown, oxlint), so an install made on a different OS/libc breaks `vite`.
