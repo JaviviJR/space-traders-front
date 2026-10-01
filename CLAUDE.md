@@ -16,11 +16,20 @@ The user is using this project to learn Vue.js while building it with Claude. Be
 
 ## Official docs
 
-When unsure how a library API works, or when the version matters, check the official docs before writing code. They take precedence over installed skills. Cite the page when a proposal relies on them.
+When unsure how a library API works, or when the version matters, check the official docs before writing code. Cite the page when a proposal relies on them.
 
 - Vue, Vue Router, Vite and Vitest publish an `llms.txt` index of Markdown pages: `vuejs.org/llms.txt`, `router.vuejs.org/llms.txt`, `vite.dev/llms.txt`, `vitest.dev/llms.txt`. Fetch the specific page it links to. To search a whole site, download its `llms-full.txt` to the scratchpad and grep it instead of reading it into context.
 - Pinia, Vue Test Utils, Tailwind and Playwright have no `llms.txt`; use their regular docs (`pinia.vuejs.org`, `test-utils.vuejs.org`, `tailwindcss.com/docs`, `playwright.dev`).
 - When a dependency is added to `package.json` (by the user or by Claude), check whether its docs site publishes `/llms.txt`. If it does, add it to the first bullet; if not, add its regular docs URL to the second. Include this edit in the same change that adds the dependency.
+
+## Conflicts between sources
+
+When two sources disagree (two skills, a skill and this file, or either of them and the official docs), tell the user before acting: name both sources, quote what each says, and say which one you will follow and why. Default precedence:
+
+1. The user's instructions in the conversation.
+2. This file, for decisions about this project: working mode, setup, tooling.
+3. The official docs, on facts: how an API behaves, what it accepts, what is deprecated in the version we use. If this file contradicts the docs on such a fact, it is probably outdated: propose a fix to this file.
+4. Installed skills, on facts. On choices the docs leave open (which of several valid patterns to use, how to structure code), follow the skill; that is not a conflict.
 
 ## Commands
 
