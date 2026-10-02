@@ -44,6 +44,8 @@ When two sources disagree (two skills, a skill and this file, or either of them 
 
 ## Architecture notes
 
+- Target architecture and layer rules are in `doc/architecture.md` (in Spanish); read it before adding API calls, stores, composables or new component folders. In short: views → components → stores/composables → `src/api/` → fetch. Only `src/api/` calls `fetch`, and it imports nothing from Vue or Pinia. Shared state goes in Pinia setup stores, local state in composables, feature UI in `src/components/<feature>/` and generic UI in `src/components/ui/`.
+- The backend is a separate repo acting as a BFF in front of `api.spacetraders.io`. The front only talks to it (`VITE_API_URL`) and never calls SpaceTraders directly. Responses keep SpaceTraders' `{ data }` / `{ data, meta }` envelope, which `src/api/` unwraps, and the SpaceTraders agent token stays in the backend. Mocks in tests follow the backend's contract.
 - Alias `@` maps to `src/` (set in `vite.config.ts`; `vitest.config.ts` merges that config, so tests get the alias too). Unit tests live in `src/__tests__/`. `e2e/` holds the Playwright specs and is excluded from Vitest.
 - Unit and e2e tests assert on the hero title in `LandingHero.vue` and on the "Empezar" link going to `/login`. Update them when the landing changes. Unit tests that mount `App` need the router plugin and `await router.isReady()` plus `flushPromises()`, since views are lazy-loaded.
 - Linting uses both oxlint and ESLint. `eslint-plugin-oxlint` turns off the ESLint rules oxlint already covers, so a lint config change may need edits in both `.oxlintrc.json` and `eslint.config.ts`.
