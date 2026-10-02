@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Frontend for SpaceTraders built with Vue 3 + Vite + TypeScript, Pinia (state), Vue Router and Tailwind CSS v4. It is still a fresh scaffold: `App.vue` renders a single Tailwind-styled "Hola mundo" page, the router has no routes yet, and there are no stores (Pinia is installed in `main.ts`).
+Frontend for SpaceTraders built with Vue 3 + Vite + TypeScript, Pinia (state), Vue Router and Tailwind CSS v4. It is at an early stage: `App.vue` is the app shell (`AppHeader`, `<RouterView />`, `AppFooter`), the router has a landing page (`home`, `/`) and a placeholder `login` route (`/login`), and there are no stores yet (Pinia is installed in `main.ts`). UI text is in Spanish for now; other languages are planned. Route views live in `src/views/` (lazy-loaded) and components in `src/components/<feature>/` (`layout/`, `landing/`).
 
 Tailwind is configured from CSS: the `@tailwindcss/vite` plugin is in `vite.config.ts`, `src/assets/main.css` imports Tailwind, and any customization goes in `@theme` blocks there. There is no `tailwind.config.js`.
 
@@ -45,6 +45,6 @@ When two sources disagree (two skills, a skill and this file, or either of them 
 ## Architecture notes
 
 - Alias `@` maps to `src/` (set in `vite.config.ts`; `vitest.config.ts` merges that config, so tests get the alias too). Unit tests live in `src/__tests__/`. `e2e/` holds the Playwright specs and is excluded from Vitest.
-- Unit and e2e tests assert on the "Hola mundo" text in `App.vue`. Update them when that page changes.
+- Unit and e2e tests assert on the hero title in `LandingHero.vue` and on the "Empezar" link going to `/login`. Update them when the landing changes. Unit tests that mount `App` need the router plugin and `await router.isReady()` plus `flushPromises()`, since views are lazy-loaded.
 - Linting uses both oxlint and ESLint. `eslint-plugin-oxlint` turns off the ESLint rules oxlint already covers, so a lint config change may need edits in both `.oxlintrc.json` and `eslint.config.ts`.
 - The dev environment is a Docker container (`docker/compose.yml`, service `node`, idle on `sleep infinity`) wrapped by `./dev.sh`: `up`, `down`, `build`, `sh`, `sh-root`, `logs`, and any other arguments are passed to `docker compose`. The image (`docker/node/Dockerfile`) is Ubuntu 26.04 with Node from NodeSource (`NODE_MAJOR`) and Playwright's system deps and browsers (`PLAYWRIGHT_VERSION`; keep it in step with `@playwright/test` in `package-lock.json`). The container uses host networking and mounts `APP_DIR` from `docker/.env` at `/home/ubuntu/app` (user `ubuntu`, UID 1000, with passwordless `sudo`). `./dev.sh sh` and `sh-root` open `bash`. `.devcontainer/` attaches VS Code to the same compose service.

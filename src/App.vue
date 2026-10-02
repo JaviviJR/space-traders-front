@@ -1,11 +1,14 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppHeader from '@/components/layout/AppHeader.vue'
+import AppFooter from '@/components/layout/AppFooter.vue'
+</script>
 
 <template>
-  <main class="flex min-h-screen items-center justify-center bg-slate-950">
-    <h1
-      class="bg-linear-to-r from-indigo-400 to-cyan-300 bg-clip-text text-6xl font-bold tracking-tight text-transparent"
-    >
-      Hola mundo
-    </h1>
-  </main>
+  <div class="flex min-h-screen flex-col bg-slate-950 text-slate-300">
+    <AppHeader />
+    <main class="flex-1">
+      <RouterView />
+    </main>
+    <AppFooter />
+  </div>
 </template>
