@@ -1,16 +1,15 @@
+<script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
+</script>
+
 <template>
-  <section class="mx-auto max-w-6xl px-4 pb-24">
-    <div
-      class="rounded-2xl border border-cyan-300/20 bg-linear-to-br from-indigo-500/10 to-cyan-400/10 px-6 py-12 text-center"
-    >
-      <h2 class="text-3xl font-bold text-white">¿Listo para despegar?</h2>
+  <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+    <div class="rounded-2xl bg-panel/80 px-6 py-12 text-center ring-1 ring-white/10">
+      <h2 class="text-gradient font-display text-4xl tracking-tight text-balance">
+        ¿Listo para despegar?
+      </h2>
       <p class="mt-4 text-slate-400">Registra tu agente o entra con el que ya tienes.</p>
-      <RouterLink
-        :to="{ name: 'login' }"
-        class="mt-8 inline-block rounded-full bg-cyan-300 px-6 py-2.5 font-medium text-slate-950 hover:bg-cyan-200"
-      >
-        Crear agente o iniciar sesión
-      </RouterLink>
+      <BaseButton :to="{ name: 'login' }" class="mt-8">Crear agente o iniciar sesión</BaseButton>
     </div>
   </section>
 </template>

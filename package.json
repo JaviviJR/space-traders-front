@@ -17,6 +17,8 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/lexend": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "pinia": "^4.0.3",
     "tailwindcss": "^4.3.3",
@@ -24,6 +26,8 @@
     "vue-router": "^5.3.1"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.138",
+    "@iconify/tailwind4": "^1.2.3",
     "@playwright/test": "^1.63.0",
     "@tsconfig/node24": "^24.0.5",
     "@types/jsdom": "^30.0.0",

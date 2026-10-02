@@ -1,1 +1,36 @@
 @import 'tailwindcss';
+@plugin '@iconify/tailwind4';
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Lexend Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-panel: #0a101f;
+  --color-code-key: #9cdcfe;
+  --color-code-string: #ce9178;
+  --color-code-number: #b5cea8;
+  --color-code-punct: #d4d4d4;
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(
+    to right,
+    var(--color-indigo-200),
+    var(--color-sky-400),
+    var(--color-indigo-200)
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}

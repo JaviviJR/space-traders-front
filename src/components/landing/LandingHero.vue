@@ -1,44 +1,33 @@
 <script setup lang="ts">
-const sampleResponse = `{
-  "symbol": "MI-AGENTE-1",
-  "headquarters": "X1-DF55-A1",
-  "credits": 175000,
-  "shipCount": 2
-}`
+import BaseButton from '@/components/ui/BaseButton.vue'
+import HeroCodePanel from './HeroCodePanel.vue'
 </script>
 
 <template>
-  <section class="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 lg:grid-cols-2">
-    <div>
-      <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-        Comanda tu flota en el universo
-        <span class="bg-linear-to-r from-indigo-400 to-cyan-300 bg-clip-text text-transparent">
-          SpaceTraders
-        </span>
-      </h1>
-      <p class="mt-6 text-lg text-slate-400">
-        Gestiona naves, comercia entre sistemas y cumple contratos desde un panel pensado para
-        jugar a SpaceTraders sin escribir peticiones a mano.
-      </p>
-      <div class="mt-8 flex flex-wrap gap-4">
-        <RouterLink
-          :to="{ name: 'login' }"
-          class="rounded-full bg-cyan-300 px-6 py-2.5 font-medium text-slate-950 hover:bg-cyan-200"
-        >
-          Empezar
-        </RouterLink>
-        <a
-          href="#features"
-          class="rounded-full border border-slate-700 px-6 py-2.5 font-medium hover:border-cyan-300"
-        >
-          Ver características
-        </a>
-      </div>
+  <section class="relative isolate overflow-hidden">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 mask-t-from-70%">
+      <div class="absolute -top-40 -left-40 size-128 rounded-full bg-cyan-500/15 blur-3xl" />
+      <div class="absolute -top-40 -right-40 size-128 rounded-full bg-sky-500/10 blur-3xl" />
     </div>
 
-    <pre
-      aria-hidden="true"
-      class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/70 p-6 font-mono text-sm text-cyan-200 shadow-lg shadow-cyan-500/10"
-    >{{ sampleResponse }}</pre>
+    <div
+      class="mx-auto grid max-w-7xl items-center gap-x-8 gap-y-16 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20 xl:gap-x-16"
+    >
+      <div>
+        <h1 class="text-gradient font-display text-4xl tracking-tight text-balance sm:text-5xl">
+          Comanda tu flota en el universo SpaceTraders
+        </h1>
+        <p class="mt-3 text-xl tracking-tight text-slate-400">
+          Gestiona naves, comercia entre sistemas y cumple contratos desde un panel pensado para
+          jugar a SpaceTraders sin escribir peticiones a mano.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <BaseButton :to="{ name: 'login' }">Empezar</BaseButton>
+          <BaseButton href="#features" variant="secondary">Ver características</BaseButton>
+        </div>
+      </div>
+
+      <HeroCodePanel />
+    </div>
   </section>
 </template>

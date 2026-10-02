@@ -1,3 +1,5 @@
+import '@fontsource-variable/inter'
+import '@fontsource-variable/lexend'
 import './assets/main.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

@@ -1,15 +1,17 @@
+<script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
+</script>
+
 <template>
-  <header class="border-b border-slate-800/60">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-      <RouterLink :to="{ name: 'home' }" class="text-lg font-semibold text-cyan-300">
+  <header>
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
+      <RouterLink
+        :to="{ name: 'home' }"
+        class="bg-linear-to-r from-sky-400 via-indigo-400 to-blue-400 bg-clip-text font-display text-lg tracking-tight text-transparent"
+      >
         SpaceTraders
       </RouterLink>
-      <RouterLink
-        :to="{ name: 'login' }"
-        class="rounded-full bg-cyan-300 px-4 py-1.5 text-sm font-medium text-slate-950 hover:bg-cyan-200"
-      >
-        Iniciar sesión
-      </RouterLink>
+      <BaseButton :to="{ name: 'login' }">Iniciar sesión</BaseButton>
     </nav>
   </header>
 </template>

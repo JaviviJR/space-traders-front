@@ -9,9 +9,9 @@ const links = [
 <template>
   <footer class="border-t border-slate-800/60">
     <div
-      class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm sm:flex-row sm:justify-between"
+      class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm sm:flex-row sm:justify-between sm:px-6 lg:px-8"
     >
-      <p class="text-slate-500">Cliente no oficial de SpaceTraders.</p>
+      <p class="text-slate-400">Cliente no oficial de SpaceTraders.</p>
       <ul class="flex flex-wrap gap-6">
         <li v-for="link in links" :key="link.href">
           <a
