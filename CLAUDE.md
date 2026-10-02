@@ -14,6 +14,14 @@ Requires Node `^22.18.0 || >=24.12.0`.
 
 The user is using this project to learn Vue.js while building it with Claude. Before any change to project files (Vue components, tests, config, Docker), show the proposed change in chat first: the code, which file, and why, explaining the Vue concepts involved (e.g. `ref` vs `reactive`, props, emits, Pinia stores, routes). Write those explanations in Spanish. When a decision comes from an installed skill, say which skill and why it recommends it. Then invite questions, answer them, and apply the change only once the user says they have no more doubts. Reading files and running tests, lint or build need no confirmation.
 
+## Design suggestions
+
+The user has little design experience. When working on UI, proactively suggest improvements even when not asked: layout, spacing, typography, color and contrast, responsive behavior, accessibility, states (hover, focus, loading, empty, error) and small animations. Explain the reasoning in Spanish, so the user learns the design principle behind each suggestion.
+
+Also suggest ready-made components or libraries worth integrating (icons, dialogs, dropdowns, toasts, tables, charts…). Only suggest libraries that work with Tailwind and support the Tailwind major version in `package.json` (currently v4): check it in the library's docs before suggesting it, and cite the page. Prefer unstyled or Tailwind-styled ones (styled with Tailwind classes we control) over libraries that ship their own CSS theme. They must also support Vue 3 and be actively maintained. For each, say what it adds, its cost (bundle size, learning curve) and whether building it ourselves would be simpler.
+
+Keep suggestions as a short list, separate from the requested change, so the user can pick which to apply. They follow the working mode above (shown first, applied only once the user agrees), and adding a library follows the dependency rule in "Official docs". Use the `frontend-design` skill for visual direction and `web-design-guidelines` to review UI code.
+
 ## Official docs
 
 When unsure how a library API works, or when the version matters, check the official docs before writing code. Cite the page when a proposal relies on them.
