@@ -41,7 +41,7 @@ src/
 - **components/**: pintan UI. Props hacia abajo, eventos hacia arriba. Nunca
   llaman a la API.
 - **stores/**: estado que usan varias vistas (sesión, datos del agente). Stores
-  en formato *setup*. En componentes, leer el estado con `storeToRefs`. La
+  en formato _setup_. En componentes, leer el estado con `storeToRefs`. La
   [guía oficial de Vue sobre gestión de estado](https://vuejs.org/guide/scaling-up/state-management)
   respalda esta elección: recomienda Pinia frente a un store artesanal
   (`reactive()` en un módulo) cuando el equipo necesita convenciones más
@@ -54,56 +54,13 @@ src/
 - **types/**: al principio, generados del OpenAPI de SpaceTraders con
   `openapi-typescript`; después, del OpenAPI de nuestro back.
 
-## Envelope de las respuestas
-
-La API de SpaceTraders no devuelve los datos directamente, sino envueltos en una
-propiedad `data` (el *envelope*). `GET /my/agent` devuelve:
-
-```json
-{
-  "data": {
-    "symbol": "MI-AGENTE-1",
-    "credits": 175000
-  }
-}
-```
-
-El agente es lo de dentro. El envelope deja sitio para información que no es el
-recurso, como la paginación en las listas (`GET /my/ships`):
-
-```json
-{
-  "data": [{ "symbol": "MI-AGENTE-1-1" }, { "symbol": "MI-AGENTE-1-2" }],
-  "meta": { "total": 2, "page": 1, "limit": 10 }
-}
-```
-
-`src/api/` quita el envelope para que el resto de la app trabaje con el recurso
-(`agent.credits`, no `agent.data.credits`):
-
-```ts
-export function getMyAgent() {
-  return apiFetch<{ data: Agent }>('/my/agent').then((response) => response.data)
-}
-```
-
-En las listas paginadas, la función devuelve también `meta`.
-
 ## Back (BFF)
 
-El back vive en otro repositorio y hace de *Backend for Frontend*: todas las
+El back vive en otro repositorio y hace de _Backend for Frontend_: todas las
 peticiones del front van a él, y él llama a `api.spacetraders.io`.
 
 - El front solo conoce el contrato del back (`VITE_API_URL`), nunca la API de
   SpaceTraders directamente.
-- Los endpoints sin lógica propia reenvían la respuesta de SpaceTraders tal cual.
-  Los que tienen lógica propia usan el mismo envelope: `{ data }` para un
-  recurso, `{ data, meta }` para listas paginadas.
-- Los errores tienen un único formato, sean del back o de SpaceTraders.
-- El token del agente de SpaceTraders vive solo en el back. El front se
-  autentica contra el back con su propia sesión (cookie `httpOnly` preferida).
-- Los reinicios del universo de SpaceTraders invalidan los tokens de agente;
-  los gestiona el back.
 
 ## Tests
 

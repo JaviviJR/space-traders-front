@@ -6,6 +6,14 @@
   "remoteUser": "ubuntu",
   // El contenedor también se gestiona con ./dev.sh; no pararlo al cerrar VS Code
   "shutdownAction": "none",
+  "initializeCommand": "docker run --rm -v claude-code-config:/data alpine chown -R 1000:1000 /data",
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+  "mounts": ["source=claude-code-config,target=/home/ubuntu/.claude,type=volume"],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/ubuntu/.claude"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -14,7 +22,6 @@
         "ms-playwright.playwright",
         "dbaeumer.vscode-eslint",
         "EditorConfig.EditorConfig",
-        "oxc.oxc-vscode",
         "esbenp.prettier-vscode",
         "syler.sass-indented",
         "SimonSiefke.svg-preview",
@@ -24,11 +31,17 @@
         "naumovs.color-highlight",
         "usernamehw.errorlens",
         "codezombiech.gitignore",
-        "eamodio.gitlens",
         "ecmel.vscode-html-css",
         "lokalise.i18n-ally",
-        "bradlc.vscode-tailwindcss"
+        "bradlc.vscode-tailwindcss",
+        "waderyan.gitblame",
+        "mhutchie.git-graph",
+        "donjayamanne.githistory",
+        "GitHub.vscode-pull-request-github"
       ]
+    },
+    "settings": {
+      "terminal.integrated.defaultProfile.linux": "bash"
     }
   }
 }
