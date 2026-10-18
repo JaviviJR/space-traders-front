@@ -51,8 +51,6 @@ src/
 - **api/**: TypeScript puro. Cada función devuelve datos tipados o lanza
   `ApiError`. Quita el envelope `{ data }` (ver abajo) para que los stores
   reciban el recurso directamente.
-- **types/**: al principio, generados del OpenAPI de SpaceTraders con
-  `openapi-typescript`; después, del OpenAPI de nuestro back.
 
 ## Back (BFF)
 
