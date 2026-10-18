@@ -12,3 +12,7 @@ services:
         # ports:
         #     - ${APP_PORT}:5173
 
+volumes:
+    claude-code-config:
+        external: true
+
