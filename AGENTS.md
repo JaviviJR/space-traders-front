@@ -127,6 +127,10 @@ Prefer the smallest structure that satisfies these principles.
   - `npm run type-check`: type-check only
   - `npm run lint`: runs oxlint, then ESLint, both with `--fix`
   - `npm run format`: Prettier on `src/`
+  - `npm run generate:types`: regenerates `src/types/backend.d.ts` (gitignored)
+    from the back's OpenAPI spec via `openapi-typescript`. Run it after the
+    back's API contract changes; needs the back reachable at the URL in the
+    script.
   - `npm run test:unit`: Vitest (jsdom) in watch mode. For a single run use
     `npx vitest run`; for one file, `npx vitest run src/__tests__/App.spec.ts`;
     filter by name with `-t "name"`.
