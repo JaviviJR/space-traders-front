@@ -74,10 +74,21 @@ peticiones del front van a él, y él llama a `api.spacetraders.io`.
   viven en `src/__tests__/`; `e2e/` tiene las specs de Playwright y está
   excluido de Vitest.
 
+## UI / librerías de componentes
+
+Prefer unstyled or Tailwind-styled libraries (styled with Tailwind classes we
+control) over libraries that ship their own CSS theme. A library with its
+own theme system is acceptable if its design tokens are overridable and are
+reconfigured to match our own `@theme` palette, instead of adopting its
+default preset as-is.
+
 ## Pendiente de decidir
 
 - Formato exacto de los errores: comprobar con una respuesta real de
   SpaceTraders antes de fijarlo.
 - Proxy de Vite (`server.proxy`) hacia el back en desarrollo: al conectar el
   primer endpoint.
-- Internacionalización (`vue-i18n`): los textos están en español por ahora.
+- Internacionalización (`vue-i18n` + `@intlify/unplugin-vue-i18n`): los
+  textos están en español por ahora.
+- Cobertura de tests (`@vitest/ui` + `@vitest/coverage-v8`): visualización
+  interactiva de la cobertura de Vitest.

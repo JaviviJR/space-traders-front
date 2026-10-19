@@ -61,17 +61,34 @@ How the user works with Claude on this project. Applies to every session.
 - Also suggest ready-made components or libraries worth integrating (icons,
   dialogs, dropdowns, toasts, tables, charts…). Only suggest libraries that
   work with Tailwind and support the Tailwind major version in
-  `package.json` (currently v4): check it in the library's docs before
-  suggesting it, and cite the page. Prefer unstyled or Tailwind-styled ones
-  (styled with Tailwind classes we control) over libraries that ship their
-  own CSS theme. They must also support Vue 3 and be actively maintained.
-  For each, say what it adds, its cost (bundle size, learning curve) and
-  whether building it ourselves would be simpler.
+  `package.json`: check both before suggesting it, and cite the library's
+  docs page. Follow the UI library styling policy in
+  `doc/architecture.md`. They must also support Vue 3 and be actively
+  maintained. For each, say what it adds, its cost (bundle size, learning
+  curve) and whether building it ourselves would be simpler.
 - Keep suggestions as a short list, separate from the requested change, so
   the user can pick which to apply. They follow Learning mode above (shown
   first, applied only once the user agrees), and adding a library follows the
   dependency rule in "Steps and installs" below. Use the `frontend-design`
   skill for visual direction and `web-design-guidelines` to review UI code.
+
+## Introducing new libraries in code
+
+- The first time a reusable-capability library is used in code (component,
+  composable or store) — what `AGENTS.md` calls "Adding features" (VueUse,
+  future dialog/table/HTTP libs...) — explain it in three steps, in this
+  order: (1) how it would be done without the library, (2) what specific
+  problem the library solves in that case, (3) the implementation with the
+  library.
+- Does not apply to: build/dev tooling (Vite, Vitest, Playwright, ESLint,
+  oxlint, Prettier, vue-tsc), the already-settled base trio (Vue, Vue
+  Router, Pinia), type-only or codegen packages (`@types/*`,
+  openapi-typescript), or fonts/icons (already covered by "Design
+  suggestions" above).
+- This explanation repeats every time a new use is introduced, until the
+  user asks to stop doing it for that specific case. List of exceptions
+  already granted (composable/library → no longer needs the three steps):
+  - _(empty for now)_
 
 ## Steps and installs
 
