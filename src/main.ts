@@ -10,11 +10,11 @@ import Aura from '@primevue/themes/aura'
 import App from './App.vue'
 import router from './router'
 
-// darkModeSelector: 'none' below makes PrimeVue drop colorScheme.dark entirely
-// (verified in @primeuix/styled's transformCSS: the dark branch never emits
-// CSS when darkModeSelector is 'none'/false) and always apply colorScheme.light
-// unconditionally — so the app's permanently-dark palette is defined here,
-// under `light`, not `dark`.
+// App is permanently dark, no light/dark toggle. Per PrimeVue's docs
+// (v4.primevue.org/styled.md): "In case you prefer to use dark mode all the
+// time, apply the darkModeSelector initially and never change it" — so the
+// palette lives under colorScheme.dark, and darkModeSelector points at
+// `.app-dark`, a class set once on <html> in index.html and never toggled.
 const SpaceTradersPreset = definePreset(Aura, {
   semantic: {
     primary: {
@@ -31,7 +31,7 @@ const SpaceTradersPreset = definePreset(Aura, {
       950: '{sky.950}',
     },
     colorScheme: {
-      light: {
+      dark: {
         primary: {
           color: '{sky.300}',
           contrastColor: '{slate.900}',
@@ -65,7 +65,7 @@ app.use(PrimeVue, {
   theme: {
     preset: SpaceTradersPreset,
     options: {
-      darkModeSelector: 'none',
+      darkModeSelector: '.app-dark',
     },
   },
 })
