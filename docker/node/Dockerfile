@@ -5,7 +5,7 @@ ARG PLAYWRIGHT_VERSION=1.63.0
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends ca-certificates git curl nano sudo
+    && apt-get install -y --no-install-recommends ca-certificates git curl nano sudo python3
 
 # Node.js desde el repositorio apt de NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash - \

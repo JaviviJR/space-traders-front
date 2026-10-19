@@ -3,7 +3,14 @@
     "allow": [
       "WebFetch(domain:github.com)",
       "WebFetch(domain:vitest.dev)",
-      "WebFetch(domain:daisyui.com)"
+      "WebFetch(domain:primevue.org)",
+      "WebFetch(domain:primevue.dev)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "Bash(npm view *)",
+      "WebFetch(domain:v4.primevue.org)",
+      "Bash(npm run *)"
     ]
   },
   "skillOverrides": {}
