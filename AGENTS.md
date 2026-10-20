@@ -106,21 +106,8 @@ Prefer the smallest structure that satisfies these principles.
 
 ## Everyday workflow
 
-- The development environment runs in a Docker container (`docker/compose.yml`,
-  service `node`, idle on `sleep infinity`), wrapped by `./dev.sh` (`up`,
-  `down`, `build`, `sh`, `sh-root`, `logs`, any other argument passed to
-  `docker compose`). If the container is stopped, start it. The image
-  (`docker/node/Dockerfile`) is Ubuntu with Node from NodeSource
-  (`NODE_MAJOR`) and Playwright's system deps and browsers
-  (`PLAYWRIGHT_VERSION`; keep it in step with `@playwright/test` in
-  `package-lock.json`). The container uses host networking and mounts
-  `APP_DIR` from `docker/.env` at `/home/ubuntu/app` (user `ubuntu`, UID
-  1000, with passwordless `sudo`). `./dev.sh sh` and `sh-root` open `bash`.
-  `.devcontainer/` attaches VS Code to the same compose service.
-- Node isn't installed on the host; run npm scripts inside the container
-  (`./dev.sh sh`, then `npm run ...`). Also run `npm ci` there: `node_modules`
-  holds platform-specific native binaries (rolldown, oxlint), so an install
-  made on a different OS/libc breaks Vite.
+- Run npm scripts directly (no need for `./dev.sh` or `docker compose` from
+  inside the container):
   - `npm run dev`: Vite dev server (port 5173)
   - `npm run build`: runs type-check (`vue-tsc --build`) and `vite build` in
     parallel
@@ -137,10 +124,9 @@ Prefer the smallest structure that satisfies these principles.
   - `npm run test:e2e`: Playwright (chromium, firefox, webkit). For one file
     and browser: `npx playwright test e2e/vue.spec.ts --project=chromium`.
     Playwright starts `npm run dev` unless a server is already running.
-    Browsers run headed unless `CI` is set, and the container has no
-    display, so there use `CI=1 npm run build && CI=1 npx playwright test`
-    (with `CI` it serves `npm run preview` on port 4173). The image installs
-    the browsers into `/home/ubuntu/.cache/ms-playwright`.
+    Browsers run headed unless `CI` is set, and there is no display here, so
+    use `CI=1 npm run build && CI=1 npx playwright test` (with `CI` it
+    serves `npm run preview` on port 4173).
 - When something fails, check the browser console and the Network tab before
   changing code — most front-end bugs show up there (a thrown error, a
   rejected fetch, an unexpected response shape) before they show up in the
@@ -199,6 +185,16 @@ up instead of relying on memory:
     Fetch the specific page it links to. To search a whole site, download its
     `llms-full.txt` to the scratchpad and grep it instead of reading it into
     context.
+  - PrimeVue: this project pins `primevue`/`@primevue/themes` to
+    `4.5.5`/`4.5.4` (the last MIT release — newer majors require a PrimeUI
+    license). Docs for that exact version live at `v4.primevue.org`, a frozen
+    mirror (footer confirms "PrimeVue 4.5.5"): index at
+    `v4.primevue.org/llms/llms.txt`, per-page Markdown at
+    `v4.primevue.org/<page>.md`. Don't follow the URLs listed _inside_ that
+    index as given — they point at `primevue.org`, which now redirects to the
+    current (paid) major version's site; re-root each one onto
+    `v4.primevue.org` before fetching. `tailwindcss-primeui`'s own docs live
+    on the same mirror's Tailwind page, no separate index.
   - Pinia, Vue Test Utils, Tailwind, Playwright and Iconify have no
     `llms.txt`; use their regular docs (`pinia.vuejs.org`,
     `test-utils.vuejs.org`, `tailwindcss.com/docs`, `playwright.dev`,
@@ -218,7 +214,7 @@ When two sources disagree (two skills, a skill and this file, or either of them 
 
 Read this before designing or generating code that touches its area:
 
-- `doc/architecture.md`: layer rules (views → components →
+- @doc/architecture.md : layer rules (views → components →
   stores/composables → `src/api/` → fetch), folder structure, the response
   envelope (`{ data }` / `{ data, meta }`), and the BFF contract with the
   backend.
@@ -228,5 +224,6 @@ When a decision changes, update the file in the same change.
 ## Working agreements
 
 How the user wants to work with Claude (confirmations, proposals, learning
-mode, design suggestions, installs, language). Read `doc/workflow.md` at the
-start of every session.
+mode, design suggestions, installs, language).
+
+@doc/workflow.md

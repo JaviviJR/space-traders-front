@@ -9,7 +9,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
         ¿Listo para despegar?
       </h2>
       <p class="mt-4 text-slate-400">Registra tu agente o entra con el que ya tienes.</p>
-      <BaseButton :to="{ name: 'login' }" class="mt-8">Crear agente o iniciar sesión</BaseButton>
+      <BaseButton :to="{ name: 'register' }" class="mt-4">Crear agente</BaseButton>
     </div>
   </section>
 </template>

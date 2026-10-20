@@ -22,7 +22,7 @@ import HeroCodePanel from './HeroCodePanel.vue'
           jugar a SpaceTraders sin escribir peticiones a mano.
         </p>
         <div class="mt-8 flex flex-wrap gap-4">
-          <BaseButton :to="{ name: 'login' }">Empezar</BaseButton>
+          <BaseButton :to="{ name: 'register' }">Empezar</BaseButton>
           <BaseButton href="#features" variant="secondary">Ver características</BaseButton>
         </div>
       </div>

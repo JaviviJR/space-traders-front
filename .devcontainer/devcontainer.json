@@ -5,7 +5,7 @@
   "workspaceFolder": "/home/ubuntu/app",
   "remoteUser": "ubuntu",
   // El contenedor también se gestiona con ./dev.sh; no pararlo al cerrar VS Code
-  "shutdownAction": "none",
+  "shutdownAction": "stopCompose",
   "initializeCommand": "docker run --rm -v claude-code-config:/data alpine chown -R 1000:1000 /data",
   "features": {
     "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}

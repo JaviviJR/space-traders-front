@@ -1,3 +1,25 @@
 {
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:vitest.dev)",
+      "WebFetch(domain:primevue.org)",
+      "WebFetch(domain:primevue.dev)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "Bash(npm view *)",
+      "WebFetch(domain:v4.primevue.org)",
+      "Bash(npm run *)",
+      "Bash(npx vue-tsc *)",
+      "Bash(grep -iE '^\\(inputtext|password|message\\)$')",
+      "Skill(playwright-cli)",
+      "Skill(playwright-cli:*)",
+      "Bash(npx playwright *)",
+      "Bash(grep -n '\\\\$attrs\\\\|mergeProps' node_modules/primevue/button/index.mjs)",
+      "Bash(gh issue *)",
+      "WebFetch(domain:pinia.vuejs.org)"
+    ]
+  },
   "skillOverrides": {}
 }

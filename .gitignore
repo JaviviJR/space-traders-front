@@ -43,3 +43,5 @@ playwright-report/
 
 # Generado por `npm run generate:types` a partir del OpenAPI del back
 src/types/backend.d.ts
+
+.playwright-cli

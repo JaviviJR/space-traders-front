@@ -68,8 +68,10 @@ const lineNumbers = lines.map((_, i) => String(i + 1).padStart(2, '0'))
         </div>
         <code class="overflow-x-auto pl-4">
           <span v-for="(line, i) in lines" :key="i" class="block whitespace-pre"
-            ><span v-for="(token, j) in line" :key="j" :class="token.class">{{ token.text }}</span
-          ></span>
+            ><span v-for="(token, j) in line" :key="j" :class="token.class">{{
+              token.text
+            }}</span></span
+          >
         </code>
       </div>
     </div>
