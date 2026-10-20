@@ -12,7 +12,12 @@
       "WebFetch(domain:v4.primevue.org)",
       "Bash(npm run *)",
       "Bash(npx vue-tsc *)",
-      "Bash(grep -iE '^\\(inputtext|password|message\\)$')"
+      "Bash(grep -iE '^\\(inputtext|password|message\\)$')",
+      "Skill(playwright-cli)",
+      "Skill(playwright-cli:*)",
+      "Bash(npx playwright *)",
+      "Bash(grep -n '\\\\$attrs\\\\|mergeProps' node_modules/primevue/button/index.mjs)",
+      "Bash(gh issue *)"
     ]
   },
   "skillOverrides": {}

@@ -4,15 +4,8 @@ How the user works with Claude on this project. Applies to every session.
 
 ## Confirmations
 
-- Ask explicit confirmation before writing any file, or running commands that
-  change state. This applies regardless of whether the file is tracked by
-  git.
-- Option answers are not approval. Approval for one change does not extend to
-  the next.
 - Related changes may be grouped into one proposal, provided each change is
   listed explicitly so the approval covers each one.
-- Reading files and running tests, lint, format, type-check or build need no
-  confirmation.
 
 ## Learning mode
 
@@ -71,6 +64,20 @@ How the user works with Claude on this project. Applies to every session.
   first, applied only once the user agrees), and adding a library follows the
   dependency rule in "Steps and installs" below. Use the `frontend-design`
   skill for visual direction and `web-design-guidelines` to review UI code.
+
+## Research order for bugs and solutions
+
+- When diagnosing a bug or designing a fix involving a third-party library,
+  check in this order: (1) the library's official docs, (2) its GitHub
+  issues/discussions for the exact problem (a maintainer may have confirmed a
+  pattern or workaround), (3) only then its vendored/installed source
+  (`node_modules` or equivalent).
+- Reading source to confirm a root cause once docs/issues are exhausted is
+  fine. Reading source to _design the fix itself_ is not: ask first, stating
+  what's already been checked and why it wasn't enough.
+- Any solution that ends up source-derived (not confirmed by docs or an
+  issue thread) must be flagged as such when proposed, not presented as a
+  documented guarantee.
 
 ## Introducing new libraries in code
 

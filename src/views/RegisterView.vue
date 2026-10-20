@@ -2,6 +2,7 @@
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Message from 'primevue/message'
+import { RouterLink } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useRegister } from '@/composables/useRegister'
 
@@ -80,5 +81,12 @@ async function handleSubmit() {
         {{ loading ? 'Creando cuenta…' : 'Crear cuenta' }}
       </BaseButton>
     </form>
+
+    <p class="mt-8 text-center text-sm text-slate-400">
+      ¿Ya tienes cuenta?
+      <RouterLink :to="{ name: 'login' }" class="text-sky-400 hover:underline"
+        >Inicia sesión</RouterLink
+      >
+    </p>
   </section>
 </template>

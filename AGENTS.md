@@ -190,7 +190,7 @@ up instead of relying on memory:
     license). Docs for that exact version live at `v4.primevue.org`, a frozen
     mirror (footer confirms "PrimeVue 4.5.5"): index at
     `v4.primevue.org/llms/llms.txt`, per-page Markdown at
-    `v4.primevue.org/<page>.md`. Don't follow the URLs listed *inside* that
+    `v4.primevue.org/<page>.md`. Don't follow the URLs listed _inside_ that
     index as given — they point at `primevue.org`, which now redirects to the
     current (paid) major version's site; re-root each one onto
     `v4.primevue.org` before fetching. `tailwindcss-primeui`'s own docs live
@@ -214,7 +214,7 @@ When two sources disagree (two skills, a skill and this file, or either of them 
 
 Read this before designing or generating code that touches its area:
 
-- `doc/architecture.md`: layer rules (views → components →
+- @doc/architecture.md : layer rules (views → components →
   stores/composables → `src/api/` → fetch), folder structure, the response
   envelope (`{ data }` / `{ data, meta }`), and the BFF contract with the
   backend.
@@ -224,5 +224,6 @@ When a decision changes, update the file in the same change.
 ## Working agreements
 
 How the user wants to work with Claude (confirmations, proposals, learning
-mode, design suggestions, installs, language). Read `doc/workflow.md` at the
-start of every session.
+mode, design suggestions, installs, language).
+
+@doc/workflow.md
