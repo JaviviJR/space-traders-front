@@ -18,9 +18,9 @@ describe('App', () => {
     expect(wrapper.text()).toContain('Comanda tu flota')
   })
 
-  it('el botón Empezar lleva a /login', async () => {
+  it('el botón Empezar lleva a /register', async () => {
     const wrapper = await mountAtRoot()
     const start = wrapper.findAll('a').find((a) => a.text() === 'Empezar')
-    expect(start?.attributes('href')).toBe('/login')
+    expect(start?.attributes('href')).toBe('/register')
   })
 })

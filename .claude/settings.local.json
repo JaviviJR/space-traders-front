@@ -20,7 +20,8 @@
       "Bash(gh issue *)",
       "WebFetch(domain:pinia.vuejs.org)",
       "WebFetch(domain:router.vuejs.org)",
-      "Bash(npx vitest *)"
+      "Bash(npx vitest *)",
+      "Bash(git stash *)"
     ]
   },
   "skillOverrides": {}
