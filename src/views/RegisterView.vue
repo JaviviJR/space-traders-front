@@ -40,7 +40,7 @@ async function handleSubmit() {
       <div class="flex flex-col gap-2">
         <label class="text-sm text-slate-400" for="password">Contraseña</label>
         <Password
-          id="password"
+          input-id="password"
           v-model="password"
           :feedback="false"
           toggle-mask
@@ -55,7 +55,7 @@ async function handleSubmit() {
           >Confirmar contraseña</label
         >
         <Password
-          id="password-confirmation"
+          input-id="password-confirmation"
           v-model="passwordConfirmation"
           :feedback="false"
           :invalid="passwordMismatch"
