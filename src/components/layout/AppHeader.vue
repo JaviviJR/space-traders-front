@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import BaseButton from '@/components/ui/BaseButton.vue'
+import { useAuthDialog } from '@/composables/useAuthDialog'
+
+const { visible, openLogin } = useAuthDialog()
 </script>
 
 <template>
@@ -11,7 +14,13 @@ import BaseButton from '@/components/ui/BaseButton.vue'
       >
         SpaceTraders
       </RouterLink>
-      <BaseButton :to="{ name: 'login' }">Iniciar sesión</BaseButton>
+      <BaseButton
+        :aria-expanded="visible"
+        :aria-controls="visible ? 'auth-dialog' : undefined"
+        @click="openLogin"
+      >
+        Iniciar sesión
+      </BaseButton>
     </nav>
   </header>
 </template>

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import BaseButton from '@/components/ui/BaseButton.vue'
+import { useAuthDialog } from '@/composables/useAuthDialog'
+
+const { visible, openRegister } = useAuthDialog()
 </script>
 
 <template>
@@ -9,7 +12,14 @@ import BaseButton from '@/components/ui/BaseButton.vue'
         ¿Listo para despegar?
       </h2>
       <p class="mt-4 text-slate-400">Registra tu agente o entra con el que ya tienes.</p>
-      <BaseButton :to="{ name: 'register' }" class="mt-4">Crear agente</BaseButton>
+      <BaseButton
+        class="mt-4"
+        :aria-expanded="visible"
+        :aria-controls="visible ? 'auth-dialog' : undefined"
+        @click="openRegister"
+      >
+        Crear agente
+      </BaseButton>
     </div>
   </section>
 </template>

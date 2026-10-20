@@ -21,7 +21,20 @@
       "WebFetch(domain:pinia.vuejs.org)",
       "WebFetch(domain:router.vuejs.org)",
       "Bash(npx vitest *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(node -p \"require\\('vue/package.json'\\).version\")",
+      "Bash(sed -n '/^    login: {/,/^    };/p' src/types/backend.d.ts | grep -n 'description\\\\|[0-9][0-9][0-9]:')",
+      "Bash(node -p \"require\\('primevue/package.json'\\).version\")",
+      "Bash(grep -n 'emits\\\\|'\\\\''show'\\\\''\\\\|after-hide\\\\|$emit' node_modules/primevue/dialog/index.mjs)",
+      "Bash(mkdir -p src/components/auth)",
+      "Bash(git mv *)",
+      "Bash(sed -i \"s#import RegisterView from '../views/RegisterView.vue'#import RegisterForm from '../components/auth/RegisterForm.vue'#; s#mount\\(RegisterView,#mount\\(RegisterForm,#; s#describe\\('RegisterView'#describe\\('RegisterForm'#; s#function mountView#function mountForm#; s#typeof mountView#typeof mountForm#; s#= mountView\\(\\)#= mountForm\\(\\)#\" src/__tests__/RegisterForm.spec.ts && grep -n \"Register\\\\\\(View\\\\|Form\\\\\\)\\\\|mount\" src/__tests__/RegisterForm.spec.ts)",
+      "Bash(curl -sL https://vitest.dev/api/vi.md)",
+      "Bash(npx vite *)"
+    ],
+    "additionalDirectories": [
+      "/home/ubuntu/app/src/types",
+      "/home/ubuntu/app/src/__tests__"
     ]
   },
   "skillOverrides": {}

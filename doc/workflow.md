@@ -43,6 +43,12 @@ How the user works with Claude on this project. Applies to every session.
     changes.
 - When a decision is closed, write it to the relevant `doc/*.md` file and
   reply with a one-line summary.
+- Testing: every proposal — the initial one or a later split into sequential
+  blocks — must say what will be tested and how: which unit test(s)
+  (new or updated, with file path) cover the change, and whether an e2e test
+  applies (per `AGENTS.md`'s Testing section) or doesn't and why. State this
+  alongside the files-affected list, not as an afterthought once the change
+  is already applied.
 
 ## Design suggestions
 
