@@ -10,7 +10,9 @@
       "WebSearch",
       "Bash(npm view *)",
       "WebFetch(domain:v4.primevue.org)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(npx vue-tsc *)",
+      "Bash(grep -iE '^\\(inputtext|password|message\\)$')"
     ]
   },
   "skillOverrides": {}

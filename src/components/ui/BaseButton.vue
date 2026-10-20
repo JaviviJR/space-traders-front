@@ -22,7 +22,10 @@ const severity = computed(() => (variant === 'secondary' ? 'secondary' : undefin
       <slot />
     </RouterLink>
   </Button>
-  <Button v-else as="a" :href="href" :severity="severity">
+  <Button v-else-if="href" as="a" :href="href" :severity="severity">
+    <slot />
+  </Button>
+  <Button v-else :severity="severity">
     <slot />
   </Button>
 </template>
