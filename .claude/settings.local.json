@@ -18,7 +18,9 @@
       "Bash(npx playwright *)",
       "Bash(grep -n '\\\\$attrs\\\\|mergeProps' node_modules/primevue/button/index.mjs)",
       "Bash(gh issue *)",
-      "WebFetch(domain:pinia.vuejs.org)"
+      "WebFetch(domain:pinia.vuejs.org)",
+      "WebFetch(domain:router.vuejs.org)",
+      "Bash(npx vitest *)"
     ]
   },
   "skillOverrides": {}
