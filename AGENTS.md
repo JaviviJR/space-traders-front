@@ -106,21 +106,8 @@ Prefer the smallest structure that satisfies these principles.
 
 ## Everyday workflow
 
-- The development environment runs in a Docker container (`docker/compose.yml`,
-  service `node`, idle on `sleep infinity`), wrapped by `./dev.sh` (`up`,
-  `down`, `build`, `sh`, `sh-root`, `logs`, any other argument passed to
-  `docker compose`). If the container is stopped, start it. The image
-  (`docker/node/Dockerfile`) is Ubuntu with Node from NodeSource
-  (`NODE_MAJOR`) and Playwright's system deps and browsers
-  (`PLAYWRIGHT_VERSION`; keep it in step with `@playwright/test` in
-  `package-lock.json`). The container uses host networking and mounts
-  `APP_DIR` from `docker/.env` at `/home/ubuntu/app` (user `ubuntu`, UID
-  1000, with passwordless `sudo`). `./dev.sh sh` and `sh-root` open `bash`.
-  `.devcontainer/` attaches VS Code to the same compose service.
-- Node isn't installed on the host; run npm scripts inside the container
-  (`./dev.sh sh`, then `npm run ...`). Also run `npm ci` there: `node_modules`
-  holds platform-specific native binaries (rolldown, oxlint), so an install
-  made on a different OS/libc breaks Vite.
+- Run npm scripts directly (no need for `./dev.sh` or `docker compose` from
+  inside the container):
   - `npm run dev`: Vite dev server (port 5173)
   - `npm run build`: runs type-check (`vue-tsc --build`) and `vite build` in
     parallel
@@ -137,10 +124,9 @@ Prefer the smallest structure that satisfies these principles.
   - `npm run test:e2e`: Playwright (chromium, firefox, webkit). For one file
     and browser: `npx playwright test e2e/vue.spec.ts --project=chromium`.
     Playwright starts `npm run dev` unless a server is already running.
-    Browsers run headed unless `CI` is set, and the container has no
-    display, so there use `CI=1 npm run build && CI=1 npx playwright test`
-    (with `CI` it serves `npm run preview` on port 4173). The image installs
-    the browsers into `/home/ubuntu/.cache/ms-playwright`.
+    Browsers run headed unless `CI` is set, and there is no display here, so
+    use `CI=1 npm run build && CI=1 npx playwright test` (with `CI` it
+    serves `npm run preview` on port 4173).
 - When something fails, check the browser console and the Network tab before
   changing code — most front-end bugs show up there (a thrown error, a
   rejected fetch, an unexpected response shape) before they show up in the
