@@ -30,7 +30,12 @@
       "Bash(git mv *)",
       "Bash(sed -i \"s#import RegisterView from '../views/RegisterView.vue'#import RegisterForm from '../components/auth/RegisterForm.vue'#; s#mount\\(RegisterView,#mount\\(RegisterForm,#; s#describe\\('RegisterView'#describe\\('RegisterForm'#; s#function mountView#function mountForm#; s#typeof mountView#typeof mountForm#; s#= mountView\\(\\)#= mountForm\\(\\)#\" src/__tests__/RegisterForm.spec.ts && grep -n \"Register\\\\\\(View\\\\|Form\\\\\\)\\\\|mount\" src/__tests__/RegisterForm.spec.ts)",
       "Bash(curl -sL https://vitest.dev/api/vi.md)",
-      "Bash(npx vite *)"
+      "Bash(npx vite *)",
+      "Bash(python3 -c \"import reportlab; print\\(reportlab.Version\\)\")",
+      "Bash(grep -E '\"\\(vue|@playwright/test|primevue\\)\"' package.json; ls ~/.cache/ms-playwright 2>/dev/null; ls doc/imgs; grep -rn \"AuthDialog\\\\|provide\" src/__tests__/App.spec.ts | head)",
+      "Read(//home/ubuntu/.cache/ms-playwright/**)",
+      "Bash(curl -sL -m 60 https://code.visualstudio.com/docs/nodejs/browser-debugging.md)",
+      "Bash(curl -sL -m 60 https://raw.githubusercontent.com/firefox-devtools/vscode-firefox-debug/master/README.md)"
     ],
     "additionalDirectories": [
       "/home/ubuntu/app/src/types",
