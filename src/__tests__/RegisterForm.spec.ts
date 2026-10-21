@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
-import RegisterView from '../views/RegisterView.vue'
+import RegisterForm from '../components/auth/RegisterForm.vue'
 import { register } from '../api/auth'
 import type { RegisterPayload, RegisteredUser } from '../api/auth'
 import { ApiError } from '../api/client'
@@ -10,8 +10,8 @@ vi.mock('../api/auth', () => ({
   register: vi.fn<(payload: RegisterPayload) => Promise<RegisteredUser>>(),
 }))
 
-function mountView() {
-  return mount(RegisterView, {
+function mountForm() {
+  return mount(RegisterForm, {
     global: {
       plugins: [PrimeVue],
     },
@@ -19,7 +19,7 @@ function mountView() {
 }
 
 async function fillForm(
-  wrapper: ReturnType<typeof mountView>,
+  wrapper: ReturnType<typeof mountForm>,
   overrides: Partial<{
     name: string
     email: string
@@ -44,7 +44,7 @@ async function fillForm(
   await wrapper.find('#account-token').setValue(values.accountToken)
 }
 
-describe('RegisterView', () => {
+describe('RegisterForm', () => {
   beforeEach(() => {
     vi.mocked(register).mockReset()
   })
@@ -55,7 +55,7 @@ describe('RegisterView', () => {
       name: 'Ellen Ripley',
       email: 'ripley@nostromo.test',
     })
-    const wrapper = mountView()
+    const wrapper = mountForm()
 
     await fillForm(wrapper)
     await wrapper.find('form').trigger('submit.prevent')
@@ -70,7 +70,7 @@ describe('RegisterView', () => {
   })
 
   it('muestra un aviso y bloquea el envío si las contraseñas no coinciden', async () => {
-    const wrapper = mountView()
+    const wrapper = mountForm()
 
     await fillForm(wrapper, { passwordConfirmation: 'otra-contraseña' })
 
@@ -85,7 +85,7 @@ describe('RegisterView', () => {
 
   it('muestra el error del backend cuando el email ya está registrado', async () => {
     vi.mocked(register).mockRejectedValue(new ApiError('Conflict', 409))
-    const wrapper = mountView()
+    const wrapper = mountForm()
 
     await fillForm(wrapper)
     await wrapper.find('form').trigger('submit.prevent')
