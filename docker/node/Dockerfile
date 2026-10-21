@@ -5,13 +5,12 @@ ARG PLAYWRIGHT_VERSION=1.63.0
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends ca-certificates git curl nano sudo python3
+    && apt-get install -y --no-install-recommends ca-certificates git curl nano sudo \
+    && rm -rf /var/lib/apt/lists/*
 
 # Node.js desde el repositorio apt de NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash - \
     && apt-get install -y --no-install-recommends nodejs
-
-RUN rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g npm
 
@@ -27,5 +26,11 @@ USER ubuntu
 RUN npx -y playwright@${PLAYWRIGHT_VERSION} install \
     && rm -rf /home/ubuntu/.npm
 USER root
+
+# Para Claude
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends python3 python3-reportlab poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
 
 #EXPOSE 5173
