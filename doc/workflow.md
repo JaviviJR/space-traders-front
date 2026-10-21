@@ -46,62 +46,25 @@ How the user works with Claude on this project. Applies to every session.
 - Testing: every proposal — the initial one or a later split into sequential
   blocks — must say what will be tested and how: which unit test(s)
   (new or updated, with file path) cover the change, and whether an e2e test
-  applies (per `AGENTS.md`'s Testing section) or doesn't and why. State this
+  applies (per [testing.md](testing.md)) or doesn't and why. State this
   alongside the files-affected list, not as an afterthought once the change
   is already applied.
 
 ## Design suggestions
 
-- The user has little design experience. When working on UI, proactively
-  suggest improvements even when not asked: layout, spacing, typography,
-  color and contrast, responsive behavior, accessibility, states (hover,
-  focus, loading, empty, error) and small animations. Explain the reasoning
-  in Spanish, so the user learns the design principle behind each suggestion.
-- Also suggest ready-made components or libraries worth integrating (icons,
-  dialogs, dropdowns, toasts, tables, charts…). Only suggest libraries that
-  work with Tailwind and support the Tailwind major version in
-  `package.json`: check both before suggesting it, and cite the library's
-  docs page. Follow the UI library styling policy in
-  `doc/architecture.md`. They must also support Vue 3 and be actively
-  maintained. For each, say what it adds, its cost (bundle size, learning
-  curve) and whether building it ourselves would be simpler.
-- Keep suggestions as a short list, separate from the requested change, so
-  the user can pick which to apply. They follow Learning mode above (shown
-  first, applied only once the user agrees), and adding a library follows the
-  dependency rule in "Steps and installs" below. Use the `frontend-design`
-  skill for visual direction and `web-design-guidelines` to review UI code.
+Proactive UI/design suggestions while working on UI live in
+[ui.md](ui.md#design-suggestions).
 
 ## Research order for bugs and solutions
 
-- When diagnosing a bug or designing a fix involving a third-party library,
-  check in this order: (1) the library's official docs, (2) its GitHub
-  issues/discussions for the exact problem (a maintainer may have confirmed a
-  pattern or workaround), (3) only then its vendored/installed source
-  (`node_modules` or equivalent).
-- Reading source to confirm a root cause once docs/issues are exhausted is
-  fine. Reading source to _design the fix itself_ is not: ask first, stating
-  what's already been checked and why it wasn't enough.
-- Any solution that ends up source-derived (not confirmed by docs or an
-  issue thread) must be flagged as such when proposed, not presented as a
-  documented guarantee.
+The docs → issues → source order for third-party library bugs lives in
+[dependencies.md](dependencies.md#research-order-for-bugs-and-solutions).
 
 ## Introducing new libraries in code
 
-- The first time a reusable-capability library is used in code (component,
-  composable or store) — what `AGENTS.md` calls "Adding features" (VueUse,
-  future dialog/table/HTTP libs...) — explain it in three steps, in this
-  order: (1) how it would be done without the library, (2) what specific
-  problem the library solves in that case, (3) the implementation with the
-  library.
-- Does not apply to: build/dev tooling (Vite, Vitest, Playwright, ESLint,
-  oxlint, Prettier, vue-tsc), the already-settled base trio (Vue, Vue
-  Router, Pinia), type-only or codegen packages (`@types/*`,
-  openapi-typescript), or fonts/icons (already covered by "Design
-  suggestions" above).
-- This explanation repeats every time a new use is introduced, until the
-  user asks to stop doing it for that specific case. List of exceptions
-  already granted (composable/library → no longer needs the three steps):
-  - _(empty for now)_
+The three-step explanation for a library's first use in code, and its list
+of exceptions, live in
+[dependencies.md](dependencies.md#introducing-new-libraries-in-code).
 
 ## Steps and installs
 

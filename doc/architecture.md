@@ -1,94 +1,80 @@
-# Arquitectura del front
+# Front-end architecture
 
-Estructura objetivo. Las carpetas se crean cuando se necesitan por primera vez,
-no antes.
+Target structure. Folders are created when they're first needed, not
+before.
 
-## Capas
+## Layers
 
-Vista → Componentes → Store / Composable → Capa API → fetch
+View → Components → Store / Composable → API layer → fetch
 
-Las dependencias solo van en ese sentido: un componente no hace `fetch`, y
-`src/api/` no importa nada de Vue ni de Pinia.
+Dependencies only go in that direction: a component doesn't call `fetch`, and
+`src/api/` imports nothing from Vue or Pinia.
 
-## Carpetas
+## Folders
 
 ```
 src/
-├── api/          Único sitio con fetch. client.ts + un archivo por recurso
-├── types/        Interfaces TS de los datos (Agent, Ship, Waypoint…)
-├── stores/       Pinia: estado compartido por varias vistas (auth, agent)
-├── composables/  Lógica reutilizable con estado local (useMarket…)
-├── router/       Rutas y guards
-├── views/        Una por ruta, cargadas de forma perezosa
+├── api/          The only place with fetch. client.ts + one file per resource
+├── types/        TS interfaces for the data (Agent, Ship, Waypoint…)
+├── stores/       Pinia: state shared by several views (auth, agent)
+├── composables/  Reusable logic with local state (useMarket…)
+├── router/       Routes and guards
+├── views/        One per route, lazy-loaded
 ├── components/
-│   ├── ui/       Genéricos sin lógica de negocio (BaseButton, BaseCard)
-│   ├── layout/   Carcasa de la app (AppHeader, AppFooter)
-│   └── <feature>/  Una carpeta por funcionalidad (landing, fleet, market…)
+│   ├── ui/       Generic, no business logic (BaseButton, BaseCard)
+│   ├── layout/   App shell (AppHeader, AppFooter)
+│   └── <feature>/  One folder per feature (landing, fleet, market…)
 ├── assets/
 └── __tests__/
 ```
 
-> Nota: si el proyecto crece mucho (decenas de componentes), revisar si
-> conviene pasar de carpetas por tipo (`components/`, `stores/`,
-> `composables/`) a carpetas por feature/dominio. No es una recomendación
-> oficial de Vue, pero es una opinión recurrente en la comunidad (p. ej.
+> Note: if the project grows a lot (dozens of components), reconsider
+> switching from folders by type (`components/`, `stores/`,
+> `composables/`) to folders by feature/domain. It isn't an official Vue
+> recommendation, but it's a recurring opinion in the community (e.g.
 > [certificates.dev](https://certificates.dev/blog/structuring-a-large-vue-app-a-feature-based-folder-architecture)):
-> la estructura por tipo se vuelve incómoda a partir de ~50 componentes.
+> the by-type structure becomes awkward beyond ~50 components.
 
-## Reglas por capa
+## Rules per layer
 
-- **views/**: delgadas. Leen parámetros de la ruta y componen componentes.
-- **components/**: pintan UI. Props hacia abajo, eventos hacia arriba. Nunca
-  llaman a la API.
-- **stores/**: estado que usan varias vistas (sesión, datos del agente). Stores
-  en formato _setup_. En componentes, leer el estado con `storeToRefs`. La
-  [guía oficial de Vue sobre gestión de estado](https://vuejs.org/guide/scaling-up/state-management)
-  respalda esta elección: recomienda Pinia frente a un store artesanal
-  (`reactive()` en un módulo) cuando el equipo necesita convenciones más
-  fuertes, integración con Vue Devtools (timeline, time-travel) o SSR.
-- **composables/**: lógica con estado local de una vista o componente. Regla:
-  empezar en local y subir a store solo cuando lo necesite más de una vista.
-- **api/**: TypeScript puro. Cada función devuelve datos tipados o lanza
-  `ApiError`. Quita el envelope `{ data }` (ver abajo) para que los stores
-  reciban el recurso directamente.
+- **views/**: thin. They read route parameters and compose components.
+- **components/**: render UI. Props down, events up. They never call the
+  API.
+- **stores/**: state used by several views (session, agent data). Stores in
+  _setup_ format. In components, read the state with `storeToRefs`. The
+  [official Vue guide on state management](https://vuejs.org/guide/scaling-up/state-management)
+  backs this choice: it recommends Pinia over a hand-rolled store
+  (`reactive()` in a module) when the team needs stronger conventions,
+  Vue Devtools integration (timeline, time-travel) or SSR.
+- **composables/**: logic with local state for one view or component. Rule:
+  start local and move up to a store only when more than one view needs it.
+- **api/**: plain TypeScript. Each function returns typed data or throws
+  `ApiError`. It strips the `{ data }` envelope so stores receive the
+  resource directly.
 
 ## Back (BFF)
 
-El back vive en otro repositorio y hace de _Backend for Frontend_: todas las
-peticiones del front van a él, y él llama a `api.spacetraders.io`.
+The back lives in another repository and acts as a _Backend for Frontend_:
+every request from the front goes to it, and it calls `api.spacetraders.io`.
 
-- El front solo conoce el contrato del back (`VITE_API_URL`), nunca la API de
-  SpaceTraders directamente.
+- The front only knows the back's contract (`VITE_API_URL`), never the
+  SpaceTraders API directly.
 
 ## Tests
 
-- Unitarios (Vitest): simular los módulos de `src/api/` con `vi.mock`.
-- e2e (Playwright): interceptar las peticiones al back con `page.route()`.
-  Los mocks siguen el contrato del back, no el de SpaceTraders.
-- Unos pocos e2e contra el back real, más adelante, para los flujos críticos.
-- Los tests unitarios que montan `App` necesitan el plugin del router y
-  `await router.isReady()` más `flushPromises()`, porque las vistas se cargan
-  de forma perezosa.
-- El alias `@` apunta a `src/` (`vite.config.ts`; `vitest.config.ts` hereda
-  esa config, así que los tests también tienen el alias). Los tests unitarios
-  viven en `src/__tests__/`; `e2e/` tiene las specs de Playwright y está
-  excluido de Vitest.
+Test setup (mocking `src/api/`, intercepting the back in e2e, mounting `App`)
+lives in [testing.md](testing.md).
 
-## UI / librerías de componentes
+## UI / component libraries
 
-Prefer unstyled or Tailwind-styled libraries (styled with Tailwind classes we
-control) over libraries that ship their own CSS theme. A library with its
-own theme system is acceptable if its design tokens are overridable and are
-reconfigured to match our own `@theme` palette, instead of adopting its
-default preset as-is.
+The styling policy for UI libraries lives in
+[ui.md](ui.md#ui--component-libraries).
 
-## Pendiente de decidir
+## Pending decisions
 
-- Formato exacto de los errores: comprobar con una respuesta real de
-  SpaceTraders antes de fijarlo.
-- Proxy de Vite (`server.proxy`) hacia el back en desarrollo: al conectar el
-  primer endpoint.
-- Internacionalización (`vue-i18n` + `@intlify/unplugin-vue-i18n`): los
-  textos están en español por ahora.
-- Cobertura de tests (`@vitest/ui` + `@vitest/coverage-v8`): visualización
-  interactiva de la cobertura de Vitest.
+- Exact error format: check against a real SpaceTraders response before
+  settling it.
+- Vite proxy (`server.proxy`) to the back in development: when connecting
+  the first endpoint.
+- Internationalization (`vue-i18n` + `@intlify/unplugin-vue-i18n`): texts are
+  in Spanish for now.
