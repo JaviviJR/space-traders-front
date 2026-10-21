@@ -20,89 +20,18 @@ asked.
 
 ## Adding features: npm, then its own docs
 
-Install new capabilities with `npm install <package>`, then configure it the
-way its own docs show (Vite plugin, Vue plugin, etc.). Unlike Symfony Flex,
-npm has no recipe system that auto-wires config for you — so after installing,
-check the library's setup docs yourself rather than guessing the config shape.
-Don't hand-roll what a library already does well (routing, icons, HTTP,
-dialogs...); check "Official docs" (section 10) before adding anything, and
-new dependencies follow the show-first rule in CLAUDE.md.
+Installing and configuring a new library lives in
+[doc/dependencies.md](doc/dependencies.md#adding-features-npm-then-its-own-docs).
 
 ## Conventions
 
-Project-specific conventions, not covered by the official style guide:
-
-- Composition API only, `<script setup lang="ts">` in every component — no
-  Options API, no mixins.
-- Shared state lives in Pinia **setup stores** (not the options-style
-  `defineStore` with an object). Local, non-shared state lives in composables
-  (`src/composables/`) or component `ref`/`reactive`.
-- Views go in `src/views/` (lazy-loaded via the router), feature components in
-  `src/components/<feature>/`, generic/reusable UI in `src/components/ui/`.
-- Only `src/api/` calls `fetch`; it imports nothing from Vue or Pinia. Stores
-  and composables call into `src/api/`, never `fetch` directly.
-- Style with Tailwind utility classes in templates. New design tokens go in
-  the `@theme` block in `src/assets/main.css`, not a new config file.
-- Prefer `computed` over a watcher that just derives a value; reach for
-  `watch`/`watchEffect` only for side effects.
-
-From the official [Vue style guide](https://vuejs.org/style-guide), Priority A
-(essential, non-negotiable):
-
-- Multi-word component names (`TodoItem`, not `Todo`) — avoids clashes with
-  current/future HTML elements. Root `App` is exempt.
-- Props declared with at least their type(s) — never a bare array like
-  `['status']`.
-- `v-for` always has a unique `:key` (required on components).
-- Never `v-if` and `v-for` on the same element — filter via a computed
-  property, or wrap in `<template>`.
-- Component-scoped styling (`scoped`, CSS Modules, or a class convention) on
-  every component except the root `App`/layout components.
-
-Priority B (strongly recommended — follow unless there's a reason not to):
-
-- One component per file; SFC filename in PascalCase or kebab-case,
-  consistently.
-- Prefix generic, app-wide-styled base components with `Base`/`App`/`V`
-  (e.g. `BaseButton`).
-- Prefix a child component tightly coupled to one parent with the parent's
-  name (`TodoListItem`).
-- Component name word order: general → specific (`SearchButtonClear`).
-- Self-close components with no content in SFCs; never in in-DOM templates.
-- PascalCase for component names in SFC templates.
-- Full words over abbreviations in component names.
-- Props: camelCase in JS, kebab-case in in-DOM templates.
-- Multiple attributes on an element → one per line.
-- Keep template expressions simple; move logic into computed properties or
-  methods.
-- Split a complex computed into several smaller, well-named ones.
-- Quote every non-empty attribute value.
-- Use directive shorthands (`:`, `@`, `#`) consistently — always or never.
-
-One style-guide pair is cross-referenced elsewhere, not repeated here:
-component/attribute ordering and SFC block order are formatting, enforced by
-lint/Prettier — see section 8 (Code style).
+Project conventions and the Vue style guide (Priority A/B) live in
+[doc/conventions.md](doc/conventions.md#conventions).
 
 ## Design principles
 
-Write code that follows SOLID, adapted to components/composables/stores:
-
-- **Single responsibility.** A component renders; a composable or store holds
-  logic. Don't let a component reach into `src/api/` directly — go through a
-  store or composable.
-- **Open/closed.** Add a new component or composable instead of branching an
-  existing one on a type/mode prop when the branches don't share markup.
-- **Liskov substitution.** A component that accepts a slot or prop-driven
-  variant honors the same contract across variants — no variant that needs
-  extra required props.
-- **Interface segregation.** Keep props/composable return types minimal and
-  role-specific. Don't make a component accept props it ignores.
-- **Dependency inversion.** Components depend on composables/stores, not on
-  `src/api/` or `fetch` directly; composables depend on injected state, not
-  global singletons.
-
-Don't introduce a composable or store for logic used in exactly one component.
-Prefer the smallest structure that satisfies these principles.
+SOLID adapted to components/composables/stores lives in
+[doc/conventions.md](doc/conventions.md#design-principles).
 
 ## Everyday workflow
 
@@ -118,15 +47,8 @@ Prefer the smallest structure that satisfies these principles.
     from the back's OpenAPI spec via `openapi-typescript`. Run it after the
     back's API contract changes; needs the back reachable at the URL in the
     script.
-  - `npm run test:unit`: Vitest (jsdom) in watch mode. For a single run use
-    `npx vitest run`; for one file, `npx vitest run src/__tests__/App.spec.ts`;
-    filter by name with `-t "name"`.
-  - `npm run test:e2e`: Playwright (chromium, firefox, webkit). For one file
-    and browser: `npx playwright test e2e/vue.spec.ts --project=chromium`.
-    Playwright starts `npm run dev` unless a server is already running.
-    Browsers run headed unless `CI` is set, and there is no display here, so
-    use `CI=1 npm run build && CI=1 npx playwright test` (with `CI` it
-    serves `npm run preview` on port 4173).
+  - `npm run test:unit` / `npm run test:e2e`: see
+    [doc/testing.md](doc/testing.md#commands).
 - When something fails, check the browser console and the Network tab before
   changing code — most front-end bugs show up there (a thrown error, a
   rejected fetch, an unexpected response shape) before they show up in the
@@ -134,12 +56,8 @@ Prefer the smallest structure that satisfies these principles.
 
 ## Testing
 
-Unit tests (Vitest + Vue Test Utils) go in `src/__tests__/`; e2e tests
-(Playwright) go in `e2e/`. A feature isn't done until it has a test that
-exercises it the way a user would — mounting the component/view and
-interacting with it, or an e2e flow for a user journey — not just "it didn't
-throw." Mocks in tests must follow the backend's response contract
-(`doc/architecture.md`), not an invented shape.
+Where tests go, the definition of done, mocks and test setup live in
+[doc/testing.md](doc/testing.md).
 
 ## Code style
 
@@ -176,54 +94,40 @@ up instead of relying on memory:
   guessed one — read it before changing code.
 - Browser DevTools (Network tab): the actual response shape from the backend,
   instead of assuming the SpaceTraders envelope.
-- Docs: when unsure how a library API works, or when the version matters,
-  check the official docs before writing code, and cite the page when a
-  proposal relies on them.
-  - Vue, Vue Router, Vite, Vitest and Fontsource publish an `llms.txt` index
-    of Markdown pages: `vuejs.org/llms.txt`, `router.vuejs.org/llms.txt`,
-    `vite.dev/llms.txt`, `vitest.dev/llms.txt`, `fontsource.org/llms.txt`.
-    Fetch the specific page it links to. To search a whole site, download its
-    `llms-full.txt` to the scratchpad and grep it instead of reading it into
-    context.
-  - PrimeVue: this project pins `primevue`/`@primevue/themes` to
-    `4.5.5`/`4.5.4` (the last MIT release — newer majors require a PrimeUI
-    license). Docs for that exact version live at `v4.primevue.org`, a frozen
-    mirror (footer confirms "PrimeVue 4.5.5"): index at
-    `v4.primevue.org/llms/llms.txt`, per-page Markdown at
-    `v4.primevue.org/<page>.md`. Don't follow the URLs listed _inside_ that
-    index as given — they point at `primevue.org`, which now redirects to the
-    current (paid) major version's site; re-root each one onto
-    `v4.primevue.org` before fetching. `tailwindcss-primeui`'s own docs live
-    on the same mirror's Tailwind page, no separate index.
-  - Pinia, Vue Test Utils, Tailwind, Playwright and Iconify have no
-    `llms.txt`; use their regular docs (`pinia.vuejs.org`,
-    `test-utils.vuejs.org`, `tailwindcss.com/docs`, `playwright.dev`,
-    `iconify.design/docs`).
-  - When a dependency is added to `package.json` (by the user or by Claude),
-    check whether its docs site publishes `/llms.txt`. If it does, add it to
-    the first bullet; if not, add its regular docs URL to the second. Include
-    this edit in the same change that adds the dependency.
-- Read installed source and `.d.ts` files under `node_modules/` when the docs
-  don't settle the exact behaviour of the installed version.
+- Library docs (`llms.txt` indexes, the PrimeVue mirror, `node_modules/`
+  source): see [doc/dependencies.md](doc/dependencies.md#library-docs).
 
 ## Conflicts between sources
 
 When two sources disagree (two skills, a skill and this file, or either of them and the official docs), tell the user before acting: name both sources, quote what each says, and say which one you will follow and why.
 
-## Architecture decisions
+## Decision docs
 
-Read this before designing or generating code that touches its area:
+They are not loaded automatically: read only the ones whose trigger matches
+the task.
 
-- @doc/architecture.md : layer rules (views → components →
-  stores/composables → `src/api/` → fetch), folder structure, the response
-  envelope (`{ data }` / `{ data, meta }`), and the BFF contract with the
-  backend.
+- [doc/architecture.md](doc/architecture.md): read before creating a file or
+  folder under `src/`, adding a view, store, composable or `src/api/` module,
+  deciding which layer owns a piece of logic, or changing how the front talks
+  to the back (`VITE_API_URL`, dev proxy, error format).
+- [doc/conventions.md](doc/conventions.md): read before writing or reviewing
+  a `.vue` component, a Pinia store or a composable, or naming a component.
+- [doc/testing.md](doc/testing.md): read before writing or changing a test,
+  mocking `src/api/` or the back, running Vitest or Playwright, or writing
+  the testing part of a proposal.
+- [doc/dependencies.md](doc/dependencies.md): read before adding or upgrading
+  a dependency, using a library in code for the first time, looking up a
+  library's API or docs, or diagnosing a bug inside a third-party library.
+- [doc/ui.md](doc/ui.md): read before working on UI (templates, styles,
+  layout), suggesting design improvements, or choosing a UI/component
+  library.
 
 When a decision changes, update the file in the same change.
 
 ## Working agreements
 
-How the user wants to work with Claude (confirmations, proposals, learning
-mode, design suggestions, installs, language).
+How the user wants to work with Claude (confirmations, learning mode,
+proposals, installs, subagents, language). Loaded automatically every
+session:
 
 @doc/workflow.md
