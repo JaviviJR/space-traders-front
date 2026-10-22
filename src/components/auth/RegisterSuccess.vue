@@ -12,6 +12,8 @@ const { email } = defineProps<{
       <strong class="font-semibold break-all text-white">{{ email }}</strong
       >. Ábrelo para activar tu cuenta.
     </p>
-    <p class="text-sm text-slate-400">Si no lo ves, revisa la carpeta de spam.</p>
+    <p class="text-sm text-slate-400">
+      Si no lo ves, revisa la carpeta de spam.
+    </p>
   </div>
 </template>

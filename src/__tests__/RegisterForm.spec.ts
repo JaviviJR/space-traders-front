@@ -4,10 +4,11 @@ import PrimeVue from 'primevue/config'
 import RegisterForm from '../components/auth/RegisterForm.vue'
 import { register } from '../api/auth'
 import type { RegisterUserRequest, RegisterUserResponse } from '../api/auth'
-import { ApiError } from '../api/client'
+import { ApiError } from '../api/errors/ApiError'
 
 vi.mock('../api/auth', () => ({
-  register: vi.fn<(payload: RegisterUserRequest) => Promise<RegisterUserResponse>>(),
+  register:
+    vi.fn<(payload: RegisterUserRequest) => Promise<RegisterUserResponse>>(),
 }))
 
 function mountForm() {
@@ -40,7 +41,9 @@ async function fillForm(
   await wrapper.find('#name').setValue(values.name)
   await wrapper.find('#email').setValue(values.email)
   await wrapper.find('#password').setValue(values.password)
-  await wrapper.find('#password-confirmation').setValue(values.passwordConfirmation)
+  await wrapper
+    .find('#password-confirmation')
+    .setValue(values.passwordConfirmation)
   await wrapper.find('#account-token').setValue(values.accountToken)
 }
 
@@ -90,7 +93,9 @@ describe('RegisterForm', () => {
     await fillForm(wrapper, { passwordConfirmation: 'otra-contraseña' })
 
     expect(wrapper.text()).toContain('Las contraseñas no coinciden.')
-    expect(wrapper.find('button[type="submit"]').attributes('disabled')).toBeDefined()
+    expect(
+      wrapper.find('button[type="submit"]').attributes('disabled'),
+    ).toBeDefined()
 
     await wrapper.find('form').trigger('submit.prevent')
     await flushPromises()
@@ -112,7 +117,9 @@ describe('RegisterForm', () => {
     await wrapper.find('form').trigger('submit.prevent')
     await flushPromises()
 
-    expect(wrapper.text()).toContain('Ya existe una cuenta registrada con ese email.')
+    expect(wrapper.text()).toContain(
+      'Ya existe una cuenta registrada con ese email.',
+    )
     expect(wrapper.emitted('registered')).toBeUndefined()
   })
 })

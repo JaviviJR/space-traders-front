@@ -1,10 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { apiFetch, ApiError, ApiErrorValidation } from '../api/client'
+import { apiFetch } from '../api/client'
+import { ApiError, ApiErrorValidation } from '../api/errors/ApiError'
 import type { RegisterUserResponse } from '../api/auth'
 import type { components } from '@/types/backend'
 
 type ErrorBody = { error: components['schemas']['ApiError'] }
-type ValidationErrorBody = { error: components['schemas']['ApiErrorValidation'] }
+type ValidationErrorBody = {
+  error: components['schemas']['ApiErrorValidation']
+}
 
 const fetchMock = vi.fn<typeof fetch>()
 
@@ -43,7 +46,9 @@ describe('apiFetch', () => {
 
     await apiFetch('/auth/register')
 
-    expect(fetchMock.mock.calls[0]?.[1]?.headers).toMatchObject({ 'Accept-Language': 'es' })
+    expect(fetchMock.mock.calls[0]?.[1]?.headers).toMatchObject({
+      'Accept-Language': 'es',
+    })
   })
 
   it('devuelve el contenido de data en una respuesta 2xx', async () => {
@@ -54,19 +59,27 @@ describe('apiFetch', () => {
     }
     fetchMock.mockResolvedValue(jsonResponse(201, { data: user }))
 
-    await expect(apiFetch<RegisterUserResponse>('/auth/register')).resolves.toEqual(user)
+    await expect(
+      apiFetch<RegisterUserResponse>('/auth/register'),
+    ).resolves.toEqual(user)
   })
 
   it('lanza ApiError con el code y el status del back', async () => {
     const body: ErrorBody = {
-      error: { code: 'email_already_registered', message: 'Email already registered' },
+      error: {
+        code: 'email_already_registered',
+        message: 'Email already registered',
+      },
     }
     fetchMock.mockResolvedValue(jsonResponse(409, body))
 
     const error = await rejectionOf(apiFetch('/auth/register'))
 
     expect(error).toBeInstanceOf(ApiError)
-    expect(error).toMatchObject({ code: 'email_already_registered', status: 409 })
+    expect(error).toMatchObject({
+      code: 'email_already_registered',
+      status: 409,
+    })
   })
 
   it('lanza ApiErrorValidation con las violations en un 422', async () => {
@@ -93,7 +106,9 @@ describe('apiFetch', () => {
   it('lanza unrecognized con el code original si el code no está en el contrato', async () => {
     // Deliberately outside the contract: a code the back deployed before the front regenerated its types.
     fetchMock.mockResolvedValue(
-      jsonResponse(400, { error: { code: 'brand_new_code', message: 'Something new' } }),
+      jsonResponse(400, {
+        error: { code: 'brand_new_code', message: 'Something new' },
+      }),
     )
 
     const error = await rejectionOf(apiFetch('/auth/register'))

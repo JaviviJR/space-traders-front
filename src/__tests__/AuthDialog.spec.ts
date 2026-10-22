@@ -20,7 +20,10 @@ vi.stubGlobal(
 
 // jsdom has no matchMedia; AuthDialog reads '(pointer: fine)' to decide on autofocus.
 function stubPointer(fine: boolean) {
-  vi.stubGlobal('matchMedia', (query: string) => ({ matches: fine, media: query }))
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: fine,
+    media: query,
+  }))
 }
 
 function mountDialog(initialTab: AuthTab, { finePointer = true } = {}) {
@@ -46,7 +49,10 @@ function mountDialog(initialTab: AuthTab, { finePointer = true } = {}) {
   return { wrapper, context }
 }
 
-function findTab(wrapper: ReturnType<typeof mountDialog>['wrapper'], label: string) {
+function findTab(
+  wrapper: ReturnType<typeof mountDialog>['wrapper'],
+  label: string,
+) {
   return wrapper.findAll('[role="tab"]').find((tab) => tab.text() === label)
 }
 
@@ -55,7 +61,9 @@ describe('AuthDialog', () => {
     const { wrapper } = mountDialog('register')
     await flushPromises()
 
-    expect(findTab(wrapper, 'Crear cuenta')?.attributes('aria-selected')).toBe('true')
+    expect(findTab(wrapper, 'Crear cuenta')?.attributes('aria-selected')).toBe(
+      'true',
+    )
     expect(wrapper.find('form').isVisible()).toBe(true)
     expect(wrapper.find('#name').exists()).toBe(true)
   })
@@ -82,7 +90,9 @@ describe('AuthDialog', () => {
     const { wrapper, context } = mountDialog('register')
     await flushPromises()
 
-    const link = wrapper.findAll('form button').find((button) => button.text() === 'Inicia sesión')
+    const link = wrapper
+      .findAll('form button')
+      .find((button) => button.text() === 'Inicia sesión')
     await link?.trigger('click')
 
     expect(context.selectTab).toHaveBeenCalledWith('login')
@@ -92,7 +102,9 @@ describe('AuthDialog', () => {
     const { wrapper } = mountDialog('register')
     await flushPromises()
 
-    wrapper.findComponent(RegisterForm).vm.$emit('registered', 'ripley@nostromo.test')
+    wrapper
+      .findComponent(RegisterForm)
+      .vm.$emit('registered', 'ripley@nostromo.test')
     await flushPromises()
 
     expect(wrapper.find('form').exists()).toBe(false)
@@ -104,7 +116,9 @@ describe('AuthDialog', () => {
     const { wrapper } = mountDialog('register')
     await flushPromises()
 
-    wrapper.findComponent(RegisterForm).vm.$emit('registered', 'ripley@nostromo.test')
+    wrapper
+      .findComponent(RegisterForm)
+      .vm.$emit('registered', 'ripley@nostromo.test')
     await flushPromises()
     wrapper.findComponent(Dialog).vm.$emit('after-hide')
     await flushPromises()
@@ -116,10 +130,14 @@ describe('AuthDialog', () => {
   it('pone autofocus en Nombre con ratón, pero no en pantallas táctiles', async () => {
     const withMouse = mountDialog('register', { finePointer: true })
     await flushPromises()
-    expect(withMouse.wrapper.find('#name').attributes('autofocus')).toBeDefined()
+    expect(
+      withMouse.wrapper.find('#name').attributes('autofocus'),
+    ).toBeDefined()
 
     const withTouch = mountDialog('register', { finePointer: false })
     await flushPromises()
-    expect(withTouch.wrapper.find('#name').attributes('autofocus')).toBeUndefined()
+    expect(
+      withTouch.wrapper.find('#name').attributes('autofocus'),
+    ).toBeUndefined()
   })
 })

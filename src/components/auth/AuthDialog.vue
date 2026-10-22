@@ -26,7 +26,9 @@ function handleAfterHide() {
 
 // Autofocus only with a mouse: on touch devices it pops up the keyboard over the dialog.
 const hasFinePointer = window.matchMedia('(pointer: fine)').matches
-const autofocusRegister = computed(() => hasFinePointer && activeTab.value === 'register')
+const autofocusRegister = computed(
+  () => hasFinePointer && activeTab.value === 'register',
+)
 
 // Tabs emits update:value as string | number (primevue/tabs/index.d.ts), wider than AuthTab.
 function handleTabChange(value: string | number) {

@@ -14,7 +14,8 @@ export interface AuthDialogContext {
   selectTab: (tab: AuthTab) => void
 }
 
-export const AuthDialogKey: InjectionKey<AuthDialogContext> = Symbol('AuthDialog')
+export const AuthDialogKey: InjectionKey<AuthDialogContext> =
+  Symbol('AuthDialog')
 
 export function useAuthDialog(): AuthDialogContext {
   const context = inject(AuthDialogKey, null)

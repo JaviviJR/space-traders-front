@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import { register } from '@/api/auth'
-import { ApiError } from '@/api/client'
+import { ApiError } from '@/api/errors/ApiError'
 import type { RegisterUserResponse } from '@/api/auth'
 
 export function useRegister() {
@@ -13,7 +13,9 @@ export function useRegister() {
   const error = ref<string | null>(null)
 
   const passwordMismatch = computed(
-    () => passwordConfirmation.value.length > 0 && password.value !== passwordConfirmation.value,
+    () =>
+      passwordConfirmation.value.length > 0 &&
+      password.value !== passwordConfirmation.value,
   )
 
   async function submit(): Promise<RegisterUserResponse | null> {
@@ -38,12 +40,16 @@ export function useRegister() {
         if (err.status === 409) {
           error.value = 'Ya existe una cuenta registrada con ese email.'
         } else if (err.status === 422) {
-          error.value = err.message || 'Revisa los datos del formulario e inténtalo de nuevo.'
+          error.value =
+            err.message ||
+            'Revisa los datos del formulario e inténtalo de nuevo.'
         } else {
-          error.value = 'No se ha podido completar el registro. Inténtalo de nuevo.'
+          error.value =
+            'No se ha podido completar el registro. Inténtalo de nuevo.'
         }
       } else {
-        error.value = 'No se ha podido completar el registro. Inténtalo de nuevo.'
+        error.value =
+          'No se ha podido completar el registro. Inténtalo de nuevo.'
       }
 
       return null
