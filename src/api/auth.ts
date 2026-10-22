@@ -5,10 +5,8 @@ export type RegisterUserRequest = components['schemas']['RegisterUserRequest']
 export type RegisterUserResponse = components['schemas']['RegisterUserResponse']
 
 export async function register(payload: RegisterUserRequest): Promise<RegisterUserResponse> {
-  const response = await apiFetch<{ data: RegisterUserResponse }>('/auth/register', {
+  return apiFetch<RegisterUserResponse>('/auth/register', {
     method: 'POST',
     body: payload,
   })
-
-  return response.data
 }

@@ -99,7 +99,13 @@ describe('RegisterForm', () => {
   })
 
   it('muestra el error del backend cuando el email ya está registrado', async () => {
-    vi.mocked(register).mockRejectedValue(new ApiError('Conflict', 409))
+    vi.mocked(register).mockRejectedValue(
+      new ApiError({
+        code: 'email_already_registered',
+        message: 'Email already registered',
+        status: 409,
+      }),
+    )
     const wrapper = mountForm()
 
     await fillForm(wrapper)

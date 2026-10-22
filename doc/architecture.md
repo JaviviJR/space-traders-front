@@ -46,10 +46,24 @@ grows to dozens of components.
   `ApiError`. It strips the `{ data }` envelope so stores receive the
   resource directly.
   - Errors: the back's contract (the error schemas in the generated types)
-    defines their shape. `ApiError` is the base; each contract schema that
+    defines their shape, and `client.ts` derives the error classes' fields
+    from those schemas. `ApiError` is the base; each contract schema that
     extends it gets an `ApiError` subclass with the same name and its extra
-    fields, and `client.ts` picks the subclass from the response's `code`
-    (not implemented yet, see [Pending decisions](#pending-decisions)).
+    fields, and `client.ts` picks the subclass from the response's `code`.
+    Logic branches on `code`, never on `status` or the text of `message`.
+  - `code` is a closed type, but the back treats it as an open enum at
+    runtime. `client.ts` checks the received code against the runtime array
+    the generator emits, so the rest of the app can trust the type; an error
+    the contract doesn't describe (unknown code, non-JSON body from something
+    in between) becomes a front-only code and is logged with `console.error`
+    so a developer knows to regenerate the types. A request with no response
+    (`fetch` rejects) also becomes an `ApiError`, with status `0` and its own
+    front-only code. Front-only codes are defined in `client.ts`, never in
+    `src/types/`, and a compile-time check fails `npm run type-check` if one
+    overlaps a contract code.
+  - `client.ts` sends `Accept-Language` on every request; the back uses it to
+    translate validation messages. It's fixed to Spanish until
+    internationalization exists (see [Pending decisions](#pending-decisions)).
   - When writing a function, check in the generated types which error schema
     its endpoint returns for each status. Callers catch `ApiError`, and use
     `instanceof` on a subclass only when they need its extra fields.
@@ -71,10 +85,6 @@ every request from the front goes to it, and it calls the SpaceTraders API.
 
 ## Pending decisions
 
-- Error hierarchy in `client.ts`: today it only throws `ApiError`, with `code`
-  as a plain string, and drops the extra fields of extended errors. Implement
-  the subclasses and type `code` with the contract's enum when a form needs
-  per-field errors.
 - Cross-origin cookies: when connecting the first endpoint that relies on the
   refresh-token cookie, the front's requests must send credentials and the
   back's CORS must allow them. Neither does today.
