@@ -5,8 +5,8 @@
 - The user has little design experience. When working on UI, proactively
   suggest improvements even when not asked: layout, spacing, typography,
   color and contrast, responsive behavior, accessibility, states (hover,
-  focus, loading, empty, error) and small animations. Explain the reasoning
-  in Spanish, so the user learns the design principle behind each suggestion.
+  focus, loading, empty, error) and small animations. Explain the reasoning,
+  so the user learns the design principle behind each suggestion.
 - Also suggest ready-made components or libraries worth integrating (icons,
   dialogs, dropdowns, toasts, tables, charts…). Only suggest libraries that
   work with Tailwind and support the Tailwind major version in
@@ -29,5 +29,6 @@
 Prefer unstyled or Tailwind-styled libraries (styled with Tailwind classes we
 control) over libraries that ship their own CSS theme. A library with its
 own theme system is acceptable if its design tokens are overridable and are
-reconfigured to match our own `@theme` palette, instead of adopting its
+reconfigured to match our own palette (the Tailwind colors and `@theme`
+tokens the templates use), instead of adopting its
 default preset as-is.

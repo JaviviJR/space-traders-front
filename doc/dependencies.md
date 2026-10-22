@@ -2,10 +2,11 @@
 
 ## Adding features: npm, then its own docs
 
-Install new capabilities with `npm install <package>`, then configure it the
-way its own docs show (Vite plugin, Vue plugin, etc.). Unlike Symfony Flex,
-npm has no recipe system that auto-wires config for you — so after installing,
-check the library's setup docs yourself rather than guessing the config shape.
+New capabilities come from an npm package (the user runs the install, see
+below), configured the way its own docs show (Vite plugin, Vue plugin, etc.).
+Unlike Symfony Flex, npm has no recipe system that auto-wires config for you —
+so after installing, check the library's setup docs yourself rather than
+guessing the config shape.
 Don't hand-roll what a library already does well (routing, icons, HTTP,
 dialogs...); check [Library docs](#library-docs) before adding anything, and
 new dependencies follow the install rule in
@@ -22,24 +23,29 @@ new dependencies follow the install rule in
     Fetch the specific page it links to. To search a whole site, download its
     `llms-full.txt` to the scratchpad and grep it instead of reading it into
     context.
-  - PrimeVue: this project pins `primevue`/`@primevue/themes` to
-    `4.5.5`/`4.5.4` (the last MIT release — newer majors require a PrimeUI
-    license). Docs for that exact version live at `v4.primevue.org`, a frozen
-    mirror (footer confirms "PrimeVue 4.5.5"): index at
+  - PrimeVue: `primevue`/`@primevue/themes` stay on major 4, the last MIT
+    one — newer majors require a PrimeUI license. The version range in
+    `package.json` blocks the next major and the lockfile fixes the exact
+    version; don't upgrade the major. Docs for major 4 live at
+    `v4.primevue.org`, a frozen mirror (its footer shows the version): index at
     `v4.primevue.org/llms/llms.txt`, per-page Markdown at
     `v4.primevue.org/<page>.md`. Don't follow the URLs listed _inside_ that
     index as given — they point at `primevue.org`, which now redirects to the
     current (paid) major version's site; re-root each one onto
     `v4.primevue.org` before fetching. `tailwindcss-primeui`'s own docs live
     on the same mirror's Tailwind page, no separate index.
-  - Pinia, Vue Test Utils, Tailwind, Playwright and Iconify have no
+  - Pinia, Vue Test Utils, Tailwind, Playwright, Iconify and VueUse have no
     `llms.txt`; use their regular docs (`pinia.vuejs.org`,
     `test-utils.vuejs.org`, `tailwindcss.com/docs`, `playwright.dev`,
-    `iconify.design/docs`).
+    `iconify.design/docs`, `vueuse.org`). VueUse's `/llms.txt` and `.md` URLs
+    return its HTML homepage; for Markdown, read
+    `packages/<package>/<function>/index.md` from its GitHub repo at the tag
+    `v<installed version>` (see `package-lock.json`), not `main`.
   - When a dependency is added to `package.json` (by the user or by Claude),
     check whether its docs site publishes `/llms.txt`. If it does, add it to
-    the first bullet; if not, add its regular docs URL to the second. Include
-    this edit in the same change that adds the dependency.
+    the `llms.txt` bullet; if not, add its regular docs URL to the
+    regular-docs bullet. Include this edit in the same change that adds the
+    dependency.
 - Read installed source and `.d.ts` files under `node_modules/` when the docs
   don't settle the exact behaviour of the installed version.
 
