@@ -36,12 +36,9 @@ isn't done until lint, format and type-check are clean. `eslint-plugin-oxlint`
 turns off the ESLint rules oxlint already covers, so a lint config change may
 need edits in both `.oxlintrc.json` and `eslint.config.ts`.
 
-The Vue style guide's Priority C
-([rules-recommended](https://vuejs.org/style-guide/rules-recommended)) asks
-for consistency rather than one specific choice. This project orders SFC
-blocks `<script>`, `<template>`, `<style>`, and element attributes in the
-guide's default order. The lint config uses `eslint-plugin-vue`'s essential
-preset, which checks neither, so keep them by hand.
+Lint and Prettier enforce the parts of the Vue style guide a tool can check;
+the rules that are judgment calls live in
+[doc/conventions.md](doc/conventions.md#conventions).
 
 ## Static analysis
 

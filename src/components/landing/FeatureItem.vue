@@ -13,7 +13,10 @@ defineProps<{
         aria-hidden="true"
         class="absolute flex size-12 items-center justify-center rounded-md bg-sky-300 text-slate-900"
       >
-        <span :class="icon" class="text-2xl" />
+        <span
+          :class="icon"
+          class="text-2xl"
+        />
       </span>
       <span class="text-gradient ml-16 block text-lg leading-6 font-medium">{{ title }}</span>
     </dt>

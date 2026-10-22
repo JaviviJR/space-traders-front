@@ -13,7 +13,10 @@ const links = [
     >
       <p class="text-slate-400">Cliente no oficial de SpaceTraders.</p>
       <ul class="flex flex-wrap gap-6">
-        <li v-for="link in links" :key="link.href">
+        <li
+          v-for="link in links"
+          :key="link.href"
+        >
           <a
             :href="link.href"
             target="_blank"

@@ -3,9 +3,10 @@ import { computed, useAttrs } from 'vue'
 import type { RouteLocationRaw } from 'vue-router'
 import Button from 'primevue/button'
 
+// Explicit `undefined` defaults (vue/require-default-prop): no `to`/`href` is what selects the plain <button> branch.
 const {
-  to,
-  href,
+  to = undefined,
+  href = undefined,
   variant = 'primary',
 } = defineProps<{
   to?: RouteLocationRaw
@@ -23,15 +24,31 @@ const severity = computed(() => (variant === 'secondary' ? 'secondary' : undefin
        this branch), so a class passed to BaseButton would be silently dropped here
        unlike the href/plain branches below. Merging attrs.class by hand is PrimeVue's
        asChild limitation, not an officially documented pattern. -->
-  <Button v-if="to" asChild :severity="severity" v-slot="slotProps">
-    <RouterLink :to="to" :class="[slotProps.class, attrs.class]">
+  <Button
+    v-if="to"
+    v-slot="slotProps"
+    as-child
+    :severity="severity"
+  >
+    <RouterLink
+      :to="to"
+      :class="[slotProps.class, attrs.class]"
+    >
       <slot />
     </RouterLink>
   </Button>
-  <Button v-else-if="href" as="a" :href="href" :severity="severity">
+  <Button
+    v-else-if="href"
+    as="a"
+    :href="href"
+    :severity="severity"
+  >
     <slot />
   </Button>
-  <Button v-else :severity="severity">
+  <Button
+    v-else
+    :severity="severity"
+  >
     <slot />
   </Button>
 </template>

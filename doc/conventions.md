@@ -2,54 +2,36 @@
 
 ## Conventions
 
-Project-specific conventions, not covered by the official style guide:
+The parts of the official [Vue style guide](https://vuejs.org/style-guide)
+that a tool can check are enforced by lint (`eslint.config.ts`) and Prettier
+(`.prettierrc.json`). No tool checks the rules below: apply them when writing
+code.
 
-- Composition API only, `<script setup lang="ts">` in every component — no
-  Options API, no mixins.
-- Style with Tailwind utility classes in templates. New design tokens go in
-  the `@theme` block in `src/assets/main.css`, not a new config file.
+Project-specific:
+
+- `lang="ts"` in every `<script setup>`.
+- Style with Tailwind utility classes in templates; they need no scoping
+  mechanism. New design tokens go in the `@theme` block in
+  `src/assets/main.css`, not a new config file. A component's own CSS must be
+  `scoped` or a CSS Module (lint checks it); global CSS goes in `main.css`.
+- Avoid descendant variants (`[&_p]:…`, `*:…`) that style a child component's
+  internals; use its props or styling API instead.
 - Prefer `computed` over a watcher that just derives a value; reach for
   `watch`/`watchEffect` only for side effects.
 
-From the official [Vue style guide](https://vuejs.org/style-guide), Priority A
-(essential, non-negotiable):
+From the style guide (Priority B, strongly recommended — follow unless there's
+a reason not to):
 
-- Multi-word component names (`TodoItem`, not `Todo`) — avoids clashes with
-  current/future HTML elements. Root `App` is exempt.
-- Props declared with at least their type(s) — never a bare array like
-  `['status']`.
-- `v-for` always has a unique `:key` (required on components).
-- Never `v-if` and `v-for` on the same element — filter via a computed
-  property, or wrap in `<template>`.
-- Component-scoped styling. Tailwind utility classes in the template need no
-  scoping mechanism. A component's own CSS goes in a `<style scoped>` block
-  (or CSS Modules), except in the root `App` and layout components. Avoid
-  descendant variants (`[&_p]:…`, `*:…`) that style a child component's
-  internals; use its props or styling API instead.
-
-Priority B (strongly recommended — follow unless there's a reason not to):
-
-- One component per file; SFC filename in PascalCase or kebab-case,
-  consistently.
+- SFC filenames in PascalCase or kebab-case, consistently.
 - Prefix generic, app-wide-styled base components with `Base`/`App`/`V`
   (e.g. `BaseButton`).
 - Prefix a child component tightly coupled to one parent with the parent's
   name (`TodoListItem`).
 - Component name word order: general → specific (`SearchButtonClear`).
-- Self-close components with no content in SFCs; never in in-DOM templates.
-- PascalCase for component names in SFC templates.
 - Full words over abbreviations in component names.
-- Props: camelCase in JS, kebab-case in in-DOM templates.
-- Multiple attributes on an element → one per line.
 - Keep template expressions simple; move logic into computed properties or
   methods.
 - Split a complex computed into several smaller, well-named ones.
-- Quote every non-empty attribute value.
-- Use directive shorthands (`:`, `@`, `#`) consistently — always or never.
-
-One style-guide pair is cross-referenced elsewhere, not repeated here:
-component/attribute ordering and SFC block order are formatting (Priority C),
-not checked by lint today — see [Code style](../AGENTS.md#code-style).
 
 ## Design principles
 

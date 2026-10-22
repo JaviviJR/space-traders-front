@@ -17,9 +17,9 @@ export default defineConfigWithVueTs(
     files: ['**/*.{vue,ts,mts,tsx}'],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**', 'doc/**']),
 
-  ...pluginVue.configs['flat/essential'],
+  ...pluginVue.configs['flat/recommended'],
   vueTsConfigs.recommended,
 
   {
@@ -35,4 +35,20 @@ export default defineConfigWithVueTs(
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
   skipFormatting,
+
+  {
+    name: 'app/vue-style-guide',
+    files: ['**/*.vue'],
+    rules: {
+      'vue/component-api-style': ['error', ['script-setup']],
+      'vue/component-name-in-template-casing': [
+        'warn',
+        'PascalCase',
+        { registeredComponentsOnly: false },
+      ],
+      // After skipFormatting, which turns it off; `void: 'any'` is the option eslint-config-prettier documents as Prettier-compatible.
+      'vue/html-self-closing': ['warn', { html: { void: 'any' } }],
+      'vue/enforce-style-attribute': ['warn', { allow: ['scoped', 'module'] }],
+    },
+  },
 )
