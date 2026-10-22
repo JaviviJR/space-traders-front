@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { register } from '@/api/auth'
 import { ApiError } from '@/api/client'
-import type { RegisteredUser } from '@/api/auth'
+import type { RegisterUserResponse } from '@/api/auth'
 
 export function useRegister() {
   const name = ref('')
@@ -16,7 +16,7 @@ export function useRegister() {
     () => passwordConfirmation.value.length > 0 && password.value !== passwordConfirmation.value,
   )
 
-  async function submit(): Promise<RegisteredUser | null> {
+  async function submit(): Promise<RegisterUserResponse | null> {
     error.value = null
 
     if (passwordMismatch.value) {

@@ -3,11 +3,11 @@ import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import RegisterForm from '../components/auth/RegisterForm.vue'
 import { register } from '../api/auth'
-import type { RegisterPayload, RegisteredUser } from '../api/auth'
+import type { RegisterUserRequest, RegisterUserResponse } from '../api/auth'
 import { ApiError } from '../api/client'
 
 vi.mock('../api/auth', () => ({
-  register: vi.fn<(payload: RegisterPayload) => Promise<RegisteredUser>>(),
+  register: vi.fn<(payload: RegisterUserRequest) => Promise<RegisterUserResponse>>(),
 }))
 
 function mountForm() {
@@ -69,6 +69,21 @@ describe('RegisterForm', () => {
     })
   })
 
+  it('emite registered con el email que devuelve el back cuando el registro va bien', async () => {
+    vi.mocked(register).mockResolvedValue({
+      id: 1,
+      name: 'Ellen Ripley',
+      email: 'ripley@nostromo.test',
+    })
+    const wrapper = mountForm()
+
+    await fillForm(wrapper, { email: 'Ripley@Nostromo.test' })
+    await wrapper.find('form').trigger('submit.prevent')
+    await flushPromises()
+
+    expect(wrapper.emitted('registered')).toEqual([['ripley@nostromo.test']])
+  })
+
   it('muestra un aviso y bloquea el envío si las contraseñas no coinciden', async () => {
     const wrapper = mountForm()
 
@@ -92,5 +107,6 @@ describe('RegisterForm', () => {
     await flushPromises()
 
     expect(wrapper.text()).toContain('Ya existe una cuenta registrada con ese email.')
+    expect(wrapper.emitted('registered')).toBeUndefined()
   })
 })

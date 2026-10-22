@@ -11,6 +11,7 @@ const { autofocus = false } = defineProps<{
 
 const emit = defineEmits<{
   switchToLogin: []
+  registered: [email: string]
 }>()
 
 const {
@@ -26,7 +27,11 @@ const {
 } = useRegister()
 
 async function handleSubmit() {
-  await submit()
+  const user = await submit()
+
+  if (user) {
+    emit('registered', user.email)
+  }
 }
 </script>
 

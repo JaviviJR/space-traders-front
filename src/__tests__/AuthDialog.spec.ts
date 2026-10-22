@@ -2,7 +2,9 @@ import { describe, it, expect, vi } from 'vitest'
 import { ref } from 'vue'
 import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
+import Dialog from 'primevue/dialog'
 import AuthDialog from '../components/auth/AuthDialog.vue'
+import RegisterForm from '../components/auth/RegisterForm.vue'
 import { AuthDialogKey } from '../composables/useAuthDialog'
 import type { AuthDialogContext, AuthTab } from '../composables/useAuthDialog'
 
@@ -84,6 +86,31 @@ describe('AuthDialog', () => {
     await link?.trigger('click')
 
     expect(context.selectTab).toHaveBeenCalledWith('login')
+  })
+
+  it('cambia el formulario por el aviso de revisar el correo tras registrarse', async () => {
+    const { wrapper } = mountDialog('register')
+    await flushPromises()
+
+    wrapper.findComponent(RegisterForm).vm.$emit('registered', 'ripley@nostromo.test')
+    await flushPromises()
+
+    expect(wrapper.find('form').exists()).toBe(false)
+    expect(wrapper.text()).toContain('Revisa tu correo')
+    expect(wrapper.text()).toContain('ripley@nostromo.test')
+  })
+
+  it('vuelve a mostrar el formulario vacío cuando el diálogo termina de cerrarse', async () => {
+    const { wrapper } = mountDialog('register')
+    await flushPromises()
+
+    wrapper.findComponent(RegisterForm).vm.$emit('registered', 'ripley@nostromo.test')
+    await flushPromises()
+    wrapper.findComponent(Dialog).vm.$emit('after-hide')
+    await flushPromises()
+
+    expect(wrapper.text()).not.toContain('Revisa tu correo')
+    expect(wrapper.find<HTMLInputElement>('#name').element.value).toBe('')
   })
 
   it('pone autofocus en Nombre con ratón, pero no en pantallas táctiles', async () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Dialog from 'primevue/dialog'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -8,9 +8,21 @@ import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
+import RegisterSuccess from '@/components/auth/RegisterSuccess.vue'
 import { isAuthTab, useAuthDialog } from '@/composables/useAuthDialog'
 
 const { visible, activeTab, close, selectTab } = useAuthDialog()
+
+const registeredEmail = ref<string | null>(null)
+
+function handleRegistered(email: string) {
+  registeredEmail.value = email
+}
+
+// Reset on after-hide, not when visible turns false: otherwise the form replaces the notice mid leave animation.
+function handleAfterHide() {
+  registeredEmail.value = null
+}
 
 // Autofocus only with a mouse: on touch devices it pops up the keyboard over the dialog.
 const hasFinePointer = window.matchMedia('(pointer: fine)').matches
@@ -36,6 +48,7 @@ function handleTabChange(value: string | number) {
     :breakpoints="{ '575px': '90vw' }"
     content-class="overscroll-contain"
     @update:visible="close"
+    @after-hide="handleAfterHide"
   >
     <Tabs
       :value="activeTab"
@@ -60,9 +73,15 @@ function handleTabChange(value: string | number) {
           <LoginForm />
         </TabPanel>
         <TabPanel value="register">
+          <RegisterSuccess
+            v-if="registeredEmail"
+            :email="registeredEmail"
+          />
           <RegisterForm
+            v-else
             :autofocus="autofocusRegister"
             @switch-to-login="selectTab('login')"
+            @registered="handleRegistered"
           />
         </TabPanel>
       </TabPanels>
