@@ -59,18 +59,33 @@ const lineNumbers = lines.map((_, i) => String(i + 1).padStart(2, '0'))
 
     <div class="px-4 pt-4 pb-6">
       <div class="flex gap-1.5">
-        <span v-for="n in 3" :key="n" class="size-2.5 rounded-full ring-1 ring-slate-500/40" />
+        <span
+          v-for="n in 3"
+          :key="n"
+          class="size-2.5 rounded-full ring-1 ring-slate-500/40"
+        />
       </div>
 
       <div class="mt-6 flex items-start font-mono text-sm leading-6">
         <div class="border-r border-slate-300/5 pr-4 text-slate-600 select-none">
-          <span v-for="number in lineNumbers" :key="number" class="block">{{ number }}</span>
+          <span
+            v-for="number in lineNumbers"
+            :key="number"
+            class="block"
+            >{{ number }}</span
+          >
         </div>
         <code class="overflow-x-auto pl-4">
-          <span v-for="(line, i) in lines" :key="i" class="block whitespace-pre"
-            ><span v-for="(token, j) in line" :key="j" :class="token.class">{{
-              token.text
-            }}</span></span
+          <span
+            v-for="(line, i) in lines"
+            :key="i"
+            class="block whitespace-pre"
+            ><span
+              v-for="(token, j) in line"
+              :key="j"
+              :class="token.class"
+              >{{ token.text }}</span
+            ></span
           >
         </code>
       </div>

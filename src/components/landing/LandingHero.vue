@@ -8,7 +8,10 @@ const { visible, openRegister } = useAuthDialog()
 
 <template>
   <section class="relative isolate overflow-hidden">
-    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 mask-t-from-70%">
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 -z-10 mask-t-from-70%"
+    >
       <div class="absolute -top-40 -left-40 size-128 rounded-full bg-cyan-500/15 blur-3xl" />
       <div class="absolute -top-40 -right-40 size-128 rounded-full bg-sky-500/10 blur-3xl" />
     </div>
@@ -32,7 +35,11 @@ const { visible, openRegister } = useAuthDialog()
           >
             Empezar
           </BaseButton>
-          <BaseButton href="#features" variant="secondary">Ver características</BaseButton>
+          <BaseButton
+            href="#features"
+            variant="secondary"
+            >Ver características</BaseButton
+          >
         </div>
       </div>
 

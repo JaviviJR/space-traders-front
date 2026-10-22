@@ -1,8 +1,7 @@
 # AGENTS.md
 
-This is a Vue 3 + Vite + TypeScript SPA. Check `package.json` for exact
-versions of Vue, Vite, Pinia, Vue Router and Tailwind in use. Don't assume a
-library is available unless it's listed there.
+This is a Vue 3 + Vite + TypeScript SPA. Don't assume a library is available
+unless it's listed in `package.json`.
 
 ## Ask before generating
 
@@ -18,46 +17,17 @@ If you can't ask, state the assumption you're making and pick the smallest
 option (e.g. local `ref` over a Pinia store) rather than scaffolding more than
 asked.
 
-## Adding features: npm, then its own docs
-
-Installing and configuring a new library lives in
-[doc/dependencies.md](doc/dependencies.md#adding-features-npm-then-its-own-docs).
-
-## Conventions
-
-Project conventions and the Vue style guide (Priority A/B) live in
-[doc/conventions.md](doc/conventions.md#conventions).
-
-## Design principles
-
-SOLID adapted to components/composables/stores lives in
-[doc/conventions.md](doc/conventions.md#design-principles).
-
 ## Everyday workflow
 
-- Run npm scripts directly (no need for `./dev.sh` or `docker compose` from
-  inside the container):
-  - `npm run dev`: Vite dev server (port 5173)
-  - `npm run build`: runs type-check (`vue-tsc --build`) and `vite build` in
-    parallel
-  - `npm run type-check`: type-check only
-  - `npm run lint`: runs oxlint, then ESLint, both with `--fix`
-  - `npm run format`: Prettier on `src/`
-  - `npm run generate:types`: regenerates `src/types/backend.d.ts` (gitignored)
-    from the back's OpenAPI spec via `openapi-typescript`. Run it after the
-    back's API contract changes; needs the back reachable at the URL in the
-    script.
-  - `npm run test:unit` / `npm run test:e2e`: see
-    [doc/testing.md](doc/testing.md#commands).
-- When something fails, check the browser console and the Network tab before
-  changing code — most front-end bugs show up there (a thrown error, a
-  rejected fetch, an unexpected response shape) before they show up in the
-  source.
-
-## Testing
-
-Where tests go, the definition of done, mocks and test setup live in
-[doc/testing.md](doc/testing.md).
+- You're inside the container: run the npm scripts directly, not `./dev` or
+  `docker compose` (those are for the host).
+- The scripts live in `package.json`. What their names don't tell you:
+  - `npm run lint` and `npm run format` rewrite files in place.
+  - `npm run format` only covers `src/`.
+  - `npm run generate:types` regenerates the back's contract types
+    (gitignored) from its OpenAPI spec. Run it after the back's API contract
+    changes; it needs the back reachable at the URL in the script.
+  - Tests: see [doc/testing.md](doc/testing.md#commands).
 
 ## Code style
 
@@ -66,11 +36,9 @@ isn't done until lint, format and type-check are clean. `eslint-plugin-oxlint`
 turns off the ESLint rules oxlint already covers, so a lint config change may
 need edits in both `.oxlintrc.json` and `eslint.config.ts`.
 
-From the Vue style guide (Priority C, formatting — enforce via lint config
-rather than by hand): element/attribute order (`v-for` before `v-if` before
-`ref`/`key` before `v-model` before other attributes before `v-on` before
-`v-html`/`v-text`), and SFC top-level block order (`<script>`, `<template>`,
-`<style>`, consistently).
+Lint and Prettier enforce the parts of the Vue style guide a tool can check;
+the rules that are judgment calls live in
+[doc/conventions.md](doc/conventions.md#conventions).
 
 ## Static analysis
 
@@ -90,12 +58,12 @@ up instead of relying on memory:
 - Vue Devtools (bundled via `vite-plugin-vue-devtools` in `vite.config.ts`):
   inspect the live component tree, props, Pinia state, router state and
   emitted events at runtime, instead of guessing what a component renders.
-- `npx vue-tsc --noEmit` / `npm run type-check`: the real type error, not a
-  guessed one — read it before changing code.
-- Browser DevTools (Network tab): the actual response shape from the backend,
-  instead of assuming the SpaceTraders envelope.
-- Library docs (`llms.txt` indexes, the PrimeVue mirror, `node_modules/`
-  source): see [doc/dependencies.md](doc/dependencies.md#library-docs).
+- `npm run type-check`: the real type error, not a guessed one — read it
+  before changing code.
+- Browser console and DevTools Network tab: when something fails, check them
+  before changing code — a thrown error, a rejected fetch, or a response
+  shape that doesn't match the generated types usually shows up there before
+  it shows up in the source.
 
 ## Conflicts between sources
 
@@ -109,7 +77,7 @@ the task.
 - [doc/architecture.md](doc/architecture.md): read before creating a file or
   folder under `src/`, adding a view, store, composable or `src/api/` module,
   deciding which layer owns a piece of logic, or changing how the front talks
-  to the back (`VITE_API_URL`, dev proxy, error format).
+  to the back (base URL, CORS, error format).
 - [doc/conventions.md](doc/conventions.md): read before writing or reviewing
   a `.vue` component, a Pinia store or a composable, or naming a component.
 - [doc/testing.md](doc/testing.md): read before writing or changing a test,
@@ -122,12 +90,34 @@ the task.
   layout), suggesting design improvements, or choosing a UI/component
   library.
 
-When a decision changes, update the file in the same change.
+## Where documentation lives
+
+- `doc/*.md` and this file describe the generic mechanism and how to add a
+  case (steps, rules, conventions), not an inventory of implementations.
+  Don't copy lists the code already expresses (routes, stores, type fields,
+  endpoints, the components in a folder) or literal config values (URLs,
+  ports, env vars, tool options): say what they do and point to the file.
+- When a decision is closed or changes, record it in the same change that
+  applies it:
+  - A mechanism that applies to several files: the `doc/*.md` whose trigger
+    above covers it.
+  - Something specific to one component, store, composable or module (why
+    this value, what it deliberately doesn't do, which alternatives were
+    rejected for it): a comment in that file — a `/** */` header at the top
+    of the `<script setup>` or the `.ts` file when it's about the whole file,
+    a one-line `//` next to the line when it's a local trap. Only write it
+    when removing it would likely lead a future reader to "simplify" the code
+    back into the problem it avoids.
+- A single case never becomes a `doc/*.md` rule. When a second case appears,
+  propose to the user whether to generalize it into `doc/` or keep a comment
+  in each file.
+- Record only what was decided: what won't be done isn't recorded, except a
+  rejected alternative's one-sentence summary with the condition to revisit
+  it. When a decision changes, rewrite the existing text instead of appending
+  a note.
 
 ## Working agreements
 
-How the user wants to work with Claude (confirmations, learning mode,
-proposals, installs, subagents, language). Loaded automatically every
-session:
+How the user wants to work with Claude. Loaded automatically every session:
 
 @doc/workflow.md

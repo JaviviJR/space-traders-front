@@ -37,17 +37,33 @@ function handleTabChange(value: string | number) {
     content-class="overscroll-contain"
     @update:visible="close"
   >
-    <Tabs :value="activeTab" @update:value="handleTabChange">
+    <Tabs
+      :value="activeTab"
+      @update:value="handleTabChange"
+    >
       <TabList>
-        <Tab value="login" class="flex-1"> Iniciar sesión </Tab>
-        <Tab value="register" class="flex-1"> Crear cuenta </Tab>
+        <Tab
+          value="login"
+          class="flex-1"
+        >
+          Iniciar sesión
+        </Tab>
+        <Tab
+          value="register"
+          class="flex-1"
+        >
+          Crear cuenta
+        </Tab>
       </TabList>
       <TabPanels>
         <TabPanel value="login">
           <LoginForm />
         </TabPanel>
         <TabPanel value="register">
-          <RegisterForm :autofocus="autofocusRegister" @switch-to-login="selectTab('login')" />
+          <RegisterForm
+            :autofocus="autofocusRegister"
+            @switch-to-login="selectTab('login')"
+          />
         </TabPanel>
       </TabPanels>
     </Tabs>

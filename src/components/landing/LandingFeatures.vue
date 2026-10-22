@@ -37,7 +37,10 @@ const features: Feature[] = [
 </script>
 
 <template>
-  <section id="features" class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
+  <section
+    id="features"
+    class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8"
+  >
     <div class="text-center">
       <h2 class="text-gradient font-display text-4xl tracking-tight text-balance">
         ¿Qué puedes hacer?

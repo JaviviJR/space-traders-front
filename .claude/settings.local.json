@@ -35,7 +35,10 @@
       "Bash(grep -E '\"\\(vue|@playwright/test|primevue\\)\"' package.json; ls ~/.cache/ms-playwright 2>/dev/null; ls doc/imgs; grep -rn \"AuthDialog\\\\|provide\" src/__tests__/App.spec.ts | head)",
       "Read(//home/ubuntu/.cache/ms-playwright/**)",
       "Bash(curl -sL -m 60 https://code.visualstudio.com/docs/nodejs/browser-debugging.md)",
-      "Bash(curl -sL -m 60 https://raw.githubusercontent.com/firefox-devtools/vscode-firefox-debug/master/README.md)"
+      "Bash(curl -sL -m 60 https://raw.githubusercontent.com/firefox-devtools/vscode-firefox-debug/master/README.md)",
+      "Bash(grep '\\\\.md$')",
+      "WebFetch(domain:vueuse.org)",
+      "WebFetch(domain:eslint.vuejs.org)"
     ],
     "additionalDirectories": [
       "/home/ubuntu/app/src/types",

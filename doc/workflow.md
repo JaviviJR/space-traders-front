@@ -11,13 +11,12 @@ How the user works with Claude on this project. Applies to every session.
 
 - The user is using this project to learn Vue.js while building it with
   Claude. This extends the "Proposals" section below, not a replacement for
-  it: proposals still never show a diff or pasted code in chat.
+  it.
 - When proposing a change to project files (Vue components, tests, config,
   Docker), explain it didactically, as if it were a guided exercise: what the
   change does and which Vue concepts it involves (e.g. `ref` vs `reactive`,
   props, emits, Pinia stores, routes), in prose, without pasting the code
-  itself. The user reviews the actual code with `git diff` in VSCode.
-- Write those explanations in Spanish.
+  itself.
 - When a decision comes from an installed skill, say which skill and why it
   recommends it.
 - Invite questions, answer them, and apply the change only once the user says
@@ -41,30 +40,15 @@ How the user works with Claude on this project. Applies to every session.
     sessions, consider switching to "only for structural changes
     (interfaces, patterns, layers)" if "always" turns out noisy for trivial
     changes.
-- When a decision is closed, write it to the relevant `doc/*.md` file and
-  reply with a one-line summary.
+- When a decision is closed, record it as
+  [AGENTS.md → Where documentation lives](../AGENTS.md#where-documentation-lives)
+  says, and reply with a one-line summary.
 - Testing: every proposal — the initial one or a later split into sequential
   blocks — must say what will be tested and how: which unit test(s)
   (new or updated, with file path) cover the change, and whether an e2e test
   applies (per [testing.md](testing.md)) or doesn't and why. State this
   alongside the files-affected list, not as an afterthought once the change
   is already applied.
-
-## Design suggestions
-
-Proactive UI/design suggestions while working on UI live in
-[ui.md](ui.md#design-suggestions).
-
-## Research order for bugs and solutions
-
-The docs → issues → source order for third-party library bugs lives in
-[dependencies.md](dependencies.md#research-order-for-bugs-and-solutions).
-
-## Introducing new libraries in code
-
-The three-step explanation for a library's first use in code, and its list
-of exceptions, live in
-[dependencies.md](dependencies.md#introducing-new-libraries-in-code).
 
 ## Steps and installs
 

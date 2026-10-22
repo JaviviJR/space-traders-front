@@ -31,9 +31,16 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
+  <form
+    class="flex flex-col gap-4"
+    @submit.prevent="handleSubmit"
+  >
     <div class="flex flex-col gap-2">
-      <label class="text-sm text-slate-400" for="name">Nombre</label>
+      <label
+        class="text-sm text-slate-400"
+        for="name"
+        >Nombre</label
+      >
       <InputText
         id="name"
         v-model="name"
@@ -45,15 +52,29 @@ async function handleSubmit() {
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm text-slate-400" for="email">Email</label>
-      <InputText id="email" v-model="email" type="email" autocomplete="email" required />
+      <label
+        class="text-sm text-slate-400"
+        for="email"
+        >Email</label
+      >
+      <InputText
+        id="email"
+        v-model="email"
+        type="email"
+        autocomplete="email"
+        required
+      />
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm text-slate-400" for="password">Contraseña</label>
+      <label
+        class="text-sm text-slate-400"
+        for="password"
+        >Contraseña</label
+      >
       <Password
-        input-id="password"
         v-model="password"
+        input-id="password"
         :feedback="false"
         toggle-mask
         autocomplete="new-password"
@@ -63,10 +84,14 @@ async function handleSubmit() {
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm text-slate-400" for="password-confirmation">Confirmar contraseña</label>
+      <label
+        class="text-sm text-slate-400"
+        for="password-confirmation"
+        >Confirmar contraseña</label
+      >
       <Password
-        input-id="password-confirmation"
         v-model="passwordConfirmation"
+        input-id="password-confirmation"
         :feedback="false"
         :invalid="passwordMismatch"
         toggle-mask
@@ -74,19 +99,42 @@ async function handleSubmit() {
         required
         fluid
       />
-      <Message v-if="passwordMismatch" severity="error" size="small" variant="simple">
+      <Message
+        v-if="passwordMismatch"
+        severity="error"
+        size="small"
+        variant="simple"
+      >
         Las contraseñas no coinciden.
       </Message>
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm text-slate-400" for="account-token">Token de cuenta</label>
-      <InputText id="account-token" v-model="accountToken" type="text" required />
+      <label
+        class="text-sm text-slate-400"
+        for="account-token"
+        >Token de cuenta</label
+      >
+      <InputText
+        id="account-token"
+        v-model="accountToken"
+        type="text"
+        required
+      />
     </div>
 
-    <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
+    <Message
+      v-if="error"
+      severity="error"
+      :closable="false"
+      >{{ error }}</Message
+    >
 
-    <BaseButton type="submit" variant="primary" :disabled="loading || passwordMismatch">
+    <BaseButton
+      type="submit"
+      variant="primary"
+      :disabled="loading || passwordMismatch"
+    >
       {{ loading ? 'Creando cuenta…' : 'Crear cuenta' }}
     </BaseButton>
 
