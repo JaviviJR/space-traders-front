@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es" class="app-dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>P1: página propia</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #0f172a; color: #94a3b8; }
+      .url { font-family: monospace; font-size: 13px; background: #020617; color: #cbd5e1; padding: 8px 16px; }
+      header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #1e293b; }
+      header strong { color: #fff; }
+      .hero { max-width: 40rem; margin: 64px auto; padding: 0 16px; text-align: center; }
+      .hero h1 { color: #fff; }
+      .card { max-width: 26rem; margin: 64px auto; padding: 24px; background: #1e293b; border-radius: 12px; }
+      .card h2 { color: #fff; margin-top: 0; }
+      .sim { position: fixed; right: 16px; bottom: 16px; background: #1e293b; border: 1px dashed #475569; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+      .stack { display: flex; flex-direction: column; gap: 12px; }
+      .center { text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <!-- Same versions as package-lock.json; theme script must load after PrimeVue (v4.primevue.org/cdn.md). -->
+    <script src="https://unpkg.com/vue@3.5.43/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/primevue@4.5.5/umd/primevue.min.js"></script>
+    <script src="https://unpkg.com/@primevue/themes@4.5.4/umd/aura.min.js"></script>
+    <script>
+      const { createApp, ref, onMounted } = Vue
+
+      // Fake back: resolves 'confirmed' or 'invalid' after a delay.
+      const fakeConfirm = (outcome) =>
+        new Promise((resolve) => setTimeout(() => resolve(outcome), 1200))
+
+      const url = ref('localhost:5173/')
+      // Fake router: which view is shown, plus the outcome the fake back will return.
+      const route = ref({ name: 'home' })
+
+      const authVisible = ref(false)
+      const authTab = ref('login')
+      function openAuth(tab) {
+        authTab.value = tab
+        authVisible.value = true
+      }
+
+      // Today's AuthDialog, unchanged.
+      const AuthDialog = {
+        setup() {
+          const registeredEmail = ref(null)
+          const email = ref('ripley@nostromo.test')
+          return { authVisible, authTab, registeredEmail, email }
+        },
+        template: `
+          <Dialog v-model:visible="authVisible" modal :draggable="false" :style="{ width: '28rem' }"
+                  :header="registeredEmail ? 'Revisa tu correo' : 'Accede a SpaceTraders'" @after-hide="registeredEmail = null">
+            <div v-if="registeredEmail" class="stack center">
+              <p>Hemos enviado un enlace de confirmación a <strong>{{ registeredEmail }}</strong>.</p>
+              <Button label="Entendido" @click="authVisible = false" />
+            </div>
+            <Tabs v-else v-model:value="authTab">
+              <TabList><Tab value="login">Iniciar sesión</Tab><Tab value="register">Crear cuenta</Tab></TabList>
+              <TabPanels>
+                <TabPanel value="login">
+                  <div class="stack">
+                    <InputText placeholder="Email" /><InputText placeholder="Contraseña" type="password" />
+                    <Button label="Entrar" />
+                  </div>
+                </TabPanel>
+                <TabPanel value="register">
+                  <div class="stack">
+                    <InputText v-model="email" placeholder="Email" />
+                    <Button label="Crear cuenta" @click="registeredEmail = email" />
+                  </div>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </Dialog>`,
+      }
+
+      // The /confirm-email view: a full page with a result card.
+      const ConfirmEmailView = {
+        props: { outcome: String },
+        setup(props) {
+          const status = ref('pending')
+          onMounted(async () => {
+            status.value = await fakeConfirm(props.outcome)
+            url.value = 'localhost:5173/confirm-email' // router.replace drops the query
+          })
+          return { status, openAuth }
+        },
+        template: `
+          <div class="card stack center">
+            <template v-if="status === 'pending'"><h2>Confirmando…</h2><p>Estamos activando tu cuenta.</p></template>
+            <template v-else-if="status === 'confirmed'">
+              <h2>Cuenta confirmada</h2>
+              <p>Ya puedes iniciar sesión.</p>
+              <Button label="Iniciar sesión" @click="openAuth('login')" />
+            </template>
+            <template v-else>
+              <h2>Enlace no válido</h2>
+              <Message severity="error" :closable="false">El enlace no es válido o ha caducado.</Message>
+              <p>(Aquí iría el formulario de reenvío, sub-bloque 2.)</p>
+            </template>
+          </div>`,
+      }
+
+      const App = {
+        components: { AuthDialog, ConfirmEmailView },
+        setup() {
+          function simulateLink(outcome) {
+            url.value = 'localhost:5173/confirm-email?id=1&expires=…&token=…&signature=…'
+            route.value = { name: 'confirm', outcome, key: Date.now() }
+          }
+          function goHome() {
+            url.value = 'localhost:5173/'
+            route.value = { name: 'home' }
+          }
+          return { url, route, openAuth, simulateLink, goHome }
+        },
+        template: `
+          <div class="url">{{ url }}</div>
+          <header><strong @click="goHome" style="cursor: pointer">SpaceTraders</strong><Button label="Empezar" @click="openAuth('register')" /></header>
+          <ConfirmEmailView v-if="route.name === 'confirm'" :key="route.key" :outcome="route.outcome" />
+          <section v-else class="hero"><h1>P1: página propia</h1>
+            <p>El enlace abre /confirm-email como página con una tarjeta de resultado. "Iniciar sesión" abre el modal de login encima de esa página.</p>
+          </section>
+          <div class="sim"><strong>Simulador</strong>
+            <Button size="small" label="Abrir enlace del email" @click="simulateLink('confirmed')" />
+            <Button size="small" severity="secondary" label="Abrir enlace caducado" @click="simulateLink('invalid')" />
+            <Button size="small" text label="Volver a la home" @click="goHome" />
+          </div>
+          <AuthDialog />`,
+      }
+
+      const app = createApp(App)
+      app.use(PrimeVue.Config, { theme: { preset: PrimeVue.Themes.Aura, options: { darkModeSelector: '.app-dark' } } })
+      for (const name of ['Dialog', 'Button', 'InputText', 'Message', 'Tabs', 'TabList', 'Tab', 'TabPanels', 'TabPanel']) {
+        app.component(name, PrimeVue[name])
+      }
+      app.mount('#app')
+    </script>
+  </body>
+</html>
