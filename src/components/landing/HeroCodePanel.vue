@@ -12,7 +12,10 @@ const agent = {
 }
 
 const punct = (text: string): Token => ({ text, class: 'text-code-punct' })
-const key = (name: string): Token => ({ text: `"${name}"`, class: 'text-code-key' })
+const key = (name: string): Token => ({
+  text: `"${name}"`,
+  class: 'text-code-key',
+})
 
 function value(v: string | number): Token {
   return typeof v === 'string'
@@ -67,7 +70,9 @@ const lineNumbers = lines.map((_, i) => String(i + 1).padStart(2, '0'))
       </div>
 
       <div class="mt-6 flex items-start font-mono text-sm leading-6">
-        <div class="border-r border-slate-300/5 pr-4 text-slate-600 select-none">
+        <div
+          class="border-r border-slate-300/5 pr-4 text-slate-600 select-none"
+        >
           <span
             v-for="number in lineNumbers"
             :key="number"

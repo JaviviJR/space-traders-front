@@ -15,7 +15,10 @@ vi.stubGlobal(
   },
 )
 // jsdom has no matchMedia; AuthDialog reads '(pointer: fine)' to decide on autofocus.
-vi.stubGlobal('matchMedia', (query: string) => ({ matches: false, media: query }))
+vi.stubGlobal('matchMedia', (query: string) => ({
+  matches: false,
+  media: query,
+}))
 
 async function mountAtRoot() {
   router.push('/')
@@ -28,8 +31,13 @@ async function mountAtRoot() {
   return wrapper
 }
 
-function findButton(wrapper: Awaited<ReturnType<typeof mountAtRoot>>, label: string) {
-  return wrapper.findAll('button:not([role="tab"])').find((button) => button.text() === label)
+function findButton(
+  wrapper: Awaited<ReturnType<typeof mountAtRoot>>,
+  label: string,
+) {
+  return wrapper
+    .findAll('button:not([role="tab"])')
+    .find((button) => button.text() === label)
 }
 
 function selectedTabLabel(wrapper: Awaited<ReturnType<typeof mountAtRoot>>) {

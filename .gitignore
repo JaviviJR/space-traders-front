@@ -42,7 +42,7 @@ test-results/
 playwright-report/
 
 # Generado por `npm run generate:types` a partir del OpenAPI del back
-src/types/backend.d.ts
+src/types/backend.ts
 
 .playwright-cli
 

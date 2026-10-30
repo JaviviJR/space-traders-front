@@ -38,7 +38,11 @@
       "Bash(curl -sL -m 60 https://raw.githubusercontent.com/firefox-devtools/vscode-firefox-debug/master/README.md)",
       "Bash(grep '\\\\.md$')",
       "WebFetch(domain:vueuse.org)",
-      "WebFetch(domain:eslint.vuejs.org)"
+      "WebFetch(domain:eslint.vuejs.org)",
+      "Bash(curl -s -m 5 http://localhost/api/doc.json)",
+      "Bash(python3 -c 'import json,sys; d=json.load\\(sys.stdin\\); s=d[\"components\"][\"schemas\"]; print\\(json.dumps\\(s[\"RegisterUserRequest\"],indent=1\\)\\); print\\(json.dumps\\(s.get\\(\"ResendConfirmationRequest\"\\),indent=1\\)\\)')",
+      "WebFetch(domain:openapi-ts.dev)",
+      "WebFetch(domain:vite.dev)"
     ],
     "additionalDirectories": [
       "/home/ubuntu/app/src/types",

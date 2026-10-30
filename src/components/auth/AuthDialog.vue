@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Dialog from 'primevue/dialog'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
@@ -8,13 +8,31 @@ import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
+import RegisterSuccess from '@/components/auth/RegisterSuccess.vue'
 import { isAuthTab, useAuthDialog } from '@/composables/useAuthDialog'
 
 const { visible, activeTab, close, selectTab } = useAuthDialog()
 
+const registeredEmail = ref<string | null>(null)
+
+const dialogHeader = computed(() =>
+  registeredEmail.value ? 'Revisa tu correo' : 'Accede a SpaceTraders',
+)
+
+function handleRegistered(email: string) {
+  registeredEmail.value = email
+}
+
+// Reset on after-hide, not when visible turns false: otherwise the form replaces the notice mid leave animation.
+function handleAfterHide() {
+  registeredEmail.value = null
+}
+
 // Autofocus only with a mouse: on touch devices it pops up the keyboard over the dialog.
 const hasFinePointer = window.matchMedia('(pointer: fine)').matches
-const autofocusRegister = computed(() => hasFinePointer && activeTab.value === 'register')
+const autofocusRegister = computed(
+  () => hasFinePointer && activeTab.value === 'register',
+)
 
 // Tabs emits update:value as string | number (primevue/tabs/index.d.ts), wider than AuthTab.
 function handleTabChange(value: string | number) {
@@ -27,7 +45,7 @@ function handleTabChange(value: string | number) {
 <template>
   <Dialog
     id="auth-dialog"
-    header="Accede a SpaceTraders"
+    :header="dialogHeader"
     :visible="visible"
     modal
     :draggable="false"
@@ -36,8 +54,16 @@ function handleTabChange(value: string | number) {
     :breakpoints="{ '575px': '90vw' }"
     content-class="overscroll-contain"
     @update:visible="close"
+    @after-hide="handleAfterHide"
   >
+    <!-- Outside the Tabs, not in the register TabPanel: it ends the flow, it isn't a peer view of login/register. -->
+    <RegisterSuccess
+      v-if="registeredEmail"
+      :email="registeredEmail"
+      @close="close"
+    />
     <Tabs
+      v-else
       :value="activeTab"
       @update:value="handleTabChange"
     >
@@ -63,6 +89,7 @@ function handleTabChange(value: string | number) {
           <RegisterForm
             :autofocus="autofocusRegister"
             @switch-to-login="selectTab('login')"
+            @registered="handleRegistered"
           />
         </TabPanel>
       </TabPanels>

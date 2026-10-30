@@ -9,7 +9,9 @@
   "compilerOptions": {
     // Vitest runs in a different environment than the application code.
     // Adjust lib and types accordingly.
-    "lib": [],
+    // ES2022 matches tsconfig.app.json: app code imported by tests is checked here too.
+    // No DOM, so browser globals come only from the jsdom types.
+    "lib": ["ES2022"],
     "types": ["node", "jsdom"],
 
     // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.

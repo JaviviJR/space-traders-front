@@ -1,14 +1,14 @@
 import { apiFetch } from './client'
 import type { components } from '@/types/backend'
 
-export type RegisterPayload = components['schemas']['RegisterUser']
-export type RegisteredUser = components['schemas']['RegisteredUser']
+export type RegisterUserRequest = components['schemas']['RegisterUserRequest']
+export type RegisterUserResponse = components['schemas']['RegisterUserResponse']
 
-export async function register(payload: RegisterPayload): Promise<RegisteredUser> {
-  const response = await apiFetch<{ data: RegisteredUser }>('/auth/register', {
+export async function register(
+  payload: RegisterUserRequest,
+): Promise<RegisterUserResponse> {
+  return apiFetch<RegisterUserResponse>('/auth/register', {
     method: 'POST',
     body: payload,
   })
-
-  return response.data
 }

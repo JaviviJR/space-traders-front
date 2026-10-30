@@ -15,7 +15,9 @@ const {
 }>()
 
 const attrs = useAttrs()
-const severity = computed(() => (variant === 'secondary' ? 'secondary' : undefined))
+const severity = computed(() =>
+  variant === 'secondary' ? 'secondary' : undefined,
+)
 </script>
 
 <template>

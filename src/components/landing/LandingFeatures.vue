@@ -31,7 +31,8 @@ const features: Feature[] = [
     id: 'contracts',
     icon: 'icon-[lucide--scroll-text]',
     title: 'Cumple contratos',
-    description: 'Acepta encargos de las facciones y gana créditos y reputación.',
+    description:
+      'Acepta encargos de las facciones y gana créditos y reputación.',
   },
 ]
 </script>
@@ -42,11 +43,14 @@ const features: Feature[] = [
     class="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8"
   >
     <div class="text-center">
-      <h2 class="text-gradient font-display text-4xl tracking-tight text-balance">
+      <h2
+        class="text-gradient font-display text-4xl tracking-tight text-balance"
+      >
         ¿Qué puedes hacer?
       </h2>
       <p class="mx-auto mt-4 max-w-3xl text-xl text-pretty text-slate-400">
-        Todo lo que permite la API de SpaceTraders, desde el navegador y sin escribir código.
+        Todo lo que permite la API de SpaceTraders, desde el navegador y sin
+        escribir código.
       </p>
     </div>
     <dl class="mx-auto mt-12 grid max-w-5xl gap-10 md:grid-cols-2 md:gap-x-8">
