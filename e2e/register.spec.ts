@@ -30,11 +30,13 @@ test('tras registrarse se pide revisar el correo, y al reabrir el formulario est
   const dialog = await openRegisterForm(page)
   await fillAndSubmit(dialog)
 
-  await expect(dialog.getByRole('heading', { name: 'Revisa tu correo' })).toBeVisible()
-  await expect(dialog).toContainText('ripley@nostromo.test')
+  const notice = page.getByRole('dialog', { name: 'Revisa tu correo' })
+  await expect(notice).toBeVisible()
+  await expect(notice.getByRole('tab')).toHaveCount(0)
+  await expect(notice).toContainText('ripley@nostromo.test')
 
-  await page.keyboard.press('Escape')
-  await expect(dialog).toBeHidden()
+  await notice.getByRole('button', { name: 'Entendido' }).click()
+  await expect(notice).toBeHidden()
 
   await page.getByRole('button', { name: 'Empezar' }).click()
   await expect(dialog.getByLabel('Nombre')).toHaveValue('')

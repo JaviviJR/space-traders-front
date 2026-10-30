@@ -15,6 +15,10 @@ const { visible, activeTab, close, selectTab } = useAuthDialog()
 
 const registeredEmail = ref<string | null>(null)
 
+const dialogHeader = computed(() =>
+  registeredEmail.value ? 'Revisa tu correo' : 'Accede a SpaceTraders',
+)
+
 function handleRegistered(email: string) {
   registeredEmail.value = email
 }
@@ -41,7 +45,7 @@ function handleTabChange(value: string | number) {
 <template>
   <Dialog
     id="auth-dialog"
-    header="Accede a SpaceTraders"
+    :header="dialogHeader"
     :visible="visible"
     modal
     :draggable="false"
@@ -52,7 +56,14 @@ function handleTabChange(value: string | number) {
     @update:visible="close"
     @after-hide="handleAfterHide"
   >
+    <!-- Outside the Tabs, not in the register TabPanel: it ends the flow, it isn't a peer view of login/register. -->
+    <RegisterSuccess
+      v-if="registeredEmail"
+      :email="registeredEmail"
+      @close="close"
+    />
     <Tabs
+      v-else
       :value="activeTab"
       @update:value="handleTabChange"
     >
@@ -75,12 +86,7 @@ function handleTabChange(value: string | number) {
           <LoginForm />
         </TabPanel>
         <TabPanel value="register">
-          <RegisterSuccess
-            v-if="registeredEmail"
-            :email="registeredEmail"
-          />
           <RegisterForm
-            v-else
             :autofocus="autofocusRegister"
             @switch-to-login="selectTab('login')"
             @registered="handleRegistered"

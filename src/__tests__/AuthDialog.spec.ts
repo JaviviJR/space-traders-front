@@ -108,8 +108,26 @@ describe('AuthDialog', () => {
     await flushPromises()
 
     expect(wrapper.find('form').exists()).toBe(false)
-    expect(wrapper.text()).toContain('Revisa tu correo')
+    expect(wrapper.findAll('[role="tab"]')).toHaveLength(0)
+    expect(wrapper.find('.p-dialog-title').text()).toBe('Revisa tu correo')
     expect(wrapper.text()).toContain('ripley@nostromo.test')
+  })
+
+  it('pulsar Entendido en el aviso llama a close', async () => {
+    const { wrapper, context } = mountDialog('register')
+    await flushPromises()
+
+    wrapper
+      .findComponent(RegisterForm)
+      .vm.$emit('registered', 'ripley@nostromo.test')
+    await flushPromises()
+
+    const button = wrapper
+      .findAll('button')
+      .find((candidate) => candidate.text() === 'Entendido')
+    await button?.trigger('click')
+
+    expect(context.close).toHaveBeenCalled()
   })
 
   it('vuelve a mostrar el formulario vacío cuando el diálogo termina de cerrarse', async () => {
@@ -124,6 +142,8 @@ describe('AuthDialog', () => {
     await flushPromises()
 
     expect(wrapper.text()).not.toContain('Revisa tu correo')
+    expect(wrapper.find('.p-dialog-title').text()).toBe('Accede a SpaceTraders')
+    expect(wrapper.findAll('[role="tab"]')).toHaveLength(2)
     expect(wrapper.find<HTMLInputElement>('#name').element.value).toBe('')
   })
 
