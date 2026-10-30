@@ -15,7 +15,7 @@ afterEach(() => {
 
 function setup() {
   const email = ref('')
-  const password = ref('')
+  const password = ref('long enough')
   const clientErrors = computed(() => ({
     password:
       password.value.length < 8
@@ -42,10 +42,8 @@ function validationError(violations: Record<string, string[]>) {
 
 describe('useFormErrors', () => {
   it('distributes each field message list to that field', () => {
-    const { password, errors } = setup()
-    password.value = 'long enough'
+    const { errors } = setup()
 
-    errors.markSubmitted()
     errors.setFromApiError(
       validationError({
         email: ['Este valor no es una dirección de email válida.'],
@@ -118,27 +116,31 @@ describe('useFormErrors', () => {
     expect(errors.generalErrors.value).toEqual([message])
   })
 
-  it('shows client-rule errors only after submit, until the rule passes', async () => {
+  it('merges client-rule errors with back errors on the same field', async () => {
     const { password, errors } = setup()
 
-    expect(errors.fieldErrors.value).toEqual({})
+    errors.setFromApiError(
+      validationError({ password: ['La contraseña es demasiado común.'] }),
+    )
+    password.value = 'short'
+    await nextTick()
 
-    errors.markSubmitted()
     expect(errors.fieldErrors.value).toEqual({
       password: ['La contraseña debe tener al menos 8 caracteres.'],
     })
 
-    password.value = 'long enough'
-    await nextTick()
-    expect(errors.fieldErrors.value).toEqual({})
+    errors.setFieldError('password', 'La contraseña es demasiado común.')
+    expect(errors.fieldErrors.value).toEqual({
+      password: [
+        'La contraseña debe tener al menos 8 caracteres.',
+        'La contraseña es demasiado común.',
+      ],
+    })
   })
 
   it('clears a field back errors when that field changes, not the others', async () => {
-    const { email, password, errors } = setup()
-    password.value = 'long enough'
-    await nextTick()
+    const { email, errors } = setup()
 
-    errors.markSubmitted()
     errors.setFromApiError(
       validationError({
         email: ['Este valor no es una dirección de email válida.'],
@@ -167,20 +169,20 @@ describe('useFormErrors', () => {
     expect(errors.fieldErrors.value).toEqual({})
   })
 
-  it('clears the general errors on the next submit', () => {
+  it('clears the general errors on demand, not the field errors', () => {
     const { errors } = setup()
 
-    errors.markSubmitted()
     errors.setFromApiError(
-      new ApiError({
-        code: 'network_error',
-        message: 'Network error.',
-        status: 0,
+      validationError({
+        _global: ['Los datos enviados no son válidos.'],
+        email: ['Este valor no es una dirección de email válida.'],
       }),
     )
-    expect(errors.generalErrors.value).toHaveLength(1)
+    errors.clearGeneralErrors()
 
-    errors.markSubmitted()
     expect(errors.generalErrors.value).toEqual([])
+    expect(errors.fieldErrors.value).toEqual({
+      email: ['Este valor no es una dirección de email válida.'],
+    })
   })
 })

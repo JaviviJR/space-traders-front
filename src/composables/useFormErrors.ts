@@ -1,15 +1,14 @@
 /**
- * A form's error state, the part every form that calls the API shares:
- * distributing a 422's `violations` per field (`_global` and keys the form
- * doesn't recognise go to the general errors), a Spanish message for codes
- * without a form-specific meaning, merging the form's client-rule errors in,
- * and when each kind of error shows and clears ("reward early, punish late").
+ * A form's errors, i.e. what is wrong: distributing a 422's `violations` per
+ * field (`_global` and keys the form doesn't recognise go to the general
+ * errors), a Spanish message for codes without a form-specific meaning, and
+ * merging the form's client-rule errors with the back's.
  *
- * It deliberately leaves out `loading`, the submit `try/finally` and the
- * form-specific codes (e.g. 409 `email_already_registered`): each form's
- * composable handles those first, because each one does something different,
- * and delegates the rest here. Used by one form for now: when a second one
- * uses it, propose moving this mechanism into `doc/architecture.md`.
+ * It deliberately knows nothing about the form's lifecycle (submitted,
+ * loading) nor when an error should show: `useForm` owns that and decides
+ * which client errors it passes in. Clearing a field's back errors when the
+ * field changes stays here because it isn't timing: the back judged a value
+ * that no longer exists.
  */
 import { computed, readonly, shallowRef, toValue, watch } from 'vue'
 import type { ComputedRef, MaybeRefOrGetter, Ref, WatchSource } from 'vue'
@@ -23,17 +22,16 @@ export type FieldErrors<Field extends string> = Partial<
 export interface UseFormErrorsOptions<Field extends string> {
   /** The fields the form recognises, each with the value whose change clears its back errors. */
   fields: Record<Field, WatchSource<unknown>>
-  /** Errors from the form's own rules, derived from the values (a `computed`). */
+  /** Errors from the form's own rules to show, merged as given. */
   clientErrors?: MaybeRefOrGetter<FieldErrors<Field>>
 }
 
 export interface FormErrors<Field extends string> {
   fieldErrors: ComputedRef<FieldErrors<Field>>
   generalErrors: Readonly<Ref<readonly string[]>>
-  markSubmitted: () => void
   setFromApiError: (error: ApiError) => void
   setFieldError: (field: Field, message: string) => void
-  clear: () => void
+  clearGeneralErrors: () => void
 }
 
 // `error.message` is always English, so codes with no meaning specific to a
@@ -63,7 +61,6 @@ export function useFormErrors<Field extends string>({
   fields,
   clientErrors,
 }: UseFormErrorsOptions<Field>): FormErrors<Field> {
-  const submitted = shallowRef(false)
   // Replaced as a whole on every change instead of mutated, so a shallowRef is enough.
   const backFieldErrors = shallowRef<FieldErrors<Field>>({})
   const generalErrors = shallowRef<readonly string[]>([])
@@ -75,9 +72,7 @@ export function useFormErrors<Field extends string>({
   const fieldNames = Object.keys(fields).filter(isField)
 
   const fieldErrors = computed(() => {
-    const client: FieldErrors<Field> = submitted.value
-      ? (toValue(clientErrors) ?? {})
-      : {}
+    const client: FieldErrors<Field> = toValue(clientErrors) ?? {}
     const merged: FieldErrors<Field> = {}
 
     for (const field of fieldNames) {
@@ -100,11 +95,6 @@ export function useFormErrors<Field extends string>({
       delete next[field]
       backFieldErrors.value = next
     })
-  }
-
-  function markSubmitted(): void {
-    submitted.value = true
-    generalErrors.value = []
   }
 
   function setFromApiError(error: ApiError): void {
@@ -136,18 +126,15 @@ export function useFormErrors<Field extends string>({
     backFieldErrors.value = next
   }
 
-  function clear(): void {
-    submitted.value = false
-    backFieldErrors.value = {}
+  function clearGeneralErrors(): void {
     generalErrors.value = []
   }
 
   return {
     fieldErrors,
     generalErrors: readonly(generalErrors),
-    markSubmitted,
     setFromApiError,
     setFieldError,
-    clear,
+    clearGeneralErrors,
   }
 }
