@@ -17,6 +17,15 @@ How the user works with Claude on this project. Applies to every session.
   change does and which Vue concepts it involves (e.g. `ref` vs `reactive`,
   props, emits, Pinia stores, routes), in prose, without pasting the code
   itself.
+- When proposing several options, explain each one didactically before the
+  user picks (the user had no prior JavaScript/TypeScript/Vue experience, so
+  bare option labels aren't enough): what it does, and what the official docs
+  recommend about it — or say explicitly that they have no stance and it's a
+  project decision.
+- In each option or rule, compare the resulting code: which is simpler and
+  which adds complexity that may be unnecessary (extra state, coordination,
+  files touched). Rules are defaults, not dogma: state the condition that
+  overrides one on simplicity grounds.
 - When a decision comes from an installed skill, say which skill and why it
   recommends it.
 - Invite questions, answer them, and apply the change only once the user says
@@ -61,7 +70,10 @@ How the user works with Claude on this project. Applies to every session.
   command and wait for the result, then verify it by reading files.
 - When asked to split a plan into sequential blocks, reorder the explanations
   already given as-is into blocks — don't compress or re-summarize them into
-  shorter bullets.
+  shorter bullets. The block order must follow a real dependency (install
+  before code, model before service); if the plan has none (independent
+  blocks, a circular dependency, a block needing decisions from later ones),
+  say so and propose how to resolve it instead of forcing an order.
 
 ## Spec-kit features
 
@@ -80,7 +92,7 @@ How the user works with Claude on this project. Applies to every session.
   tasks `[X]`, then stop and wait for the user's review. If they ask for
   changes, apply them and wait again; once they say it's all OK, Claude makes
   the session's commit. Only for `/feature-session`; outside it the user
-  commits.
+  commits, and Claude doesn't ask whether to commit.
 - Session commit message: the session in the subject, to read at a glance in
   `git log --oneline`, and as trailers, to query with
   `git log --format='%(trailers:key=Session)'`:
@@ -99,6 +111,11 @@ How the user works with Claude on this project. Applies to every session.
   a session isn't one, so it goes in the description.
 - Never run `/speckit-implement`: it runs every phase in one go and creates or
   rewrites ignore files (`.gitignore`, `.prettierignore`, ESLint ignores).
+  Its skill, and the deprecated `speckit-taskstoissues`, carry
+  `disable-model-invocation: true` so only the user can launch them and their
+  descriptions stay out of every session's context. A spec-kit upgrade
+  regenerates `.claude/skills/speckit-*`: after one, check that both still
+  have it.
 
 ## Subagents
 
@@ -119,11 +136,17 @@ How the user works with Claude on this project. Applies to every session.
 
 - Chat with the user in Spanish. Project documentation (`doc/*.md`,
   `AGENTS.md`) in English.
-- Spec-kit artifacts (`.specify/memory/constitution.md`, `specs/**`): content
-  in Spanish, but the section headings of the `.specify/templates/` and the
-  structural keywords the `speckit-*` skills look for (e.g. "Constitution
-  Check", task IDs) stay in English, so the templates and skills work
-  unchanged across spec-kit upgrades.
+- Constitution (`.specify/memory/constitution.md`): English, like the
+  `AGENTS.md` and `doc/` it indexes.
+- Feature artifacts (`specs/**`): content in Spanish, so the user reviews them
+  in their own language, but the section headings of the `.specify/templates/`
+  and the structural keywords the `speckit-*` skills look for (e.g.
+  "Constitution Check", task IDs) stay in English, so the templates and skills
+  work unchanged across spec-kit upgrades.
+  - Revisit: English would save ~2k tokens per `/feature-session`. When the
+    user asks to switch, drop this rule so the `speckit-*` skills generate in
+    English as they do by default, and ask whether existing `specs/**` get
+    translated or stay as they are.
 
 ## Context
 

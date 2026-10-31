@@ -2,58 +2,60 @@
 
 ## Core Principles
 
-Cada principio es una barrera que el "Constitution Check" de `/speckit-plan` DEBE
-comprobar. El texto de la regla y su porqué viven en el documento enlazado; si
-cambian allí, esta constitución no se toca.
+Each principle is a gate that `/speckit-plan`'s "Constitution Check" MUST
+verify. The rule's text and its rationale live in the linked document; if they
+change there, this constitution stays untouched.
 
-### I. Capas con dependencias en un solo sentido
+### I. Layers with one-way dependencies
 
-El plan respeta las capas y sus reglas de dependencia.
-Fuente: `doc/architecture.md` (Layers, Rules per layer).
+The plan respects the layers and their dependency rules.
+Source: `doc/architecture.md` (Layers, Rules per layer).
 
-### II. El contrato del back es la única fuente de verdad
+### II. The back's contract is the single source of truth
 
-Tipos, errores y mocks salen del contrato generado; nada se inventa ni se edita a
-mano. Fuente: `doc/architecture.md` (api/, Back) y `doc/testing.md`.
+Types, errors and mocks come from the generated contract; nothing is invented
+or hand-edited. Source: `doc/architecture.md` (api/, Back) and
+`doc/testing.md`.
 
-### III. La estructura más pequeña que cumpla SOLID
+### III. The smallest structure that satisfies SOLID
 
-Cada estado, composable o store nuevo está justificado frente a una opción más
-pequeña. Fuente: `doc/conventions.md` (Design principles) y `AGENTS.md`
+Each new piece of state, composable or store is justified against a smaller
+option. Source: `doc/conventions.md` (Design principles) and `AGENTS.md`
 (Ask before generating).
 
-### IV. Probado como lo usaría el usuario (NON-NEGOTIABLE)
+### IV. Tested the way the user would use it (NON-NEGOTIABLE)
 
-El plan dice qué tests unitarios y e2e cubren cada cambio, o por qué no aplica un
-e2e. Fuente: `doc/testing.md` y `doc/workflow.md` (Proposals).
+The plan says which unit and e2e tests cover each change, or why an e2e test
+doesn't apply. Source: `doc/testing.md` and `doc/workflow.md` (Proposals).
 
-### V. Calidad comprobada por herramientas, sin silenciar errores
+### V. Quality checked by tools, without silencing errors
 
-Lint, format y type-check limpios, sin silenciar el type checker. Fuente:
-`AGENTS.md` (Code style, Static analysis).
+Lint, format and type-check clean, without silencing the type checker.
+Source: `AGENTS.md` (Code style, Static analysis).
 
 ## Additional Constraints
 
-Stack, librerías, estilos y orden de investigación: `AGENTS.md`,
-`doc/dependencies.md`, `doc/conventions.md` y `doc/ui.md`.
+Stack, libraries, styling and research order: `AGENTS.md`,
+`doc/dependencies.md`, `doc/conventions.md` and `doc/ui.md`.
 
 ## Development Workflow
 
-Propuestas, modo aprendizaje, decisiones e instalaciones: `doc/workflow.md`.
-Registro de decisiones: `AGENTS.md` (Where documentation lives).
+Proposals, learning mode, decisions and installs: `doc/workflow.md`.
+Recording decisions: `AGENTS.md` (Where documentation lives).
 
 ## Governance
 
-- `AGENTS.md` y `doc/*.md` son la fuente de verdad. Esta constitución solo enumera
-  las barreras del plan y no repite su texto, para que no se desincronice.
-- Si esta constitución y `AGENTS.md`, `doc/*.md` o una skill no coinciden, se DEBE
-  avisar al usuario antes de actuar, citando ambas fuentes.
-- Enmiendas: se proponen al usuario y se aplican solo con su aprobación. Solo
-  cambia si se añade, quita o redefine una barrera, no cuando cambia el detalle de
-  un documento enlazado.
-- Versionado semántico: MAJOR si se elimina o redefine una barrera; MINOR si se
-  añade una; PATCH para redacción.
-- Cumplimiento: una violación en el plan solo se acepta justificada en su sección
-  "Complexity Tracking".
+- `AGENTS.md` and `doc/*.md` are the source of truth. This constitution only
+  lists the plan's gates and doesn't repeat their text, so it can't drift out
+  of sync.
+- If this constitution disagrees with `AGENTS.md`, `doc/*.md` or a skill, the
+  user MUST be warned before acting, quoting both sources.
+- Amendments: proposed to the user and applied only with their approval. It
+  changes only when a gate is added, removed or redefined, not when a linked
+  document's detail changes.
+- Semantic versioning: MAJOR when a gate is removed or redefined; MINOR when
+  one is added; PATCH for wording.
+- Compliance: a violation in the plan is accepted only when justified in its
+  "Complexity Tracking" section.
 
-**Version**: 2.0.0 | **Ratified**: 2026-10-30 | **Last Amended**: 2026-10-31
+**Version**: 2.0.1 | **Ratified**: 2026-10-30 | **Last Amended**: 2026-10-31
