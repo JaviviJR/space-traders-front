@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import Dialog from 'primevue/dialog'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
+import BaseDialog from '@/components/ui/BaseDialog.vue'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import RegisterForm from '@/components/auth/RegisterForm.vue'
 import RegisterSuccess from '@/components/auth/RegisterSuccess.vue'
@@ -43,16 +43,10 @@ function handleTabChange(value: string | number) {
 </script>
 
 <template>
-  <Dialog
+  <BaseDialog
     id="auth-dialog"
     :header="dialogHeader"
     :visible="visible"
-    modal
-    :draggable="false"
-    block-scroll
-    :style="{ width: '28rem' }"
-    :breakpoints="{ '575px': '90vw' }"
-    content-class="overscroll-contain"
     @update:visible="close"
     @after-hide="handleAfterHide"
   >
@@ -94,5 +88,5 @@ function handleTabChange(value: string | number) {
         </TabPanel>
       </TabPanels>
     </Tabs>
-  </Dialog>
+  </BaseDialog>
 </template>
