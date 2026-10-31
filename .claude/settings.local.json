@@ -43,7 +43,8 @@
       "Bash(python3 -c 'import json,sys; d=json.load\\(sys.stdin\\); s=d[\"components\"][\"schemas\"]; print\\(json.dumps\\(s[\"RegisterUserRequest\"],indent=1\\)\\); print\\(json.dumps\\(s.get\\(\"ResendConfirmationRequest\"\\),indent=1\\)\\)')",
       "WebFetch(domain:openapi-ts.dev)",
       "WebFetch(domain:vite.dev)",
-      "WebFetch(domain:github.github.io)"
+      "WebFetch(domain:github.github.io)",
+      "WebFetch(domain:api.github.com)"
     ],
     "additionalDirectories": [
       "/home/ubuntu/app/src/types",
