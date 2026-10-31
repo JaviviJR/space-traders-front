@@ -33,7 +33,10 @@ export function useConfirmEmail(search: string) {
       await router.replace({ name: 'home' })
     } catch (err) {
       if (!(err instanceof ApiError)) throw err
-      if (err.code !== 'invalid_email_confirmation') throw err
+      if (err.code !== 'invalid_email_confirmation') {
+        status.value = 'failed'
+        return
+      }
 
       status.value = 'invalid'
       await router.replace({ name: 'home' })
@@ -44,5 +47,6 @@ export function useConfirmEmail(search: string) {
 
   void attempt()
 
-  return { status: readonly(status) }
+  // Retrying is the same attempt, so it shares the in-flight guard.
+  return { status: readonly(status), retry: attempt }
 }

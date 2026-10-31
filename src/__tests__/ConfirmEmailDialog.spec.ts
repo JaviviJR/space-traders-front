@@ -37,6 +37,26 @@ function rejectAsInvalidLink() {
   )
 }
 
+// What client.ts throws when the request gets no response.
+function rejectAsNetworkError() {
+  vi.mocked(confirmEmail).mockRejectedValueOnce(
+    new ApiError({
+      code: 'network_error',
+      message: 'Network request failed',
+      status: 0,
+    }),
+  )
+}
+
+const failedText =
+  'No hemos podido confirmar tu cuenta. Comprueba tu conexión e inténtalo de nuevo.'
+
+function findRetryButton(wrapper: ReturnType<typeof mountDialog>['wrapper']) {
+  return wrapper
+    .findAll('button')
+    .find((candidate) => candidate.text() === 'Reintentar')
+}
+
 function mountDialog() {
   const router = createRouter({
     history: createMemoryHistory(),
@@ -162,6 +182,54 @@ describe('ConfirmEmailDialog', () => {
       await button?.trigger('click')
 
       expect(wrapper.emitted('login')).toHaveLength(1)
+    })
+  })
+
+  describe('con un error de conexión', () => {
+    it('muestra el texto de error', async () => {
+      rejectAsNetworkError()
+      const { wrapper } = mountDialog()
+      await flushPromises()
+
+      expect(wrapper.text()).toContain(failedText)
+      expect(wrapper.text()).not.toContain('Confirmando…')
+    })
+
+    it('no sustituye la ruta, para conservar el enlace', async () => {
+      rejectAsNetworkError()
+      const { replace } = mountDialog()
+      await flushPromises()
+
+      expect(replace).not.toHaveBeenCalled()
+    })
+
+    it('Reintentar vuelve a llamar con el mismo query y puede acabar confirmada', async () => {
+      rejectAsNetworkError()
+      const { wrapper } = mountDialog()
+      await flushPromises()
+
+      vi.mocked(confirmEmail).mockResolvedValue({ confirmed: true })
+      await findRetryButton(wrapper)?.trigger('click')
+      await flushPromises()
+
+      expect(confirmEmail).toHaveBeenCalledTimes(2)
+      expect(confirmEmail).toHaveBeenLastCalledWith(search)
+      expect(wrapper.text()).toContain('Cuenta confirmada')
+    })
+
+    it('dos clics seguidos en Reintentar producen una sola llamada nueva', async () => {
+      rejectAsNetworkError()
+      const { wrapper } = mountDialog()
+      await flushPromises()
+
+      deferConfirmEmail()
+      const button = findRetryButton(wrapper)
+      // Without awaiting in between: the view hasn't removed the button yet.
+      void button?.trigger('click')
+      void button?.trigger('click')
+      await flushPromises()
+
+      expect(confirmEmail).toHaveBeenCalledTimes(2)
     })
   })
 })

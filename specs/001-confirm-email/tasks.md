@@ -103,9 +103,9 @@ conserva el query y "Reintentar" vuelve a llamar.
 
 ### Implementation for User Story 3
 
-- [ ] T020 [US3] En src/composables/useConfirmEmail.ts, mapear cualquier otro `ApiError` (incluido `network_error`) al estado `failed`, sin `router.replace`; exponer `retry()` que vuelve a `pending` y repite la llamada respetando el bloqueo de FR-008
-- [ ] T021 [US3] En src/components/auth/ConfirmEmailDialog.vue, estado `failed`: icono de aviso en tono de error + "No hemos podido confirmar tu cuenta. Comprueba tu conexión e inténtalo de nuevo." + botón "Reintentar" que llama a `retry()` (FR-007, clarificación Q3) (depende de T020)
-- [ ] T022 [US3] Ampliar src/__tests__/ConfirmEmailDialog.spec.ts: `network_error` → texto de error; "Reintentar" vuelve a llamar a `confirmEmail`; sin `replace` tras el error; dos clics en "Reintentar" seguidos, sin esperar a que la vista se actualice (el botón desaparece al pasar a `pending`), producen una sola llamada nueva (FR-008, SC-004) (depende de T021)
+- [X] T020 [US3] En src/composables/useConfirmEmail.ts, mapear cualquier otro `ApiError` (incluido `network_error`) al estado `failed`, sin `router.replace`; exponer `retry()` que vuelve a `pending` y repite la llamada respetando el bloqueo de FR-008
+- [X] T021 [US3] En src/components/auth/ConfirmEmailDialog.vue, estado `failed`: icono de aviso en tono de error + "No hemos podido confirmar tu cuenta. Comprueba tu conexión e inténtalo de nuevo." + botón "Reintentar" que llama a `retry()` (FR-007, clarificación Q3) (depende de T020)
+- [X] T022 [US3] Ampliar src/__tests__/ConfirmEmailDialog.spec.ts: `network_error` → texto de error; "Reintentar" vuelve a llamar a `confirmEmail`; sin `replace` tras el error; dos clics en "Reintentar" seguidos, sin esperar a que la vista se actualice (el botón desaparece al pasar a `pending`), producen una sola llamada nueva (FR-008, SC-004) (depende de T021)
 
 **Checkpoint**: All user stories should now be independently functional
 

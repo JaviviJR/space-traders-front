@@ -43,6 +43,8 @@ How the user works with Claude on this project. Applies to every session.
   - `ref`
   - `computed`
   - `v-if` / `v-else / v-else-if`
+  - A composable returning functions the component uses as event handlers
+  - `readonly` on a composable's returned state
 
 ## Proposals
 

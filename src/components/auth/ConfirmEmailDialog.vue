@@ -24,7 +24,7 @@ const emit = defineEmits<{
   login: []
 }>()
 
-const { status } = useConfirmEmail(search)
+const { status, retry } = useConfirmEmail(search)
 
 // Not closable while confirming, so the person always sees the result.
 const isPending = computed(() => status.value === 'pending')
@@ -81,6 +81,23 @@ function handleUpdateVisible(value: boolean) {
           @click="emit('login')"
         >
           Iniciar sesión
+        </BaseButton>
+      </template>
+      <template v-else-if="status === 'failed'">
+        <span
+          class="icon-[lucide--circle-alert] size-10 text-red-400"
+          aria-hidden="true"
+        />
+        <p class="text-sm text-slate-400">
+          No hemos podido confirmar tu cuenta. Comprueba tu conexión e inténtalo
+          de nuevo.
+        </p>
+        <BaseButton
+          variant="primary"
+          class="mt-2 w-full"
+          @click="retry()"
+        >
+          Reintentar
         </BaseButton>
       </template>
     </div>
