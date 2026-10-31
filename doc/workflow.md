@@ -63,6 +63,22 @@ How the user works with Claude on this project. Applies to every session.
   already given as-is into blocks — don't compress or re-summarize them into
   shorter bullets.
 
+## Spec-kit features
+
+- A feature built with spec-kit goes through `/speckit-specify`,
+  `/speckit-clarify`, `/speckit-plan`, `/speckit-tasks` and `/speckit-analyze`,
+  each reviewed by the user before the next. Its artifacts live in
+  `specs/<NNN-feature>/`.
+- `/speckit-tasks` groups tasks by user story (each story touches every layer
+  it needs), not by layer, and ends with a "Sessions" table (from
+  `.specify/templates/overrides/tasks-template.md`).
+- Implementation: one new Claude Code conversation per row of that table,
+  started with `/feature-session <feature dir> <session id>`. The context
+  comes from the feature's artifacts, not from chat history. Progress is the
+  `[X]` marks in `tasks.md`; the user commits at the end of each session.
+- Never run `/speckit-implement`: it runs every phase in one go and creates or
+  rewrites ignore files (`.gitignore`, `.prettierignore`, ESLint ignores).
+
 ## Subagents
 
 - Pick the subagent's model based on how much judgment the task needs:
@@ -82,6 +98,11 @@ How the user works with Claude on this project. Applies to every session.
 
 - Chat with the user in Spanish. Project documentation (`doc/*.md`,
   `AGENTS.md`) in English.
+- Spec-kit artifacts (`.specify/memory/constitution.md`, `specs/**`): content
+  in Spanish, but the section headings of the `.specify/templates/` and the
+  structural keywords the `speckit-*` skills look for (e.g. "Constitution
+  Check", task IDs) stay in English, so the templates and skills work
+  unchanged across spec-kit upgrades.
 
 ## Context
 
