@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+// Shared by home and confirm-email: with the same component, Vue reuses the landing on
+// confirm-email's replace to '/'. A dedicated view for confirm-email would remount it.
+const HomeView = () => import('@/views/HomeView.vue')
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -10,7 +14,12 @@ const router = createRouter({
         {
           path: '',
           name: 'home',
-          component: () => import('@/views/HomeView.vue'),
+          component: HomeView,
+        },
+        {
+          path: 'confirm-email',
+          name: 'confirm-email',
+          component: HomeView,
         },
       ],
     },

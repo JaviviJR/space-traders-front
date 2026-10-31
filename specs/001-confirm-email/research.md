@@ -101,13 +101,20 @@ No quedaba ningún NEEDS CLARIFICATION en el Technical Context.
 
 ## R8 — No cerrar mientras confirma (clarificación Q1)
 
-- **Decision**: `ConfirmEmailDialog` pasa a `BaseDialog` `closable` y `close-on-escape`
-  enlazados a "el estado no es `pending`".
-- **Rationale**: FR-012; garantiza que la persona ve el resultado. Ambas son props del
-  `Dialog` de PrimeVue 4 y llegan por fallthrough sin ampliar la interfaz de `BaseDialog`
-  (comprobar en `v4.primevue.org/dialog.md` al implementar).
+- **Decision**: `ConfirmEmailDialog` pasa a `BaseDialog` `closable` enlazado a "el estado
+  no es `pending`" (oculta la X) y deja `close-on-escape` en su valor por defecto (`true`);
+  mientras el estado es `pending`, no reenvía al padre el `update:visible` del `Dialog`, así
+  que Escape no lo cierra.
+- **Rationale**: FR-012; garantiza que la persona ve el resultado. `closable` es una prop
+  del `Dialog` de PrimeVue 4 (`v4.primevue.org/dialog.md`) y llega por fallthrough sin
+  ampliar la interfaz de `BaseDialog`. `close-on-escape` no se puede enlazar al estado: el
+  `Dialog` solo registra el listener de Escape al abrirse, si en ese momento vale `true`, y
+  se abre en `pending`. Comprobado en Chromium; deducido del código instalado (4.5.5), no
+  documentado ni con issue abierto. El `Dialog` es controlado (`v-model:visible`,
+  documentado): si el padre no cambia `visible`, sigue abierto.
 - **Alternatives considered**: añadir una prop `closable` propia a `BaseDialog`;
-  innecesario mientras el fallthrough baste.
+  innecesario mientras el fallthrough baste. Volver a montar el `Dialog` con un `key` al
+  cambiar el estado; descartado porque repite la animación de entrada.
 
 ## R9 — `ConfirmEmailDialog` como diálogo propio
 
