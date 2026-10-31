@@ -31,6 +31,19 @@ How the user works with Claude on this project. Applies to every session.
 - Invite questions, answer them, and apply the change only once the user says
   they have no more doubts.
 
+### Known concepts
+
+- The concepts listed below are ones the user already knows: name them
+  without explaining them. Exception: when one shows up in a way the user
+  hasn't seen yet (a new use, option or interaction with another API),
+  explain only that new part.
+- When the user says they already know a concept, propose adding it here;
+  if they say they've forgotten one, propose removing it.
+- List:
+  - `ref`
+  - `computed`
+  - `v-if` / `v-else / v-else-if`
+
 ## Proposals
 
 - File changes: never show a diff or pasted content in chat, regardless of
