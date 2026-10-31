@@ -75,7 +75,28 @@ How the user works with Claude on this project. Applies to every session.
 - Implementation: one new Claude Code conversation per row of that table,
   started with `/feature-session <feature dir> <session id>`. The context
   comes from the feature's artifacts, not from chat history. Progress is the
-  `[X]` marks in `tasks.md`; the user commits at the end of each session.
+  `[X]` marks in `tasks.md`.
+- Closing a session: apply the changes, run the session's checks and mark its
+  tasks `[X]`, then stop and wait for the user's review. If they ask for
+  changes, apply them and wait again; once they say it's all OK, Claude makes
+  the session's commit. Only for `/feature-session`; outside it the user
+  commits.
+- Session commit message: the session in the subject, to read at a glance in
+  `git log --oneline`, and as trailers, to query with
+  `git log --format='%(trailers:key=Session)'`:
+
+  ```
+  <type>(<NNN-feature>): <session id> <summary>
+
+  <optional body: what else the session touched>
+
+  Session: <NNN-feature> <session id>
+  Tasks: <task IDs>
+  ```
+
+  `<type>` is the Conventional Commits type of the main change. The feature
+  goes in the scope because the spec defines it as a section of the codebase;
+  a session isn't one, so it goes in the description.
 - Never run `/speckit-implement`: it runs every phase in one go and creates or
   rewrites ignore files (`.gitignore`, `.prettierignore`, ESLint ignores).
 

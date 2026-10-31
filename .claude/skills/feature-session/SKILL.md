@@ -20,7 +20,8 @@ missing, or the directory has no `tasks.md` with a "Sessions" table, stop and as
 1. Follow `AGENTS.md` and `doc/workflow.md` to the letter (learning mode: didactic
    proposal, no diffs or pasted code in chat, list every file, functional effect + design
    rationale, say what is tested; apply only once the user says they have no more doubts;
-   never ask to commit). `doc/workflow.md` → "Spec-kit features" explains this flow.
+   after applying, wait for the user's review). `doc/workflow.md` → "Spec-kit features"
+   explains this flow.
 2. Read `<feature dir>/tasks.md`. The "Sessions" table says which tasks belong to this
    session and how it closes. Check that every task of earlier sessions is marked `[X]`;
    if not, stop and tell the user which ones are missing.
@@ -32,3 +33,6 @@ missing, or the directory has no `tasks.md` with a "Sessions" table, stop and as
 5. Close as the "Sessions" table says: run each check, report each result, keep Prettier's
    edits to unrelated files and list them, and mark the finished tasks `[X]` in
    `tasks.md`.
+6. Stop and wait for the user's review. Apply any changes they ask for and wait again.
+   Once they say it's all OK, commit the session with the message format in
+   `doc/workflow.md` → "Spec-kit features".

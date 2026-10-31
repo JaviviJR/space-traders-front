@@ -259,6 +259,6 @@ Task: "Create [Entity2] model in src/models/[entity2].py"
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability
 - Each user story should be independently completable and testable
-- Mark each finished task `[X]` here; the user commits at the end of each session
+- Mark each finished task `[X]` here; Claude commits each session once the user has reviewed it and says it's all OK
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
