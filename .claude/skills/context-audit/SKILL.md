@@ -27,7 +27,7 @@ If a focus is given, run every step but report and propose only on that area.
 
 - Follow `AGENTS.md` and `doc/workflow.md` to the letter: learning-mode
   proposal, no diffs or pasted content in chat, every file listed, functional
-  effect + design rationale, what gets tested. Change nothing until the user
+  effect + design rationale for structural changes, what gets tested. Change nothing until the user
   approves.
 - Never edit or propose changes to `README.md` or `docker/README.md`.
 - Never open `doc/alternatives/`: the script reports its size only.

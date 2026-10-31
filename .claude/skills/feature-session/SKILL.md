@@ -20,7 +20,7 @@ session, stop and ask.
 
 1. Follow `AGENTS.md` and `doc/workflow.md` to the letter (learning mode: didactic
    proposal, no diffs or pasted code in chat, list every file, functional effect + design
-   rationale, say what is tested; apply only once the user says they have no more doubts;
+   rationale for structural changes, say what is tested; apply only once the user says they have no more doubts;
    after applying, wait for the user's review). `doc/workflow.md` → "Spec-kit features"
    explains this flow.
 2. Read `<feature dir>/tasks.md`. The "Sessions" tables (the main one and one per

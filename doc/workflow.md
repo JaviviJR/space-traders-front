@@ -52,18 +52,20 @@ How the user works with Claude on this project. Applies to every session.
   whether it's a new file, a small edit or a large rewrite. Explain what
   changed and why, listing every file affected, so the user knows what to
   review. The user reviews the actual change with `git diff` in VSCode.
-- Design rationale: when a change is driven by a design pattern, a SOLID
-  principle, an architecture decision or a code-quality improvement — however
-  small, including a rename or extracting a method — split the explanation in
-  two: what the change does (functional effect) and why this design
-  specifically — what coupling, responsibility or extensibility problem it
-  solves, or which principle it applies, and why a simpler alternative wasn't
-  enough. Always explicit, even for small changes. A proposal without the
-  second part is incomplete.
-  - Revisit note: tried as "always explicit" starting 2026-10-08. After a few
-    sessions, consider switching to "only for structural changes
-    (interfaces, patterns, layers)" if "always" turns out noisy for trivial
-    changes.
+- Design rationale: for a structural change, split the explanation in two:
+  what the change does (functional effect) and why this design specifically —
+  what coupling, responsibility or extensibility problem it solves, or which
+  principle it applies, and why a simpler alternative wasn't enough. A
+  structural proposal without the second part is incomplete.
+  - Structural: a new or changed interface (props, emits, a composable's or
+    store's public API, an exported function's signature), a design pattern
+    introduced, logic moved between layers, or a file, component or
+    composable created or extracted.
+  - Anything else (a local rename, extracting a method within the same file,
+    a typo, a stale reference): the functional effect in one line.
+  - Rejected: "always explicit, however small" (tried from 2026-10-08) — it
+    produced filler rationale for trivial changes; revisit if a structural
+    change slips through without its rationale.
 - When a decision is closed, record it as
   [AGENTS.md → Where documentation lives](../AGENTS.md#where-documentation-lives)
   says, and reply with a one-line summary.
