@@ -32,7 +32,7 @@ dentro de la misma fase.
 
 **Purpose**: dejar limpia la documentación que el plan cita como fuente.
 
-- [ ] T001 [P] Arreglar el texto roto de la regla de `api/` en doc/architecture.md: la línea "It str  - Errors live…" (frase cortada y pegada a la viñeta siguiente) y el fragmento duplicado "check fails `npm run type-check` if one overlaps a contract code." tras la viñeta que ya termina así. Sin cambiar contenido ni pasar herramientas sobre `doc/` (research R11)
+- [X] T001 [P] Arreglar el texto roto de la regla de `api/` en doc/architecture.md: la línea "It str  - Errors live…" (frase cortada y pegada a la viñeta siguiente) y el fragmento duplicado "check fails `npm run type-check` if one overlaps a contract code." tras la viñeta que ya termina así. Sin cambiar contenido ni pasar herramientas sobre `doc/` (research R11)
 
 ---
 
@@ -43,13 +43,13 @@ wrapper de modales y la función de API.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T002 [P] En src/api/client.ts, añadir `Content-Type: application/json` solo cuando `body` no es `undefined` (igual que el `JSON.stringify`), con un comentario `//` de una línea: la cabecera describe el body y, sin él, provocaría un preflight CORS innecesario (research R3). La llamada de registro, con body, se comporta igual
-- [ ] T003 [P] Ampliar src/__tests__/client.spec.ts: una petición sin body no envía `Content-Type`; una con body envía `Content-Type: application/json`
+- [X] T002 [P] En src/api/client.ts, añadir `Content-Type: application/json` solo cuando `body` no es `undefined` (igual que el `JSON.stringify`), con un comentario `//` de una línea: la cabecera describe el body y, sin él, provocaría un preflight CORS innecesario (research R3). La llamada de registro, con body, se comporta igual
+- [X] T003 [P] Ampliar src/__tests__/client.spec.ts: una petición sin body no envía `Content-Type`; una con body envía `Content-Type: application/json`
 - [ ] T004 [P] Crear src/components/ui/BaseDialog.vue: envuelve el `Dialog` de PrimeVue con la configuración que hoy tiene `AuthDialog` (modal, `:draggable="false"`, `block-scroll`, ancho `28rem`, breakpoint `575px` → `90vw`, `content-class="overscroll-contain"`); props `visible` y `header`; emite `update:visible` y `after-hide`; slot por defecto; el resto de atributos (`id`, `closable`, `close-on-escape`) llegan al `Dialog` por fallthrough. Cabecera `/** */` con: por qué existe, la regla "un diálogo por tarea" con su excepción de simplicidad, y las dos alternativas rechazadas con su condición para revisarlas (research R7, contracts/ui-confirm-email.md)
 - [ ] T005 [P] Crear src/__tests__/BaseDialog.spec.ts: pinta slot y cabecera, reenvía el cierre (`update:visible`) y `after-hide`, pasa `id` al diálogo
 - [ ] T006 Sustituir en src/components/auth/AuthDialog.vue el `Dialog` y sus atributos por `BaseDialog`, sin cambiar pestañas, `RegisterSuccess` ni el reset en `after-hide` (depende de T004)
 - [ ] T007 Ejecutar src/__tests__/AuthDialog.spec.ts sin cambios; si envolver el `Dialog` cambia cómo lo localiza, ajustar solo eso y avisar al usuario (depende de T006)
-- [ ] T008 [P] Añadir `confirmEmail(search: string)` en src/api/auth.ts: `POST` a `/auth/confirm-email` + `search` tal cual, sin body, devolviendo `ConfirmEmailResponse` de src/types/backend.ts; comentario de por qué recibe un string y no un objeto (firma HMAC, research R2, contracts/confirm-email-api.md)
+- [X] T008 [P] Añadir `confirmEmail(search: string)` en src/api/auth.ts: `POST` a `/auth/confirm-email` + `search` tal cual, sin body, devolviendo `ConfirmEmailResponse` de src/types/backend.ts; comentario de por qué recibe un string y no un objeto (firma HMAC, research R2, contracts/confirm-email-api.md)
 
 **Checkpoint**: lint, format, type-check y Vitest limpios; `AuthDialog` funciona igual sobre `BaseDialog`.
 
@@ -202,5 +202,6 @@ Una conversación nueva por fila: `/feature-session specs/001-confirm-email S1` 
 - [Story] label maps task to specific user story for traceability
 - Cada tarea se aplica con el flujo de `doc/workflow.md`: propuesta didáctica, dudas y
   aplicar solo cuando el usuario no tenga más.
-- Al terminar una tarea, marcarla `[X]` aquí; el usuario hace el commit al cerrar la sesión.
+- Al terminar una tarea, marcarla `[X]` aquí; al cerrar la sesión, Claude hace el commit
+  cuando el usuario la ha revisado y dice que todo está bien.
 - Stop at any checkpoint to validate story independently
