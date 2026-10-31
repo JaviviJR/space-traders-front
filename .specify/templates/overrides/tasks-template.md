@@ -244,13 +244,15 @@ Task: "Create [Entity2] model in src/models/[entity2].py"
   Spec-kit features). Usually one session per phase; split a large phase and merge a
   tiny one (e.g. a one-task Setup) into the next. Every task belongs to exactly one
   session, in execution order. "Close" lists the checks that end the session, per
-  plan.md → Testing and the constitution (principle V).
+  plan.md → Testing and the constitution (principle V). "Command" is the exact text the
+  user pastes into the new conversation, with this feature's real directory and the
+  session id filled in.
 -->
 
-| Session | Tasks | Close |
-|---|---|---|
-| S1 | T001–T00X | lint, format, type-check, Vitest |
-| S2 | ... | ... |
+| Session | Tasks | Close | Command |
+|---|---|---|---|
+| S1 | T001–T00X | lint, format, type-check, Vitest | `/feature-session specs/[###-feature-name] S1` |
+| S2 | ... | ... | ... |
 
 ---
 

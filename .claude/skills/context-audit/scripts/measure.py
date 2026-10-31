@@ -16,7 +16,7 @@ Load classes (only where a fixed rule decides them):
   on-demand - files linked from an always-loaded file, memory files, skill
               bodies, .specify/ and specs/
   bundled   - a skill's extra .md files, read one at a time (average shown)
-  rarely    - everything else (READMEs, doc/prompts, ...)
+  rarely    - everything else (READMEs, doc/examples, ...)
 
 Usage: measure.py --root <project dir> [--size-only <dir>]...
 """

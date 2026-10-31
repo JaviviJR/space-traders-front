@@ -13,7 +13,8 @@ $ARGUMENTS
 ```
 
 The first argument is the feature directory, the second the session id. If either is
-missing, or the directory has no `tasks.md` with a "Sessions" table, stop and ask.
+missing, or the directory has no `tasks.md` with a "Sessions" table listing that
+session, stop and ask.
 
 ## Steps
 
@@ -22,8 +23,8 @@ missing, or the directory has no `tasks.md` with a "Sessions" table, stop and as
    rationale, say what is tested; apply only once the user says they have no more doubts;
    after applying, wait for the user's review). `doc/workflow.md` → "Spec-kit features"
    explains this flow.
-2. Read `<feature dir>/tasks.md`. The "Sessions" table says which tasks belong to this
-   session and how it closes. Check that every task of earlier sessions is marked `[X]`;
+2. Read `<feature dir>/tasks.md`. The "Sessions" tables (the main one and one per
+   `Convergence` phase, if any) say which tasks belong to this session and how it closes. Check that every task of earlier sessions is marked `[X]`;
    if not, stop and tell the user which ones are missing.
 3. Read `<feature dir>/spec.md` and `plan.md`, and from `research.md` only the decisions
    cited by this session's tasks. Read the `doc/*.md` files whose `AGENTS.md` trigger

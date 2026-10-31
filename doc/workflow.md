@@ -92,13 +92,14 @@ How the user works with Claude on this project. Applies to every session.
 
 ## Spec-kit features
 
-- A feature built with spec-kit goes through `/speckit-specify`,
+- Features are built with spec-kit. Each one goes through `/speckit-specify`,
   `/speckit-clarify`, `/speckit-plan`, `/speckit-tasks` and `/speckit-analyze`,
   each reviewed by the user before the next. Its artifacts live in
   `specs/<NNN-feature>/`.
 - `/speckit-tasks` groups tasks by user story (each story touches every layer
   it needs), not by layer, and ends with a "Sessions" table (from
-  `.specify/templates/overrides/tasks-template.md`).
+  `.specify/templates/overrides/tasks-template.md`) whose "Command" column
+  holds the exact `/feature-session` line to paste for each row.
 - Implementation: one new Claude Code conversation per row of that table,
   started with `/feature-session <feature dir> <session id>`. The context
   comes from the feature's artifacts, not from chat history. Progress is the
@@ -124,13 +125,23 @@ How the user works with Claude on this project. Applies to every session.
   `<type>` is the Conventional Commits type of the main change. The feature
   goes in the scope because the spec defines it as a section of the codebase;
   a session isn't one, so it goes in the description.
+- `/speckit-converge` (optional, once every session is done): the
+  `/feature-session` sessions count as the `/speckit-implement` run it
+  requires. If it appends a `## Phase N: Convergence`, Claude ends that same
+  section with its own `### Sessions` table, numbered after the last session
+  and following the template's columns (including "Command") and its grouping
+  and "Close" rules, instead of adding
+  rows to the existing table (converge only appends). The handoff is
+  `/feature-session`, never `/speckit-implement`.
 - Never run `/speckit-implement`: it runs every phase in one go and creates or
   rewrites ignore files (`.gitignore`, `.prettierignore`, ESLint ignores).
   Its skill, and the deprecated `speckit-taskstoissues`, carry
   `disable-model-invocation: true` so only the user can launch them and their
   descriptions stay out of every session's context. A spec-kit upgrade
   regenerates `.claude/skills/speckit-*`: after one, check that both still
-  have it.
+  have it. Rejected: the Claude integration's `--no-model-invocation` option
+  (survives upgrades, but makes every `speckit-*` skill user-only); revisit
+  if the manual check gets missed after an upgrade.
 
 ## Subagents
 

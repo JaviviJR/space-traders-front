@@ -1,7 +1,7 @@
 # Research: Confirmación de email tras el registro
 
-Fuente: decisiones cerradas en `doc/prompts/confirmation-email/01..04` (D1–D6 y las del
-mecanismo de modales), adaptadas a las clarificaciones de la spec (sesión 2026-10-31).
+Fuente: decisiones cerradas antes de la spec (D1–D6 y las del mecanismo de modales),
+adaptadas a las clarificaciones de la spec (sesión 2026-10-31).
 No quedaba ningún NEEDS CLARIFICATION en el Technical Context.
 
 ## R1 — Cuándo se lanza la confirmación (D1)
