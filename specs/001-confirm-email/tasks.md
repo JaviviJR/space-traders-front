@@ -115,8 +115,8 @@ conserva el query y "Reintentar" vuelve a llamar.
 
 **Purpose**: cierre según la constitución (principio V) y validación manual.
 
-- [ ] T023 Ejecutar `npm run lint`, `npm run format`, `npm run type-check`, `npx vitest run` y `CI=1 npm run build && CI=1 npx playwright test e2e/confirm-email.spec.ts --project=chromium`; conservar y listar los cambios de Prettier en archivos ajenos
-- [ ] T024 Validación manual con un enlace real de Mailpit siguiendo specs/001-confirm-email/quickstart.md (la ejecuta el usuario o la pide)
+- [X] T023 Ejecutar `npm run lint`, `npm run format`, `npm run type-check`, `npx vitest run` y `CI=1 npm run build && CI=1 npx playwright test e2e/confirm-email.spec.ts --project=chromium`; conservar y listar los cambios de Prettier en archivos ajenos
+- [X] T024 Validación manual con un enlace real de Mailpit siguiendo specs/001-confirm-email/quickstart.md (la ejecuta el usuario o la pide)
 
 ---
 

@@ -27,9 +27,9 @@ en `http://localhost:5173`.
 2. Pulsa "Iniciar sesión": el modal se cierra y después se abre el de login.
 3. Recarga: home sin modal. En la pestaña Network no hay una segunda petición a
    `/auth/confirm-email`.
-4. Abre otra vez el mismo enlace: el contrato no dice qué responde una segunda llamada;
-   anota qué estado aparece (si el back lo rechaza, texto de enlace no válido +
-   "Iniciar sesión").
+4. Abre otra vez el mismo enlace: el back acepta la segunda llamada, así que ves "Cuenta
+   confirmada" + "Iniciar sesión". Si un cambio del back pasara a rechazarla, verías el
+   texto de enlace no válido + "Iniciar sesión", y también sería correcto según la spec.
 5. Cambia un carácter de `signature` en la URL: texto de enlace no válido.
 6. Con el back parado, abre un enlace: texto de error + "Reintentar"; la URL conserva el
    query. Levanta el back y pulsa "Reintentar": "Cuenta confirmada".
