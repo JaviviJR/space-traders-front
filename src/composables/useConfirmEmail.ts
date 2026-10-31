@@ -11,6 +11,7 @@
 import { readonly, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { confirmEmail } from '@/api/auth'
+import { ApiError } from '@/api/errors/ApiError'
 
 export type ConfirmEmailStatus = 'pending' | 'confirmed' | 'invalid' | 'failed'
 
@@ -29,6 +30,12 @@ export function useConfirmEmail(search: string) {
     try {
       await confirmEmail(search)
       status.value = 'confirmed'
+      await router.replace({ name: 'home' })
+    } catch (err) {
+      if (!(err instanceof ApiError)) throw err
+      if (err.code !== 'invalid_email_confirmation') throw err
+
+      status.value = 'invalid'
       await router.replace({ name: 'home' })
     } finally {
       attemptInFlight = false

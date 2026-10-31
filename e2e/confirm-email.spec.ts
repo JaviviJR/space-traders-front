@@ -5,13 +5,19 @@ import type { Page, Request } from '@playwright/test'
 const search = '?id=1&expires=1700000000&token=a%2Fb+c&signature=d4e5'
 
 // By pathname: a glob with '?' is ambiguous for a URL with a query.
-async function routeConfirmEmail(page: Page): Promise<Request[]> {
+async function routeConfirmEmail(
+  page: Page,
+  response: { status: number; json: unknown } = {
+    status: 200,
+    json: { data: { confirmed: true } },
+  },
+): Promise<Request[]> {
   const requests: Request[] = []
   await page.route(
     (url) => url.pathname.endsWith('/auth/confirm-email'),
     (route) => {
       requests.push(route.request())
-      return route.fulfill({ status: 200, json: { data: { confirmed: true } } })
+      return route.fulfill(response)
     },
   )
   return requests
@@ -77,4 +83,23 @@ test('Iniciar sesión cierra la confirmación y abre el login', async ({ page })
   const login = page.getByRole('dialog', { name: 'Accede a SpaceTraders' })
   await expect(login).toBeVisible()
   await expect(login.getByRole('tab', { selected: true })).toHaveText('Iniciar sesión')
+})
+
+test('un enlace rechazado muestra el texto de enlace no válido', async ({ page }) => {
+  await routeConfirmEmail(page, {
+    status: 400,
+    json: {
+      error: {
+        code: 'invalid_email_confirmation',
+        message: 'The email confirmation link is invalid or has expired.',
+      },
+    },
+  })
+
+  await page.goto(`/confirm-email${search}`)
+
+  const dialog = page.getByRole('dialog', { name: 'Confirmar email' })
+  await expect(dialog).toContainText(
+    'El enlace no es válido o ha caducado. Si ya confirmaste tu cuenta, inicia sesión; si no, podrás pedir un enlace nuevo.',
+  )
 })

@@ -6,6 +6,7 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 import ConfirmEmailDialog from '../components/auth/ConfirmEmailDialog.vue'
 import { confirmEmail } from '../api/auth'
 import type { ConfirmEmailResponse } from '../api/auth'
+import { ApiError } from '../api/errors/ApiError'
 
 vi.mock('@/api/auth')
 
@@ -21,6 +22,19 @@ function deferConfirmEmail() {
     }),
   )
   return { resolve: () => resolve({ confirmed: true }) }
+}
+
+const backMessage = 'The email confirmation link is invalid or has expired.'
+
+// The contract's 400: the real class, so the composable's instanceof check sees it.
+function rejectAsInvalidLink() {
+  vi.mocked(confirmEmail).mockRejectedValue(
+    new ApiError({
+      code: 'invalid_email_confirmation',
+      message: backMessage,
+      status: 400,
+    }),
+  )
 }
 
 function mountDialog() {
@@ -114,5 +128,40 @@ describe('ConfirmEmailDialog', () => {
     await button?.trigger('click')
 
     expect(wrapper.emitted('login')).toHaveLength(1)
+  })
+
+  describe('con un enlace no válido', () => {
+    it('muestra el texto de enlace no válido, no el mensaje del back', async () => {
+      rejectAsInvalidLink()
+      const { wrapper } = mountDialog()
+      await flushPromises()
+
+      expect(wrapper.text()).toContain(
+        'El enlace no es válido o ha caducado. Si ya confirmaste tu cuenta, inicia sesión; si no, podrás pedir un enlace nuevo.',
+      )
+      expect(wrapper.text()).not.toContain('Confirmando…')
+      expect(wrapper.text()).not.toContain(backMessage)
+    })
+
+    it('sustituye la ruta por la home', async () => {
+      rejectAsInvalidLink()
+      const { replace } = mountDialog()
+      await flushPromises()
+
+      expect(replace).toHaveBeenCalledWith({ name: 'home' })
+    })
+
+    it('pulsar Iniciar sesión emite login', async () => {
+      rejectAsInvalidLink()
+      const { wrapper } = mountDialog()
+      await flushPromises()
+
+      const button = wrapper
+        .findAll('button')
+        .find((candidate) => candidate.text() === 'Iniciar sesión')
+      await button?.trigger('click')
+
+      expect(wrapper.emitted('login')).toHaveLength(1)
+    })
   })
 })

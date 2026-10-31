@@ -85,10 +85,10 @@ confirmada", "Iniciar sesión" abre el login y recargar no repite la petición.
 
 ### Implementation for User Story 2
 
-- [ ] T016 [US2] En src/composables/useConfirmEmail.ts, mapear `ApiError` con `code` `invalid_email_confirmation` al estado `invalid` y hacer también `router.replace` a la home (ramificar por `code`, nunca por `status` ni `message`, research R4)
-- [ ] T017 [US2] En src/components/auth/ConfirmEmailDialog.vue, estado `invalid`: icono de aviso en tono de error + "El enlace no es válido o ha caducado. Si ya confirmaste tu cuenta, inicia sesión; si no, podrás pedir un enlace nuevo." + botón "Iniciar sesión" que emite `login` (FR-006, clarificación Q2) (depende de T016)
-- [ ] T018 [P] [US2] Ampliar src/__tests__/ConfirmEmailDialog.spec.ts: 400 `invalid_email_confirmation` → texto de enlace no válido; `replace` a la home; "Iniciar sesión" emite `login` (depende de T017)
-- [ ] T019 [P] [US2] Ampliar e2e/confirm-email.spec.ts: respuesta 400 → texto de enlace no válido (depende de T017)
+- [X] T016 [US2] En src/composables/useConfirmEmail.ts, mapear `ApiError` con `code` `invalid_email_confirmation` al estado `invalid` y hacer también `router.replace` a la home (ramificar por `code`, nunca por `status` ni `message`, research R4)
+- [X] T017 [US2] En src/components/auth/ConfirmEmailDialog.vue, estado `invalid`: icono de aviso en tono de error + "El enlace no es válido o ha caducado. Si ya confirmaste tu cuenta, inicia sesión; si no, podrás pedir un enlace nuevo." + botón "Iniciar sesión" que emite `login` (FR-006, clarificación Q2) (depende de T016)
+- [X] T018 [P] [US2] Ampliar src/__tests__/ConfirmEmailDialog.spec.ts: 400 `invalid_email_confirmation` → texto de enlace no válido; `replace` a la home; "Iniciar sesión" emite `login` (depende de T017)
+- [X] T019 [P] [US2] Ampliar e2e/confirm-email.spec.ts: respuesta 400 → texto de enlace no válido (depende de T017)
 
 **Checkpoint**: User Stories 1 y 2 funcionan por separado.
 

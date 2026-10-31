@@ -66,6 +66,23 @@ function handleUpdateVisible(value: boolean) {
           Iniciar sesión
         </BaseButton>
       </template>
+      <template v-else-if="status === 'invalid'">
+        <span
+          class="icon-[lucide--circle-alert] size-10 text-red-400"
+          aria-hidden="true"
+        />
+        <p class="text-sm text-slate-400">
+          El enlace no es válido o ha caducado. Si ya confirmaste tu cuenta,
+          inicia sesión; si no, podrás pedir un enlace nuevo.
+        </p>
+        <BaseButton
+          variant="primary"
+          class="mt-2 w-full"
+          @click="emit('login')"
+        >
+          Iniciar sesión
+        </BaseButton>
+      </template>
     </div>
   </BaseDialog>
 </template>
