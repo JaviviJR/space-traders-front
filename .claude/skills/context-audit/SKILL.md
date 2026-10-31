@@ -30,7 +30,6 @@ If a focus is given, run every step but report and propose only on that area.
   effect + design rationale for structural changes, what gets tested. Change nothing until the user
   approves.
 - Never edit or propose changes to `README.md` or `docker/README.md`.
-- Never open `doc/alternatives/`: the script reports its size only.
 - Don't edit the bodies of vendor skills (`speckit-*`, `vue-*`, `vite`,
   `playwright-cli`, ...): an upgrade overwrites them. Frontmatter overrides are
   fine only when `doc/workflow.md` records them.
@@ -49,7 +48,7 @@ line if the numbers moved.
 ## Steps
 
 1. Measure: run
-   `${CLAUDE_SKILL_DIR}/scripts/measure.py --root . --size-only doc/alternatives`.
+   `${CLAUDE_SKILL_DIR}/scripts/measure.py --root .`.
    It inventories the markdown, classifies the load where a fixed rule decides
    it, estimates tokens and the saving if Spanish prose were English, and lists
    unresolved `[[links]]` in memory. Its header explains the ratios; quote them

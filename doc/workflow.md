@@ -63,9 +63,6 @@ How the user works with Claude on this project. Applies to every session.
     composable created or extracted.
   - Anything else (a local rename, extracting a method within the same file,
     a typo, a stale reference): the functional effect in one line.
-  - Rejected: "always explicit, however small" (tried from 2026-10-08) — it
-    produced filler rationale for trivial changes; revisit if a structural
-    change slips through without its rationale.
 - When a decision is closed, record it as
   [AGENTS.md → Where documentation lives](../AGENTS.md#where-documentation-lives)
   says, and reply with a one-line summary.

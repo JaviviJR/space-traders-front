@@ -102,8 +102,7 @@ the task.
   - A mechanism that applies to several files: the `doc/*.md` whose trigger
     above covers it.
   - Something specific to one component, store, composable or module (why
-    this value, what it deliberately doesn't do, which alternatives were
-    rejected for it): a comment in that file — a `/** */` header at the top
+    this value, what it deliberately doesn't do): a comment in that file — a `/** */` header at the top
     of the `<script setup>` or the `.ts` file when it's about the whole file,
     a one-line `//` next to the line when it's a local trap. Only write it
     when removing it would likely lead a future reader to "simplify" the code
@@ -111,10 +110,9 @@ the task.
 - A single case never becomes a `doc/*.md` rule. When a second case appears,
   propose to the user whether to generalize it into `doc/` or keep a comment
   in each file.
-- Record only what was decided: what won't be done isn't recorded, except a
-  rejected alternative's one-sentence summary with the condition to revisit
-  it. When a decision changes, rewrite the existing text instead of appending
-  a note.
+- Record only what was decided: what won't be done isn't recorded (a
+  feature's rejected alternatives live in its spec-kit `research.md`). When a
+  decision changes, rewrite the existing text instead of appending a note.
 
 ## Working agreements
 

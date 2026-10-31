@@ -10,13 +10,6 @@
  *
  * Any other attribute (id, closable, close-on-escape…) reaches the Dialog by
  * fallthrough, so this interface doesn't grow a prop per Dialog option.
- *
- * Rejected alternatives:
- * - A single host Dialog with swappable content (useModal() + typed registry):
- *   revisit if coordinating dialogs in the layout becomes unmanageable.
- * - PrimeVue's DynamicDialog/DialogService: untyped data and dialogRef
- *   (#3947), no props for the content in 4.5.5 (#7492). Revisit if PrimeVue
- *   types it and passes props.
  */
 import Dialog from 'primevue/dialog'
 
