@@ -44,7 +44,8 @@ grows to dozens of components.
 - **composables/**: logic with local state for one view or component. Rule:
   start local and move up to a store only when more than one view needs it.
 - **api/**: plain TypeScript. Each function returns typed data or throws
-  `ApiError`. It str  - Errors live in `api/errors/`, split by reason to change: the classes
+  `ApiError`.
+  - Errors live in `api/errors/`, split by reason to change: the classes
     (what an error is) and the parsing of error responses (how a response
     becomes one). The back's contract (the error schemas in the generated
     types) defines their shape, and the classes derive their fields from those
@@ -64,8 +65,6 @@ grows to dozens of components.
     `0` and its own front-only code. Front-only codes are defined next to the
     classes, never in `src/types/`, and a compile-time check fails
     `npm run type-check` if one overlaps a contract code.
- check fails `npm run type-check` if one
-    overlaps a contract code.
   - `client.ts` sends `Accept-Language` on every request; the back uses it to
     translate validation messages. It's fixed to Spanish until
     internationalization exists (see [Pending decisions](#pending-decisions)).

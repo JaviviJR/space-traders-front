@@ -30,7 +30,9 @@ onMounted(() => {
     />
     <p class="text-sm text-slate-400">
       Hemos enviado un enlace de confirmación a
-      <strong class="font-semibold break-all text-white">{{ email }}</strong
+      <strong class="font-semibold wrap-break-word text-white">{{
+        email
+      }}</strong
       >. Ábrelo para activar tu cuenta.
     </p>
     <p class="text-sm text-slate-400">

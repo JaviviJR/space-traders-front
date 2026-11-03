@@ -51,6 +51,26 @@ describe('apiFetch', () => {
     })
   })
 
+  it('no envía Content-Type en una petición sin body', async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, { data: {} }))
+
+    await apiFetch('/auth/confirm-email', { method: 'POST' })
+
+    expect(fetchMock.mock.calls[0]?.[1]?.headers).not.toHaveProperty(
+      'Content-Type',
+    )
+  })
+
+  it('envía Content-Type: application/json en una petición con body', async () => {
+    fetchMock.mockResolvedValue(jsonResponse(201, { data: {} }))
+
+    await apiFetch('/auth/register', { method: 'POST', body: { name: 'x' } })
+
+    expect(fetchMock.mock.calls[0]?.[1]?.headers).toMatchObject({
+      'Content-Type': 'application/json',
+    })
+  })
+
   it('devuelve el contenido de data en una respuesta 2xx', async () => {
     const user: RegisterUserResponse = {
       id: 1,

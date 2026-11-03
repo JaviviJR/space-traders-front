@@ -4,6 +4,9 @@ import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import App from '../App.vue'
 import router from '../router'
+import { confirmEmail } from '../api/auth'
+
+vi.mock('@/api/auth')
 
 // jsdom has no ResizeObserver, and PrimeVue's TabList observes its size on mount.
 vi.stubGlobal(
@@ -20,8 +23,8 @@ vi.stubGlobal('matchMedia', (query: string) => ({
   media: query,
 }))
 
-async function mountAtRoot() {
-  router.push('/')
+async function mountAt(path: string) {
+  router.push(path)
   await router.isReady()
   // The auth Dialog teleports to body; stubbing Teleport keeps its content inside the wrapper.
   const wrapper = mount(App, {
@@ -29,6 +32,10 @@ async function mountAtRoot() {
   })
   await flushPromises()
   return wrapper
+}
+
+function mountAtRoot() {
+  return mountAt('/')
 }
 
 function findButton(
@@ -69,5 +76,16 @@ describe('App', () => {
 
     expect(wrapper.find('[role="dialog"]').exists()).toBe(true)
     expect(selectedTabLabel(wrapper)).toBe('Iniciar sesión')
+  })
+
+  it('el enlace de confirmación abre el diálogo de confirmar email sobre la landing', async () => {
+    vi.mocked(confirmEmail).mockResolvedValue({ confirmed: true })
+    const wrapper = await mountAt('/confirm-email?id=1&token=abc')
+
+    expect(wrapper.text()).toContain('Comanda tu flota')
+    expect(wrapper.find('[role="dialog"] .p-dialog-title').text()).toBe(
+      'Confirmar email',
+    )
+    expect(confirmEmail).toHaveBeenCalledWith('?id=1&token=abc')
   })
 })

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es" class="app-dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Opción 3: un diálogo por caso</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #0f172a; color: #94a3b8; }
+      .url { font-family: monospace; font-size: 13px; background: #020617; color: #cbd5e1; padding: 8px 16px; }
+      header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #1e293b; }
+      header strong { color: #fff; }
+      .hero { max-width: 40rem; margin: 64px auto; padding: 0 16px; text-align: center; }
+      .hero h1 { color: #fff; }
+      .sim { position: fixed; right: 16px; bottom: 16px; background: #1e293b; border: 1px dashed #475569; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+      .stack { display: flex; flex-direction: column; gap: 12px; }
+      .center { text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <!-- Same versions as package-lock.json; theme script must load after PrimeVue (v4.primevue.org/cdn.md). -->
+    <script src="https://unpkg.com/vue@3.5.43/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/primevue@4.5.5/umd/primevue.min.js"></script>
+    <script src="https://unpkg.com/@primevue/themes@4.5.4/umd/aura.min.js"></script>
+    <script>
+      const { createApp, ref, onMounted } = Vue
+
+      // Fake back: resolves 'confirmed' or 'invalid' after a delay.
+      const fakeConfirm = (outcome) =>
+        new Promise((resolve) => setTimeout(() => resolve(outcome), 1200))
+
+      const url = ref('localhost:5173/')
+
+      // --- The coordinator: in the app this would grow inside PublicLayout ---
+      const authVisible = ref(false)
+      const authTab = ref('login')
+      const confirmVisible = ref(false)
+      const confirmOutcome = ref(null)
+      let loginAfterConfirmCloses = false
+
+      function openAuth(tab) {
+        authTab.value = tab
+        authVisible.value = true
+      }
+      // Confirm -> login: close one dialog and open the other once it has finished leaving.
+      function goFromConfirmToLogin() {
+        loginAfterConfirmCloses = true
+        confirmVisible.value = false
+      }
+      function onConfirmAfterHide() {
+        confirmOutcome.value = null
+        if (loginAfterConfirmCloses) {
+          loginAfterConfirmCloses = false
+          openAuth('login')
+        }
+      }
+
+      // --- Shared shell: BaseDialog, like BaseButton ---
+      const BaseDialog = {
+        props: { visible: Boolean, header: String },
+        emits: ['update:visible', 'after-hide'],
+        template: `
+          <Dialog :visible="visible" @update:visible="$emit('update:visible', $event)" @after-hide="$emit('after-hide')"
+                  modal :draggable="false" :style="{ width: '28rem' }" :header="header">
+            <slot />
+          </Dialog>`,
+      }
+
+      // --- Each case is its own dialog: container + content together ---
+      const AuthDialog = {
+        components: { BaseDialog },
+        setup() {
+          const registeredEmail = ref(null)
+          const email = ref('ripley@nostromo.test')
+          return { authVisible, authTab, registeredEmail, email }
+        },
+        template: `
+          <BaseDialog v-model:visible="authVisible" :header="registeredEmail ? 'Revisa tu correo' : 'Accede a SpaceTraders'"
+                      @after-hide="registeredEmail = null">
+            <div v-if="registeredEmail" class="stack center">
+              <p>Hemos enviado un enlace de confirmación a <strong>{{ registeredEmail }}</strong>.</p>
+              <Button label="Entendido" @click="authVisible = false" />
+            </div>
+            <Tabs v-else v-model:value="authTab">
+              <TabList><Tab value="login">Iniciar sesión</Tab><Tab value="register">Crear cuenta</Tab></TabList>
+              <TabPanels>
+                <TabPanel value="login">
+                  <div class="stack">
+                    <InputText placeholder="Email" /><InputText placeholder="Contraseña" type="password" />
+                    <Button label="Entrar" />
+                  </div>
+                </TabPanel>
+                <TabPanel value="register">
+                  <div class="stack">
+                    <InputText v-model="email" placeholder="Email" />
+                    <Button label="Crear cuenta" @click="registeredEmail = email" />
+                  </div>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </BaseDialog>`,
+      }
+
+      const ConfirmEmailBody = {
+        props: { outcome: String },
+        setup(props) {
+          const status = ref('pending')
+          onMounted(async () => {
+            status.value = await fakeConfirm(props.outcome)
+            // The dialog lives in the /confirm-email view: the URL can only drop the query.
+            url.value = 'localhost:5173/confirm-email'
+          })
+          return { status, goFromConfirmToLogin, confirmVisible }
+        },
+        template: `
+          <div class="stack center">
+            <p v-if="status === 'pending'">Confirmando tu cuenta…</p>
+            <template v-else-if="status === 'confirmed'">
+              <p>Tu cuenta está confirmada. Ya puedes iniciar sesión.</p>
+              <Button label="Iniciar sesión" @click="goFromConfirmToLogin" />
+            </template>
+            <template v-else>
+              <Message severity="error" :closable="false">El enlace no es válido o ha caducado.</Message>
+              <p>(Aquí iría el formulario de reenvío, sub-bloque 2.)</p>
+              <Button label="Cerrar" severity="secondary" @click="confirmVisible = false" />
+            </template>
+          </div>`,
+      }
+
+      const ConfirmEmailDialog = {
+        components: { BaseDialog, ConfirmEmailBody },
+        setup: () => ({ confirmVisible, confirmOutcome, onConfirmAfterHide }),
+        template: `
+          <BaseDialog v-model:visible="confirmVisible" header="Confirmar email" @after-hide="onConfirmAfterHide">
+            <ConfirmEmailBody v-if="confirmOutcome" :outcome="confirmOutcome" />
+          </BaseDialog>`,
+      }
+
+      const App = {
+        components: { AuthDialog, ConfirmEmailDialog },
+        setup() {
+          function simulateLink(outcome) {
+            url.value = 'localhost:5173/confirm-email?id=1&expires=…&token=…&signature=…'
+            confirmOutcome.value = outcome
+            confirmVisible.value = true
+          }
+          return { url, openAuth, simulateLink }
+        },
+        template: `
+          <div class="url">{{ url }}</div>
+          <header><strong>SpaceTraders</strong><Button label="Empezar" @click="openAuth('register')" /></header>
+          <section class="hero"><h1>Opción 3: un diálogo por caso</h1>
+            <p>AuthDialog y ConfirmEmailDialog son diálogos distintos. Desde "Cuenta confirmada", "Iniciar sesión" cierra uno y abre el otro: dos animaciones.</p>
+          </section>
+          <div class="sim"><strong>Simulador</strong>
+            <Button size="small" label="Abrir enlace del email" @click="simulateLink('confirmed')" />
+            <Button size="small" severity="secondary" label="Abrir enlace caducado" @click="simulateLink('invalid')" />
+          </div>
+          <AuthDialog />
+          <ConfirmEmailDialog />`,
+      }
+
+      const app = createApp(App)
+      app.use(PrimeVue.Config, { theme: { preset: PrimeVue.Themes.Aura, options: { darkModeSelector: '.app-dark' } } })
+      for (const name of ['Dialog', 'Button', 'InputText', 'Message', 'Tabs', 'TabList', 'Tab', 'TabPanels', 'TabPanel']) {
+        app.component(name, PrimeVue[name])
+      }
+      app.mount('#app')
+    </script>
+  </body>
+</html>

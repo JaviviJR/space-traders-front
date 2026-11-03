@@ -22,7 +22,8 @@ export async function apiFetch<T>(
     response = await fetch(url, {
       ...rest,
       headers: {
-        'Content-Type': 'application/json',
+        // Only with a body: it describes the body, and without one it would trigger a needless CORS preflight.
+        ...(body !== undefined && { 'Content-Type': 'application/json' }),
         // Fixed until the front has i18n; the back translates `violations` with it.
         'Accept-Language': 'es',
         ...headers,
