@@ -102,8 +102,9 @@ the task.
   - A mechanism that applies to several files: the `doc/*.md` whose trigger
     above covers it.
   - Something specific to one component, store, composable or module (why
-    this value, what it deliberately doesn't do): a comment in that file — a `/** */` header at the top
-    of the `<script setup>` or the `.ts` file when it's about the whole file,
+    this value, what it deliberately doesn't do): a comment in that file — a
+    `/** */` header at the top of the `<script setup>` or the `.ts` file when
+    it's about the whole file,
     a one-line `//` next to the line when it's a local trap. Only write it
     when removing it would likely lead a future reader to "simplify" the code
     back into the problem it avoids.
