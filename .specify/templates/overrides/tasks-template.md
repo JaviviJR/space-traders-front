@@ -6,8 +6,10 @@ description: "Task list template for feature implementation"
 <!--
   Project override of the core .specify/templates/tasks-template.md (spec-kit resolves
   .specify/templates/overrides/ first, and upgrades only replace the core file). Changes:
-  tests required without TDD, no "commit after each task", and a Sessions table instead
-  of the parallel-team strategy (one developer, one Claude Code session per row).
+  tests required without TDD (one test task per row of plan.md → Testing, no "OPTIONAL"
+  test headings), no "commit after each task", and a Sessions table instead of the
+  parallel-team strategy and the parallel example (one developer, one Claude Code session
+  per row).
   Do not copy this comment into the generated tasks.md.
 -->
 
@@ -17,7 +19,7 @@ description: "Task list template for feature implementation"
 
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: REQUIRED by the constitution (principle IV) and listed in plan.md → Testing. TDD is not imposed: each test task goes in the same phase as the code it covers.
+**Tests**: REQUIRED by the constitution (principle IV) and listed in plan.md → Testing: each row there becomes one test task. TDD is not imposed: each test task goes in the same phase as the code it covers.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -88,7 +90,7 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 1
 
 > **NOTE**: Write each test alongside the code it covers, in this same phase.
 
@@ -114,7 +116,7 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 2
 
 - [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
@@ -136,7 +138,7 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 3
 
 - [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
@@ -162,7 +164,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
+- [ ] TXXX [P] Additional unit tests in tests/unit/
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
 
@@ -175,8 +177,7 @@ Examples of foundational tasks (adjust based on your project):
 - **Setup (Phase 1)**: No dependencies - can start immediately
 - **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
 - **User Stories (Phase 3+)**: All depend on Foundational phase completion
-  - User stories can then proceed in parallel (if staffed)
-  - Or sequentially in priority order (P1 → P2 → P3)
+  - Then sequentially in priority order (P1 → P2 → P3)
 - **Polish (Final Phase)**: Depends on all desired user stories being complete
 
 ### User Story Dependencies
@@ -197,24 +198,8 @@ Examples of foundational tasks (adjust based on your project):
 
 - All Setup tasks marked [P] can run in parallel
 - All Foundational tasks marked [P] can run in parallel (within Phase 2)
-- Once Foundational phase completes, all user stories can start in parallel (if team capacity allows)
 - All tests for a user story marked [P] can run in parallel
 - Models within a story marked [P] can run in parallel
-- Different user stories can be worked on in parallel by different team members
-
----
-
-## Parallel Example: User Story 1
-
-```bash
-# Launch all tests for User Story 1 together (if tests requested):
-Task: "Contract test for [endpoint] in tests/contract/test_[name].py"
-Task: "Integration test for [user journey] in tests/integration/test_[name].py"
-
-# Launch all models for User Story 1 together:
-Task: "Create [Entity1] model in src/models/[entity1].py"
-Task: "Create [Entity2] model in src/models/[entity2].py"
-```
 
 ---
 
@@ -243,15 +228,17 @@ Task: "Create [Entity2] model in src/models/[entity2].py"
   run with `/feature-session <feature dir> <session id>` (see doc/workflow.md →
   Spec-kit features). Usually one session per phase; split a large phase and merge a
   tiny one (e.g. a one-task Setup) into the next. Every task belongs to exactly one
-  session, in execution order. "Close" lists the checks that end the session, per
-  plan.md → Testing and the constitution (principle V). "Command" is the exact text the
+  session, in execution order. "Close" lists the checks that end the session, copied
+  from plan.md → Testing ("Session close checks") and the constitution (principle V):
+  the e2e check only in sessions that add or change an e2e test or touch code one
+  covers, and always in the last session. "Command" is the exact text the
   user pastes into the new conversation, with this feature's real directory and the
   session id filled in.
 -->
 
 | Session | Tasks | Close | Command |
 |---|---|---|---|
-| S1 | T001–T00X | lint, format, type-check, Vitest | `/feature-session specs/[###-feature-name] S1` |
+| S1 | T001–T00X | `npm run lint`, `npm run format`, `npm run type-check`, `npx vitest run` | `/feature-session specs/[###-feature-name] S1` |
 | S2 | ... | ... | ... |
 
 ---

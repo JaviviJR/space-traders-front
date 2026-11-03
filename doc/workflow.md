@@ -4,6 +4,10 @@ How the user works with Claude on this project. Applies to every session.
 
 ## Confirmations
 
+- Ask for explicit confirmation before writing any file or running any
+  command that changes state, whether or not the file is tracked by git.
+  Answering an options question is not approval, and approving one change
+  doesn't cover the next.
 - Related changes may be grouped into one proposal, provided each change is
   listed explicitly so the approval covers each one.
 
@@ -17,19 +21,25 @@ How the user works with Claude on this project. Applies to every session.
   change does and which Vue concepts it involves (e.g. `ref` vs `reactive`,
   props, emits, Pinia stores, routes), in prose, without pasting the code
   itself.
-- When proposing several options, explain each one didactically before the
-  user picks (the user had no prior JavaScript/TypeScript/Vue experience, so
-  bare option labels aren't enough): what it does, and what the official docs
-  recommend about it — or say explicitly that they have no stance and it's a
-  project decision.
-- In each option or rule, compare the resulting code: which is simpler and
-  which adds complexity that may be unnecessary (extra state, coordination,
-  files touched). Rules are defaults, not dogma: state the condition that
-  overrides one on simplicity grounds.
 - When a decision comes from an installed skill, say which skill and why it
   recommends it.
 - Invite questions, answer them, and apply the change only once the user says
   they have no more doubts.
+
+### Options
+
+- When a decision has several viable approaches, explain each one
+  didactically before the user picks (the user had no prior
+  JavaScript/TypeScript/Vue experience, so bare option labels aren't enough):
+  what it does, and what the official docs recommend about it (check them
+  first) — or say explicitly that they have no stance and it's a project
+  decision.
+- In each option or rule, compare the resulting code: which is simpler and
+  which adds complexity that may be unnecessary (extra state, coordination,
+  files touched). Rules are defaults, not dogma: state the condition that
+  overrides one on simplicity grounds, or under which another option would
+  win.
+- End with a recommendation.
 
 ### Known concepts
 
@@ -62,7 +72,8 @@ How the user works with Claude on this project. Applies to every session.
     introduced, logic moved between layers, or a file, component or
     composable created or extracted.
   - Anything else (a local rename, extracting a method within the same file,
-    a typo, a stale reference): the functional effect in one line.
+    a typo, a stale reference): the functional effect in one line, naming the
+    rule applied.
 - When a decision is closed, record it as
   [AGENTS.md → Where documentation lives](../AGENTS.md#where-documentation-lives)
   says, and reply with a one-line summary.
@@ -75,8 +86,7 @@ How the user works with Claude on this project. Applies to every session.
 
 ## Steps and installs
 
-- Design decisions: one at a time, each with its trade-offs and a
-  recommendation.
+- Design decisions: one at a time, each following "Options".
 - Installation and setup steps: give the commands as one copy-paste block,
   with a short note on what each does and a link to the official docs. The
   user runs them.
@@ -89,12 +99,80 @@ How the user works with Claude on this project. Applies to every session.
   blocks, a circular dependency, a block needing decisions from later ones),
   say so and propose how to resolve it instead of forcing an order.
 
+## Commits
+
+- The user commits, except at the close of a `/feature-session` (see
+  "Spec-kit features"). Outside it, Claude doesn't ask whether to commit.
+- Commits carry no `Co-Authored-By` trailer or any other AI attribution line,
+  whatever Claude Code's default says.
+
 ## Spec-kit features
 
 - Features are built with spec-kit. Each one goes through `/speckit-specify`,
   `/speckit-clarify`, `/speckit-plan`, `/speckit-tasks` and `/speckit-analyze`,
   each reviewed by the user before the next. Its artifacts live in
   `specs/<NNN-feature>/`.
+- Invoking a `/speckit-*` skill authorizes writing that phase's artifacts in
+  `specs/<NNN-feature>/` and `.specify/feature.json` without asking; the user
+  reviews them with `git diff` before the next phase. Any other file the skill
+  would touch (code, `doc/`, templates, the constitution) still needs
+  confirmation.
+- `/speckit-clarify` questions: a question follows "Options" before the
+  skill's table when an option contradicts or relies on a rule in AGENTS.md, a
+  `doc/*.md` or a closed decision (e.g. the spec's Assumptions); picks a
+  component or mechanism (framework feature vs own code, a library); or
+  changes:
+  - the contract with the back: endpoints used or changed, what is sent, how
+    each `error.code` is handled;
+  - routes and URLs: new or changed routes, query params, redirects, guards;
+  - the visible flow: which screens, dialogs or steps the user sees, and in
+    which order;
+  - state persisted on the client (localStorage, sessionStorage, cookies).
+
+  This replaces the skill's one-line-per-option format for those questions.
+  Pure-behaviour questions (a value, a duration, a text, an on/off) keep the
+  skill's format; when in doubt, use the full one. The table,
+  `**Recommended:**`, answering by letter, the 5-question limit and writing
+  `spec.md` after each answer stay as the skill says.
+- `/speckit-plan` decisions: before writing the research files, present in
+  chat each decision that has several viable approaches, following "Options",
+  one at a time, waiting for the user's answer. The research files then
+  record the closed decisions.
+- Conflicts during `/speckit-plan` (a requirement that contradicts a
+  `doc/*.md` rule, AGENTS.md, a closed decision or a constitution gate):
+  present it following "Options" with three routes, and the user picks one:
+  1. Change the spec: it goes back through `/speckit-clarify`, which records
+     it in Clarifications, then `/speckit-plan` resumes. The plan never edits
+     `spec.md`.
+  2. Change the project rule (`doc/*.md` or AGENTS.md): a doc change with its
+     own confirmation, then the plan goes on.
+  3. Keep the exception: the plan justifies it in "Complexity Tracking", as
+     the constitution requires, and goes on.
+- Two research files: each `/speckit-plan` writes the same decisions twice in
+  `specs/<NNN-feature>/`, to compare what the project's rules change against
+  spec-kit's default:
+  - `research.md`: as spec-kit writes it, untouched, with its scope
+    (`NEEDS CLARIFICATION` items, dependencies, integrations) and its
+    `Decision` / `Rationale` / `Alternatives considered` format. The
+    `speckit-*` skills read this one, since the scripts look it up by name.
+  - `research.workflow.md`: applying AGENTS.md and these working agreements.
+    It also includes the spec's closed decisions with their rejected
+    alternatives; each `Rationale` cites the official docs, and only when the
+    docs and issues don't settle it (per
+    [dependencies.md](dependencies.md)), the installed source file it rests
+    on (`node_modules/…`), labelled as a code-derived inference and flagged
+    when the decision is presented in chat; and each decision says where else
+    it gets recorded (docblock/comment or `doc/*.md`). `/feature-session` and
+    AGENTS.md use this one.
+
+  Revisit when the user says the comparison no longer adds anything; then
+  decide whether existing `research.md` files are deleted or kept.
+- Deviations from spec-kit: when a project rule makes Claude depart from what
+  a `speckit-*` skill says (skip, replace, add or reorder a step), say so at
+  that moment. If a written rule already resolves it, one line naming the
+  skill step, the project rule and which one is followed. If not, follow
+  [AGENTS.md → Conflicts between sources](../AGENTS.md#conflicts-between-sources)
+  and wait for the user's answer before acting.
 - `/speckit-tasks` groups tasks by user story (each story touches every layer
   it needs), not by layer, and ends with a "Sessions" table (from
   `.specify/templates/overrides/tasks-template.md`) whose "Command" column
@@ -106,8 +184,7 @@ How the user works with Claude on this project. Applies to every session.
 - Closing a session: apply the changes, run the session's checks and mark its
   tasks `[X]`, then stop and wait for the user's review. If they ask for
   changes, apply them and wait again; once they say it's all OK, Claude makes
-  the session's commit. Only for `/feature-session`; outside it the user
-  commits, and Claude doesn't ask whether to commit.
+  the session's commit.
 - Session commit message: the session in the subject, to read at a glance in
   `git log --oneline`, and as trailers, to query with
   `git log --format='%(trailers:key=Session)'`:
@@ -133,14 +210,37 @@ How the user works with Claude on this project. Applies to every session.
   rows to the existing table (converge only appends). The handoff is
   `/feature-session`, never `/speckit-implement`.
 - Never run `/speckit-implement`: it runs every phase in one go and creates or
-  rewrites ignore files (`.gitignore`, `.prettierignore`, ESLint ignores).
-  Its skill, and the deprecated `speckit-taskstoissues`, carry
-  `disable-model-invocation: true` so only the user can launch them and their
-  descriptions stay out of every session's context. A spec-kit upgrade
-  regenerates `.claude/skills/speckit-*`: after one, check that both still
-  have it. Rejected: the Claude integration's `--no-model-invocation` option
-  (survives upgrades, but makes every `speckit-*` skill user-only); revisit
-  if the manual check gets missed after an upgrade.
+  rewrites ignore files. Here it would append to `.gitignore` and
+  `.prettierignore`, edit the `ignores` in `eslint.config.ts`, and create a
+  `.dockerignore` (because `docker/node/Dockerfile` exists).
+- Spec-kit's behaviour is changed only through the mechanisms spec-kit
+  provides (template overrides in `.specify/templates/overrides/`, presets,
+  integration options, `.specify/extensions.yml`). Files it generates
+  (`.claude/skills/speckit-*`, `.specify/templates/*.md`,
+  `.specify/scripts/`) are never edited by hand, so an upgrade never undoes a
+  project change.
+- Every core `speckit-*` skill is user-invocable only: the Claude
+  integration's `--no-model-invocation` option, stored in
+  `.specify/integration.json` and re-applied by every
+  `specify integration upgrade claude`, writes `disable-model-invocation: true`
+  into them. That way Claude can't launch `/speckit-implement` on its own
+  (e.g. when `speckit-analyze` or `speckit-converge` suggest it), and their
+  descriptions stay out of every session's context. The user launches every
+  phase anyway. Check it again when (see the
+  [Claude integration docs](https://github.github.io/spec-kit/integrations/claude.html)):
+  - a preset is installed, removed or updated: it resets the affected skills;
+    re-apply with `specify integration upgrade claude --force`;
+  - an upgrade passes `--integration-options`: it replaces the stored ones,
+    so repeat `--no-model-invocation`;
+  - an extension's mandatory hook runs a core command: the option breaks that
+    hook and has to be dropped.
+- The spec-kit CLI isn't installed, and Claude's shell runs in the
+  devcontainer without Docker access, so Claude never runs it. The user runs
+  it from the repo root on the host with
+  `uvx --from git+https://github.com/github/spec-kit.git@v<version> specify …`,
+  where `<version>` is the one in `.specify/integration.json`, so a command
+  like `integration upgrade` doesn't silently pull newer templates and skills.
+  Upgrading spec-kit means raising that version on purpose.
 
 ## Subagents
 
@@ -163,19 +263,5 @@ How the user works with Claude on this project. Applies to every session.
   `AGENTS.md`) in English.
 - Constitution (`.specify/memory/constitution.md`): English, like the
   `AGENTS.md` and `doc/` it indexes.
-- Feature artifacts (`specs/**`): content in Spanish, so the user reviews them
-  in their own language, but the section headings of the `.specify/templates/`
-  and the structural keywords the `speckit-*` skills look for (e.g.
-  "Constitution Check", task IDs) stay in English, so the templates and skills
-  work unchanged across spec-kit upgrades.
-  - Revisit: English would save ~2k tokens per `/feature-session`. When the
-    user asks to switch, drop this rule so the `speckit-*` skills generate in
-    English as they do by default, and ask whether existing `specs/**` get
-    translated or stay as they are.
-
-## Context
-
-- Start a new conversation when a topic is closed. Point the new session to
-  `AGENTS.md` and `doc/` instead of carrying the old history.
-- Reference files by path instead of pasting their content into chat.
-- Ask grouped questions when the answers are independent.
+- Feature artifacts (`specs/**`): English, as the `speckit-*` skills generate
+  by default. `specs/001-confirm-email/` predates this and stays in Spanish.

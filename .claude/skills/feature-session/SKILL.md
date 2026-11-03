@@ -20,14 +20,17 @@ session, stop and ask.
 
 1. Follow `AGENTS.md` and `doc/workflow.md` to the letter (learning mode: didactic
    proposal, no diffs or pasted code in chat, list every file, functional effect + design
-   rationale for structural changes, say what is tested; apply only once the user says they have no more doubts;
-   after applying, wait for the user's review). `doc/workflow.md` → "Spec-kit features"
-   explains this flow.
+   rationale for structural changes, say what is tested; several viable approaches follow
+   "Options"; explicit confirmation before writing, and apply only once the user says
+   they have no more doubts; after applying, wait for the user's review).
+   `doc/workflow.md` → "Spec-kit features" explains this flow, and "Commits" how this
+   session's commit is made.
 2. Read `<feature dir>/tasks.md`. The "Sessions" tables (the main one and one per
    `Convergence` phase, if any) say which tasks belong to this session and how it closes. Check that every task of earlier sessions is marked `[X]`;
    if not, stop and tell the user which ones are missing.
-3. Read `<feature dir>/spec.md` and `plan.md`, and from `research.md` only the decisions
-   cited by this session's tasks. Read the `doc/*.md` files whose `AGENTS.md` trigger
+3. Read `<feature dir>/spec.md` and `plan.md`, and from `research.workflow.md` only the
+   decisions cited by this session's tasks (a feature that predates it, such as
+   `specs/001-confirm-email/`, has only `research.md`: read that one instead). Read the `doc/*.md` files whose `AGENTS.md` trigger
    matches the work.
 4. Implement only this session's tasks, one proposal per task or per closely related group
    (list each task ID covered). Do NOT run `/speckit-implement`.
@@ -36,4 +39,5 @@ session, stop and ask.
    `tasks.md`.
 6. Stop and wait for the user's review. Apply any changes they ask for and wait again.
    Once they say it's all OK, commit the session with the message format in
-   `doc/workflow.md` → "Spec-kit features".
+   `doc/workflow.md` → "Spec-kit features", with no `Co-Authored-By` or other AI
+   attribution line (`doc/workflow.md` → "Commits"), whatever Claude Code's default says.

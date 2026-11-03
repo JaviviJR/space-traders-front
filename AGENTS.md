@@ -45,7 +45,11 @@ the rules that are judgment calls live in
 `vue-tsc --build` (part of `npm run build` and `npm run type-check`) is the
 type checker. Fix the cause of a type error; don't reach for `any`, a
 non-null assertion (`!`), or `// @ts-ignore` to silence it without asking
-first.
+first. The same goes for lint and format: fix the cause instead of adding,
+without asking first, a new suppression — an `eslint-disable`,
+`oxlint-disable` or `prettier-ignore` comment, a path added to an ignore list
+(`.prettierignore`, the `ignores` in `eslint.config.ts`, the `ignorePatterns`
+in `.oxlintrc.json`), or a rule turned `"off"`. Existing exclusions stay.
 
 ## Discover, don't guess
 
@@ -112,7 +116,7 @@ the task.
   propose to the user whether to generalize it into `doc/` or keep a comment
   in each file.
 - Record only what was decided: what won't be done isn't recorded (a
-  feature's rejected alternatives live in its spec-kit `research.md`). When a
+  feature's rejected alternatives live in its `research.workflow.md`). When a
   decision changes, rewrite the existing text instead of appending a note.
 
 ## Working agreements

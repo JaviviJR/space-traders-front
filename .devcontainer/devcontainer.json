@@ -36,7 +36,8 @@
         "waderyan.gitblame",
         "mhutchie.git-graph",
         "donjayamanne.githistory",
-        "GitHub.vscode-pull-request-github"
+        "GitHub.vscode-pull-request-github",
+        "ritwickdey.LiveServer"
       ]
     },
     "settings": {

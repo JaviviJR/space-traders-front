@@ -13,8 +13,9 @@ Source: `doc/architecture.md` (Layers, Rules per layer).
 
 ### II. The back's contract is the single source of truth
 
-Types, errors and mocks come from the generated contract; nothing is invented
-or hand-edited. Source: `doc/architecture.md` (api/, Back) and
+The front consumes the back's OpenAPI contract: types, errors and mocks come
+from the generated types, nothing is invented or hand-edited, and `error.code`
+is handled as an open set. Source: `doc/architecture.md` (api/, Back) and
 `doc/testing.md`.
 
 ### III. The smallest structure that satisfies SOLID
@@ -25,13 +26,23 @@ option. Source: `doc/conventions.md` (Design principles) and `AGENTS.md`
 
 ### IV. Tested the way the user would use it (NON-NEGOTIABLE)
 
-The plan says which unit and e2e tests cover each change, or why an e2e test
-doesn't apply. Source: `doc/testing.md` and `doc/workflow.md` (Proposals).
+The plan's "Testing" section names, for each change, the test that covers it
+and its type (unit, component or e2e), and the feature has at least one test
+that exercises it the way a user would; when an e2e test doesn't apply, it
+says why. Source: `doc/testing.md` and `doc/workflow.md` (Proposals).
 
 ### V. Quality checked by tools, without silencing errors
 
-Lint, format and type-check clean, without silencing the type checker.
-Source: `AGENTS.md` (Code style, Static analysis).
+Lint, format and type-check clean, with no new suppression (type checker,
+lint or format) unless the user approved it and the plan justifies it in
+"Complexity Tracking". Source: `AGENTS.md` (Code style, Static analysis).
+
+### VI. Framework and installed libraries before own code
+
+Each mechanism the plan picks is the one Vue or an installed library
+provides, checked against the docs of the installed version; own code instead
+is justified. Source: `AGENTS.md` (Discover, don't guess),
+`doc/dependencies.md` and `doc/conventions.md`.
 
 ## Additional Constraints
 
@@ -58,4 +69,4 @@ Recording decisions: `AGENTS.md` (Where documentation lives).
 - Compliance: a violation in the plan is accepted only when justified in its
   "Complexity Tracking" section.
 
-**Version**: 2.0.1 | **Ratified**: 2026-10-30 | **Last Amended**: 2026-10-31
+**Version**: 3.0.0 | **Ratified**: 2026-10-30 | **Last Amended**: 2026-11-03
