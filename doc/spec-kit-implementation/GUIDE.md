@@ -1,325 +1,244 @@
-# Spec-kit with project customizations
+To install this kit, paste into a Claude Code session started at the target repo's root
+(adjust the path if you copied the folder elsewhere):
+`Read doc/spec-kit-implementation/GUIDE.md and follow it to set up this repository.`
 
-A portable kit to set up [spec-kit](https://github.github.io/spec-kit/) with
-Claude Code in another repository, plus a catalog of optional customizations
-to spec-kit's default behaviour and to how Claude works with the user. Copy
-this whole folder to the target repo's `doc/` and follow the steps below.
+# Agent and spec-kit setup kit
 
-## How the kit works
+You are the agent installing this kit. This guide tells you how. Below, `<kit>` is the
+folder this guide is in, relative to the repo root.
 
-- `files/` holds every file to install, under neutral names (`claude-md.md`,
-  `agents-md.md`…). They aren't stored under their real names because Claude
-  Code discovers nested `CLAUDE.md` files and `.claude/skills/` folders in
-  subdirectories: a real-named copy here would load into the session as if it
-  were the project's own. Step 3 copies each one to its real path.
-- The base (below) is always installed. Every optional customization has an
-  id and is dropped whole; its rules and template changes are wrapped in
-  markers in every file that carries them:
+## What the kit is
 
-  ```
-  <!-- custom:<id> -->
-  …
-  <!-- /custom:<id> -->
-  ```
+Two layers of customizations, installed in order:
 
-  Dropping a customization means deleting its blocks, markers included.
-- Some blocks in the template overrides carry `replaces-core` in their
-  opening marker: the core template (`.specify/templates/<same name>.md`) has
-  other text there, or an empty block marks core text the customization
-  removed. To drop one, replace the block with the matching core lines.
-- `<<FILL: …>>` marks a value specific to the target project (stack,
-  commands, language). They use a different syntax from spec-kit's own
-  `[PLACEHOLDER]`s so a search finds only these.
-- The descriptions below are for the person choosing; the copied files carry
-  only the rules Claude follows. This guide is never loaded automatically, and
-  it keeps every entry, so a customization dropped today can be added back
-  later from `files/`.
+1. **Agent layer** (`<kit>/files/agent/`): how Claude works in the repo: `CLAUDE.md`,
+   `AGENTS.md` and `doc/workflow.md`. It never mentions spec-kit, so small changes can be
+   made without spec-kit's flow, and it can be installed alone.
+2. **Spec-kit layer** (`<kit>/files/spec-kit/`): a spec-kit preset and two skills. It
+   loads only inside its skills. It may refer to the agent layer (`AGENTS.md` → Done
+   when, Testing; `doc/workflow.md` → Options, "if that section exists"), never the other
+   way round. It requires the agent layer.
 
-## Prerequisites
+How the files work:
 
-- [uv](https://docs.astral.sh/uv/) (spec-kit runs with `uvx`, no install).
-- [Claude Code](https://code.claude.com/docs).
-- A git repository.
+- They are stored under neutral names (`claude-md.md`, `feature-session-skill.md`…)
+  because Claude Code discovers `CLAUDE.md` files and `.claude/skills/` folders in
+  subdirectories: a real-named copy here would load as if it were the project's own. You
+  copy each one to its real path.
+- Every optional part is a `##` section (in the preset, a whole file): dropping it means
+  deleting it. In `workflow.md` → Preferences, each bullet is dropped on its own. Nothing
+  else needs editing when something is dropped.
+- `<<FILL: …>>` marks a value specific to the project. They use a different syntax from
+  spec-kit's own `[PLACEHOLDER]`s so a search finds only these.
 
-## Base (always installed)
+## How you work during the setup
 
-- **Pinned version**: `uvx … specify` would otherwise pull the latest
-  spec-kit, and an upgrade could bring new templates and skills unnoticed.
-  The version is pinned in every command and raised on purpose; spec-kit is
-  customized only through its own mechanisms (overrides, presets, integration
-  options, extensions), never by editing generated files, so an upgrade never
-  undoes a project change. Claude never runs the CLI; the user does.
-- **Announced deviations**: when a project rule makes Claude skip or change a
-  step of a `speckit-*` skill, it says so at that moment: one line when a
-  written rule settles it; otherwise it handles it as a conflict between
-  sources (AGENTS.md → Conflicts between sources) and waits.
+- Never invent a `<<FILL>>` value: ask the user, offering what you found in the repo
+  (stack, scripts, existing docs) as a suggestion.
+- Before each step that writes a file or runs a command that changes state, say what it
+  will change and wait for the user's confirmation.
+- When an existing rule in the repo contradicts the kit, name both, quote them and ask
+  which one wins before writing.
+- When a decision has several viable approaches, explain each and recommend one.
+- Feature artifacts stay in English, spec-kit's default. If the user wants another
+  language, see Part 2 → Artifact language.
 
-Both live unmarked in `workflow.md` → Spec-kit features; the conflicts
-section in `agents-md.md`.
+## Step 0: detect the situation
 
-### Preferences
+Before changing anything, check and report to the user:
 
-Installed unmarked in `workflow.md` → Preferences. Each bullet is
-independent: delete the ones you don't want.
+- Whether `CLAUDE.md` and `AGENTS.md` exist, and whether `CLAUDE.md` imports
+  `@AGENTS.md`. Whether `doc/workflow.md` exists.
+- Whether spec-kit is installed (`.specify/integration.json`): its version, integration
+  and options (`raw_options`).
+- If installed: files in `.specify/templates/overrides/`; whether
+  `.specify/memory/constitution.md` has real content (not the template's placeholders);
+  features in `specs/` with unfinished tasks.
+- Whether `uv` is available (`uv --version`). If not, give the user the install command
+  from <https://docs.astral.sh/uv/getting-started/installation/> and wait: never install
+  it yourself.
 
-- **Language**: chat, documentation and feature artifacts languages, set
-  separately. **Fill**: the three languages.
-- **User-run commands**: Claude never runs the listed commands, even when
-  the permission mode would allow it; it gives them in one block with a note
-  per command and a docs link, the user runs them, and Claude verifies by
-  reading files. **Fill**: which commands (e.g. package installs).
-- **No AI attribution**: Claude Code adds `Co-Authored-By: Claude` to commits
-  by default; with it, commits carry no AI attribution line.
-- **Subagent model**: by default Claude Code runs every subagent on the main
-  session's model. With it, Claude passes a cheap model when the expected
-  result is one closed, checkable sentence, and keeps the default model when
-  the subagent has to resolve ambiguity or make a design call.
+## Part 1: agent layer
 
-## Catalog
+### Copy or merge
 
-| Id | Area | Blocks in |
-|---|---|---|
-| `options` | Claude + spec-kit | workflow.md |
-| `learning-mode` | Claude | workflow.md |
-| `record-decisions` | Claude | agents-md.md |
-| `tests-required` | spec-kit | plan-template.md, tasks-template.md |
-| `sessions` | spec-kit | workflow.md, plan-template.md, tasks-template.md; the whole feature-session-skill.md; init option |
-| `dual-research` | spec-kit | workflow.md, plan-template.md, feature-session-skill.md |
-| `constitution-gates` | spec-kit | step 5 below (no file blocks) |
+- **None of them exists**: copy `<kit>/files/agent/claude-md.md` → `CLAUDE.md`,
+  `agents-md.md` → `AGENTS.md`, `workflow.md` → `doc/workflow.md`.
+- **Some exist**: merge, never overwrite or delete existing content:
+  - Only `AGENTS.md`: create `CLAUDE.md` from `claude-md.md` (it imports `@AGENTS.md`).
+  - Only `CLAUDE.md`: create `AGENTS.md`, and put `@AGENTS.md` at the top of `CLAUDE.md`;
+    its existing content stays below the import.
+  - Both: add the import to `CLAUDE.md` if missing.
+  - Add the kit's sections missing from `AGENTS.md`, and copy `doc/workflow.md` (or merge
+    it if it exists) with `AGENTS.md`'s import of it.
+  - Where an existing section covers the same ground as a kit section (e.g. a list of
+    checks vs Done when), show both and let the user pick: merge into the kit's section,
+    keep theirs, or keep both.
+  - If the existing files are small or disorganized, you may also offer to normalize:
+    move everything into `AGENTS.md` under the kit's sections, leaving `CLAUDE.md` with
+    the import only. Do it only with the user's explicit agreement.
 
-#### `options`
+### Pick the sections
 
-- **Default**: Claude picks an approach or gives a short list;
-  `/speckit-clarify` asks each question with one line per option;
-  `/speckit-plan` makes the technical decisions and writes them straight into
-  the research file, and settles on its own a requirement that clashes with a
-  project rule.
-- **With it**: when several approaches are viable, Claude explains each one,
-  says what the official docs recommend (or that they have no stance),
-  compares the complexity of the resulting code, says under which condition
-  another option would win, and ends with a recommendation, one decision at a
-  time. The same applies in spec-kit:
-  - `/speckit-clarify`: questions that clash with a rule or change something
-    hard to undo (an external contract, the flow the user sees, state that
-    persists) use this format; simple ones keep the skill's short one.
-  - `/speckit-plan`: each decision with several viable approaches is
-    presented in chat before anything is written.
-  - `/speckit-plan` conflicts: the user picks one of three routes: change the
-    spec (back to `/speckit-clarify`), change the project rule, or keep the
-    exception justified in "Complexity Tracking".
+Explain each optional section to the user from this table and ask which ones to keep.
+Delete the rest. If `doc/workflow.md` ends up empty, delete it and the "Working
+agreements" section of `AGENTS.md`.
 
-#### `learning-mode`
+| Section | File | Without it (Claude Code's default) | With it | Fill |
+|---|---|---|---|---|
+| Intro (base) | `AGENTS.md` | Claude infers the stack by exploring. | Claude knows the stack and doesn't assume a library that isn't in the dependency list. | The paragraph. |
+| Conflicts between sources (base) | `AGENTS.md` | Claude picks between disagreeing sources silently. | It names both, quotes them and says which it follows and why, before acting. | — |
+| Decision docs (base) | `AGENTS.md` | No index of project docs. | Each `doc/*.md` is read only when its trigger matches the task; closed decisions are recorded in the same change, in a doc or a code comment. | One bullet per doc; may start empty. |
+| Done when (base) | `AGENTS.md` | Claude decides which checks to run. | A change is done only when the listed checks pass, plus end-to-end when it applies. | The checks and their commands. |
+| Testing | `AGENTS.md` | Proposals don't have to name tests. | Every proposed change says which test covers it and whether an end-to-end test applies. | The project's test types. |
+| Preferences → Language | `doc/workflow.md` | Claude answers in the user's language; docs in whatever it picks. | Chat and documentation languages fixed. | Both languages. |
+| Preferences → User-run commands | `doc/workflow.md` | Claude runs whatever the permission mode allows. | The listed commands are given to the user in one block with a note and a docs link each; Claude verifies by reading files. | Which commands. |
+| Preferences → No AI attribution | `doc/workflow.md` | Commits get a `Co-Authored-By: Claude` trailer. | No AI attribution line. | — |
+| Preferences → Subagent model | `doc/workflow.md` | Subagents run on the session's model. | A cheap model for closed, checkable tasks; the default one for judgment calls. | — |
+| Options | `doc/workflow.md` | Claude picks an approach or gives a short list. | Each viable approach explained with what the docs say and the complexity it adds, a recommendation, one decision at a time. Spec-kit's clarify and plan use it too. | — |
+| Learning mode | `doc/workflow.md` | Claude makes the change and summarizes it. | Every change explained as a guided exercise, with the concepts involved; nothing applied until the user has no more doubts; a list of known concepts only named. | What the user learns, the framework, known concepts. |
 
-- **Default**: Claude makes the change and summarizes it; the user approves
-  it in the permission prompt.
-- **With it**: every change is explained first as a guided exercise, naming
-  the concepts involved, with code (a snippet, a diff, a minimal example)
-  when it makes the explanation clearer, and the list of files affected.
-  Structural changes split into what it does and why this design. Claude says
-  which skill a decision comes from, invites questions and applies nothing
-  until the user has no more doubts. A list of concepts the user already
-  knows is only named, not explained, and is updated when the user says they
-  know or forgot one.
-- **Fill**: what the user is learning, the framework or language, and the
-  known concepts (may start empty).
+Then fill every `<<FILL>>` left in these files.
 
-#### `record-decisions`
+## Part 2: spec-kit layer
 
-- **With it**: when a decision is closed, it's recorded in the same change:
-  in a `doc/*.md` when it applies to several files, in a comment in the file
-  when it's specific to one. Docs describe mechanisms, not inventories of
-  what the code already says; a single case never becomes a doc rule.
-- **Where**: `agents-md.md` (Where documentation lives).
+Requires Part 1. Pieces:
 
-#### `tests-required`
+| Piece | Source | Installed at | Without it (spec-kit's default) | With it |
+|---|---|---|---|---|
+| Preset `project-workflow` | `<kit>/files/spec-kit/preset/` | `presets/project-workflow/` | Clarify asks with one line per option; plan decides alone and settles clashes with project rules itself; tests optional and TDD; `tasks.md` suggests parallel team work; `/speckit-implement` runs everything in one go. | Clarify and plan present decisions following `doc/workflow.md` → Options (if it exists) and plan resolves rule conflicts with the user; plan has a Testing section and each row becomes a test task, no TDD; `tasks.md` ends with a Sessions table. |
+| Skill `feature-session` | `<kit>/files/spec-kit/feature-session-skill.md` | `.claude/skills/feature-session/SKILL.md` | — | Each Sessions row is implemented in a new conversation, closed with its checks and reviewed by the user, then committed with `Session:` and `Tasks:` trailers. |
+| Skill `spec-kit-maintenance` | `<kit>/files/spec-kit/maintenance-skill.md` | `.claude/skills/spec-kit-maintenance/SKILL.md` | — | Loads when spec-kit's setup changes: pinned CLI, no edits to generated files, presets, integration options, upgrades. |
 
-- **Default**: tests are optional ("only if the spec asks for them"), written
-  first and failing (TDD), and tasks say "commit after each task".
-- **With it**: the plan has a Testing section with one row per change (which
-  test, which type, why); each row becomes a test task in the same phase as
-  the code it covers. No TDD, no commit per task.
-- **Fill**: the project's test types and an example row in
-  `plan-template.md`.
+All three go together: the preset's Sessions table needs `feature-session`, and the
+preset needs the maintenance rules.
 
-#### `sessions`
+### 1. Version
 
-- **Default**: `tasks.md` suggests parallel work by team members;
-  `/speckit-implement` runs every phase in one go, creates or rewrites ignore
-  files (`.gitignore`, `.prettierignore`, linter ignores, a `.dockerignore`
-  when a Dockerfile exists), and Claude may launch it on its own when
-  `/speckit-analyze` or `/speckit-converge` suggest it. There's no commit
-  format.
-- **With it**:
-  - `tasks.md` groups tasks by user story and ends with a Sessions table, one
-    row per work session with its close checks and the exact command to
-    start it.
-  - Each row runs in a new Claude Code conversation with
-    `/feature-session <dir> <id>`, which reads the context from the feature's
-    artifacts, not from chat history. Progress is the `[X]` marks in
-    `tasks.md`.
-  - Once the user says a session is all OK, Claude commits it as
-    `<type>(<feature>): <session> <summary>` with `Session:` and `Tasks:`
-    trailers, queryable with `git log`. Outside a session, the user commits.
-  - `/speckit-converge`'s phase gets its own Sessions table, numbered after
-    the last session.
-  - `/speckit-implement` is never run, and the integration option
-    `--no-model-invocation` marks every core `speckit-*` skill as
-    user-invocable only, which also keeps their descriptions out of every
-    session's context. The rule lists when the option has to be re-applied.
-- **Fill**: the session close checks in `plan-template.md` and
-  `tasks-template.md`.
-- **Without it**: features are implemented with `/speckit-implement`; drop
-  the init option in step 2 too.
+Ask the user which spec-kit release to use, at least `1.2.5` (the preset's
+`requires`), from <https://github.com/github/spec-kit/releases>. Every command below is
+`uvx --from git+https://github.com/github/spec-kit.git@v<version> specify …`, run from
+the repo root; never run it without the pin. If spec-kit is installed, use its version
+unless the user decides to upgrade (as a change of its own, following the maintenance
+skill).
 
-#### `dual-research`
+### 2. Install or adapt spec-kit
 
-- **Default**: spec-kit writes `research.md`.
-- **With it**: it also writes `research.workflow.md` with the same decisions
-  under the project's rules: cites the official docs, keeps the spec's closed
-  decisions with their rejected alternatives. `/feature-session` reads this
-  one.
-- **Why**: compare what the project's rules change against spec-kit's
-  default. Experimental: drop it when the comparison stops adding anything.
+- **Not installed**:
+  `specify init --here --integration claude --integration-options "--no-model-invocation"`.
+  In a non-empty directory it asks for confirmation and fails without a terminal: add
+  `--force`, which merges into the existing files (it writes only `.claude/skills/` and
+  `.specify/`). Check flag names with `specify init --help` for the pinned version.
+- **Installed**:
+  - Version below `1.2.5`: the preset can't be installed; propose the upgrade first.
+  - Version above `1.2.5`: before installing the preset, compare its two templates with
+    the core ones (`.specify/templates/plan-template.md`, `tasks-template.md`) and report
+    differences beyond those listed in each template's header comment.
+  - Options without `--no-model-invocation`: run
+    `specify integration upgrade claude --force --integration-options "--no-model-invocation"`
+    (keeping any other stored options). It regenerates the `speckit-*` skills: first
+    show the user any hand edits in them (`git log`/`git diff` on `.claude/skills/speckit-*`),
+    which will be lost.
+  - Overrides of `plan-template` or `tasks-template` in `.specify/templates/overrides/`
+    take precedence over the preset. For each one, diff it against the core template,
+    show the user each difference and ask whether to bring it into the preset's template
+    (in `presets/project-workflow/`, also adding it to the header comment) or drop it.
+    Then delete the override. Overrides of other templates stay.
+  - Features in progress keep their current flow; the new templates apply to new
+    features. Without a Sessions table, `/feature-session` doesn't apply to them: tell
+    the user.
 
-#### `constitution-gates`
+### 3. Preset and skills
 
-- **Default**: the constitution holds the rules written out in it.
-- **With it**: each principle is only a gate the plan must pass, linking to
-  the doc where the rule lives, so the two can't drift apart. Exceptions are
-  justified in "Complexity Tracking", a disagreement with another source is
-  flagged before acting, and the constitution is versioned with semver as
-  gates are added, removed or redefined.
-- **Where**: the text passed to `/speckit-constitution` in step 5. Until the
-  project has `doc/*.md` files to link to, a gate can hold its rule directly.
-
-## Installation
-
-Run every command from the target repo's root.
-
-### 1. Pick a spec-kit version
-
-Pick a release from
-[spec-kit's releases](https://github.com/github/spec-kit/releases). Every
-command below uses `@v<version>`; never run `specify` without it.
-
-### 2. Initialize spec-kit
+Copy `<kit>/files/spec-kit/preset/` to `presets/project-workflow/` (outside `.specify/`,
+so it's tracked and editable), then:
 
 ```sh
-uvx --from git+https://github.com/github/spec-kit.git@v<version> specify init --here --integration claude --integration-options "--no-model-invocation"
+specify preset add --dev presets/project-workflow
+specify integration upgrade claude --force
 ```
 
-- `--here`: initialize in the current directory.
-- `--integration claude`: generate Claude Code skills (`.claude/skills/speckit-*`).
-- `--integration-options "--no-model-invocation"`: only with `sessions`.
+Installing a preset resets `disable-model-invocation` in the skills it touches; the
+upgrade restores it and keeps the preset's appended sections.
 
-Flag names can change between versions: check `specify init --help` for the
-pinned one, and the
-[Claude integration docs](https://github.github.io/spec-kit/integrations/claude.html).
-Afterwards `.specify/integration.json` records the version and the options.
+Copy the two skills to their paths in the table above. In the maintenance skill, fill the
+kit folder's path (`<kit>`).
 
-### 3. Copy the files
+### 4. Artifact language
 
-If the repo already has a `CLAUDE.md`, don't overwrite it: add `@AGENTS.md`
-to it. If it already has an `AGENTS.md`, merge `files/agents-md.md` into it
-instead of copying, keeping the import of `doc/workflow.md`. Skip the last
-line if you drop `sessions`.
+Only if the user wants feature artifacts in a language other than English. Add this
+section to the preset's existing command files (`commands/speckit.clarify.md`,
+`speckit.plan.md`, `speckit.converge.md`), and create append files with it for
+`speckit.specify`, `speckit.tasks` and `speckit.checklist`, each with its entry in
+`preset.yml` (`type: "command"`, `strategy: "append"`):
 
-```sh
-KIT=doc/spec-kit-implementation/files
-mkdir -p .specify/templates/overrides .claude/skills/feature-session
-cp "$KIT/claude-md.md" CLAUDE.md
-cp "$KIT/agents-md.md" AGENTS.md
-cp "$KIT/workflow.md" doc/workflow.md
-cp "$KIT/plan-template.md" .specify/templates/overrides/plan-template.md
-cp "$KIT/tasks-template.md" .specify/templates/overrides/tasks-template.md
-cp "$KIT/feature-session-skill.md" .claude/skills/feature-session/SKILL.md
+```markdown
+## Artifact language
+
+Write the text of the artifacts this command creates or edits in <language>. Keep the
+template's headings and identifiers as they are.
 ```
 
-### 4. Drop the customizations you don't want
+Then update the preset as the maintenance skill says.
 
-For each id you drop, using the catalog's "Blocks in" column:
+### 5. Constitution
 
-1. Delete every `custom:<id>` block in the copied files, markers included.
-2. Where the opening marker says `replaces-core`, put back the matching lines
-   from the core template (`.specify/templates/plan-template.md` or
-   `tasks-template.md`).
-3. If an override ends up with no `custom:` blocks, delete the override file:
-   the core template then applies and upgrades reach it.
-
-The markers of the customizations you keep can stay: they mark what to
-compare after an upgrade and what to delete later.
-
-Then delete the Preferences bullets you don't want in `doc/workflow.md`.
-
-### 5. Create the constitution
-
-Run `/speckit-constitution` in Claude Code followed by the project's
-principles. With `constitution-gates`, add this text after them:
+You can't run `/speckit-constitution` (the integration option makes it user-only). Ask
+the user for the project's principles; for each one, find the `AGENTS.md` section or
+`doc/*.md` where its rule lives. Then give the user the full command to run: the
+principles (each as a gate with its `Source:`, or with its rule stated directly when no
+document has it yet) followed by this text:
 
 ```text
-Each principle is a gate that /speckit-plan's "Constitution Check" must verify.
-The rule's text and its rationale live in the linked document (AGENTS.md or a
-doc/*.md); if they change there, the constitution stays untouched. A principle
-whose rule has no document yet states it directly, and moves to a link when
-the document exists.
+Each principle is a gate that /speckit-plan's "Constitution Check" must verify. The
+rule's text and its rationale live in the linked document (AGENTS.md or a doc/*.md); if
+they change there, the constitution stays untouched. A principle whose rule has no
+document yet states it directly, and moves to a link when the document exists.
 Governance:
-- AGENTS.md and doc/*.md are the source of truth; the constitution only lists
-  the gates and doesn't repeat their text.
-- If the constitution disagrees with AGENTS.md, a doc/*.md or a skill, warn the
-  user before acting, quoting both sources.
-- Amendments are proposed to the user and applied only with their approval;
-  the constitution changes only when a gate is added, removed or redefined.
-- Semantic versioning: MAJOR when a gate is removed or redefined, MINOR when
-  one is added, PATCH for wording.
-- A violation in a plan is accepted only when justified in its "Complexity
-  Tracking" section.
+- AGENTS.md and doc/*.md are the source of truth; the constitution only lists the gates
+  and doesn't repeat their text.
+- If the constitution disagrees with AGENTS.md, a doc/*.md or a skill, warn the user
+  before acting, quoting both sources.
+- Amendments are proposed to the user and applied only with their approval; the
+  constitution changes only when a gate is added, removed or redefined.
+- Semantic versioning: MAJOR when a gate is removed or redefined, MINOR when one is
+  added, PATCH for wording.
+- A violation in a plan is accepted only when justified in its "Complexity Tracking"
+  section.
 ```
 
-With `tests-required`, include a testing gate (every change names the test
-that covers it, at least one test exercises the feature as a user would), so
-the templates' references to "the constitution's testing gate" resolve.
+- Don't add a gate for the checks in `AGENTS.md` → Done when: they're verified when each
+  change closes.
+- If `AGENTS.md` has Testing, suggest a testing gate: every change names the test that
+  covers it, and the feature has at least one test that exercises it the way a user
+  would. `plan-template.md` refers to it.
+- If a constitution already exists, running the command restructures it: tell the user
+  and propose it as a change of its own.
 
-### 6. Fill the placeholders and check
+### 6. Check
 
-Replace every `<<FILL: …>>`, then check that none is left and that only the
-customizations you kept still have markers:
-
-```sh
-grep -rn "<<FILL" CLAUDE.md AGENTS.md doc/workflow.md .specify/templates/overrides .claude/skills/feature-session
-grep -rhoE "custom:[a-z-]+" AGENTS.md doc/workflow.md .specify/templates/overrides .claude/skills/feature-session | sort -u
-```
-
-The first command must print nothing; the second, only the ids you kept.
+- `grep -rn "<<FILL" CLAUDE.md AGENTS.md doc/workflow.md presets .claude/skills/feature-session .claude/skills/spec-kit-maintenance`
+  prints nothing.
+- `grep -L "disable-model-invocation: true" .claude/skills/speckit-*/SKILL.md` prints
+  nothing.
+- `grep -n "Project rules for this phase" .claude/skills/speckit-{clarify,plan,converge}/SKILL.md`
+  finds the three.
+- `specify preset resolve plan-template` and `tasks-template` show
+  `project-workflow` as the top layer.
 
 ### 7. First feature
 
-`/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks`
-→ `/speckit-analyze`, reviewing each phase's output before the next. With
-`sessions`, implement each row of the Sessions table in a new conversation
-with the command in its "Command" column.
+Tell the user the flow: `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` →
+`/speckit-tasks` → `/speckit-analyze`, reviewing each phase's output before the next.
+Then each row of the Sessions table is run in a new conversation with the command in its
+"Command" column. Never `/speckit-implement`: it runs every phase in one go and rewrites
+ignore files.
 
-## After a spec-kit upgrade
+## Experimental: dual research
 
-- Compare each override with the new core template (e.g.
-  `diff .specify/templates/tasks-template.md .specify/templates/overrides/tasks-template.md`):
-  the differences should be only the `custom:` blocks. Bring any other new
-  core text into the override.
-- With `sessions`, check that the `speckit-*` skills still have
-  `disable-model-invocation: true`, and re-apply as the rule in
-  `doc/workflow.md` says.
-
-## Adding a customization back later
-
-Its blocks are still in `files/`: copy each one into the installed file at
-the same place, and fill its `<<FILL>>`s.
-
-## Possible evolution: presets
-
-The rules that only add instructions to one spec-kit phase (the
-`/speckit-clarify` and `/speckit-plan` parts of `options`, `dual-research`,
-the `/speckit-converge` part of `sessions`) could become a spec-kit
-[preset](https://github.github.io/spec-kit/presets/overview.html) with
-`append` contributions to the matching command. They would then load only
-when that phase runs, instead of in every session. The cost: a CLI step to
-enable or disable each one, and re-applying `--no-model-invocation` after
-every preset change.
+`<kit>/files/spec-kit/experimental/dual-research/` is a separate preset (append to
+`speckit.plan`): the plan also writes `research.workflow.md`, the same decisions under the
+project's rules, to compare against spec-kit's default `research.md`. Nothing else reads
+it; `/feature-session` always reads `research.md`. Offer it only if the user wants that
+comparison; install it like the main preset (into `presets/dual-research/`), and remove
+it when the comparison stops adding anything.
