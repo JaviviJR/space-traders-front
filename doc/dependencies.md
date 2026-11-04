@@ -2,15 +2,13 @@
 
 ## Adding features: npm, then its own docs
 
-New capabilities come from an npm package (the user runs the install, see
-below), configured the way its own docs show (Vite plugin, Vue plugin, etc.).
+New capabilities come from an npm package (the user runs the install),
+configured the way its own docs show (Vite plugin, Vue plugin, etc.).
 Unlike Symfony Flex, npm has no recipe system that auto-wires config for you —
 so after installing, check the library's setup docs yourself rather than
 guessing the config shape.
 Don't hand-roll what a library already does well (routing, icons, HTTP,
-dialogs...); check [Library docs](#library-docs) before adding anything, and
-new dependencies follow the install rule in
-[Steps and installs](workflow.md#steps-and-installs).
+dialogs...); check [Library docs](#library-docs) before adding anything.
 
 ## Library docs
 

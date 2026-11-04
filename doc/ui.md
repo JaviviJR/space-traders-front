@@ -17,12 +17,8 @@
   its cost (bundle size, learning curve) and whether building it ourselves
   would be simpler.
 - Keep suggestions as a short list, separate from the requested change, so
-  the user can pick which to apply. They follow
-  [Learning mode](workflow.md#learning-mode) (shown first, applied only once
-  the user agrees), and adding a library follows the dependency rule in
-  [Steps and installs](workflow.md#steps-and-installs). Use the
-  `frontend-design` skill for visual direction and `web-design-guidelines` to
-  review UI code.
+  the user can pick which to apply. Use the `frontend-design` skill for
+  visual direction and `web-design-guidelines` to review UI code.
 
 ## UI / component libraries
 

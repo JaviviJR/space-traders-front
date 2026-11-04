@@ -36,7 +36,7 @@ USER root
 # Para Claude
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends python3 python3-reportlab poppler-utils \
+    && apt-get install -y --no-install-recommends python3 python3-reportlab python3-yaml poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # uv/uvx para ejecutar el CLI de spec-kit (uvx … specify) con la versión fijada
