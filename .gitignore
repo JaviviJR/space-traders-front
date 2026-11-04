@@ -51,3 +51,4 @@ doc/imgs/
 doc/pdfs/
 # Instrucciones personales de Claude Code
 CLAUDE.local.md
+.claude/settings.local.json

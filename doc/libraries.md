@@ -1,17 +1,4 @@
----
-name: library-docs
-description: Where to find the official docs for this project's libraries (llms.txt indexes, the PrimeVue v4 mirror, VueUse by tag) and the research order docs → issues → source. Use before looking up a library API, choosing or suggesting a UI/component library, adding or upgrading a dependency, configuring a newly installed package, or diagnosing a bug inside a third-party library.
----
-
-# Library docs
-
-## Adding a capability
-
-New capabilities come from an npm package (the user runs the install),
-configured the way its own docs show (Vite plugin, Vue plugin, etc.). npm has
-no recipe system that wires config for you, so read the library's setup docs
-instead of guessing the config shape. Don't hand-roll what a library already
-does well (routing, icons, HTTP, dialogs…).
+# Libraries: docs and research
 
 ## Choosing a UI/component library
 
@@ -31,8 +18,8 @@ versions are in `package-lock.json`.
   Vue Router (`router.vuejs.org/llms.txt`), Vite (`vite.dev/llms.txt`),
   Vitest (`vitest.dev/llms.txt`), Fontsource (`fontsource.org/llms.txt`).
   Fetch the specific page it links to. To search a whole site, download its
-  `llms-full.txt` to the scratchpad and grep it instead of reading it into
-  context.
+  `llms-full.txt` to a temporary directory and grep it instead of reading it
+  whole.
 - PrimeVue 4 (and `tailwindcss-primeui`, on the Tailwind page): frozen mirror
   at `v4.primevue.org` (its footer shows the version). Index at
   `v4.primevue.org/llms/llms.txt`, per-page Markdown at
