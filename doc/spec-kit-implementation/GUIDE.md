@@ -13,8 +13,8 @@ this whole folder to the target repo's `doc/` and follow the steps below.
   subdirectories: a real-named copy here would load into the session as if it
   were the project's own. Step 3 copies each one to its real path.
 - The base (below) is always installed. Every optional customization has an
-  id, and its rules and template changes are wrapped in markers in every file
-  that carries them:
+  id and is dropped whole; its rules and template changes are wrapped in
+  markers in every file that carries them:
 
   ```
   <!-- custom:<id> -->
@@ -22,9 +22,7 @@ this whole folder to the target repo's `doc/` and follow the steps below.
   <!-- /custom:<id> -->
   ```
 
-  Dropping a customization means deleting its blocks, markers included. A
-  marker can sit inside another one's block (e.g. `record-decisions` inside
-  `dual-research`): deleting the outer block removes the inner one too.
+  Dropping a customization means deleting its blocks, markers included.
 - Some blocks in the template overrides carry `replaces-core` in their
   opening marker: the core template (`.specify/templates/<same name>.md`) has
   other text there, or an empty block marks core text the customization
@@ -59,14 +57,31 @@ this whole folder to the target repo's `doc/` and follow the steps below.
 Both live unmarked in `workflow.md` → Spec-kit features; the conflicts
 section in `agents-md.md`.
 
+### Preferences
+
+Installed unmarked in `workflow.md` → Preferences. Each bullet is
+independent: delete the ones you don't want.
+
+- **Language**: chat, documentation and feature artifacts languages, set
+  separately. **Fill**: the three languages.
+- **User-run commands**: Claude never runs the listed commands, even when
+  the permission mode would allow it; it gives them in one block with a note
+  per command and a docs link, the user runs them, and Claude verifies by
+  reading files. **Fill**: which commands (e.g. package installs).
+- **No AI attribution**: Claude Code adds `Co-Authored-By: Claude` to commits
+  by default; with it, commits carry no AI attribution line.
+- **Subagent model**: by default Claude Code runs every subagent on the main
+  session's model. With it, Claude passes a cheap model when the expected
+  result is one closed, checkable sentence, and keeps the default model when
+  the subagent has to resolve ambiguity or make a design call.
+
 ## Catalog
 
 | Id | Area | Blocks in |
 |---|---|---|
 | `options` | Claude + spec-kit | workflow.md |
 | `learning-mode` | Claude | workflow.md |
-| `preferences` | Claude | workflow.md |
-| `record-decisions` | Claude | agents-md.md, workflow.md |
+| `record-decisions` | Claude | agents-md.md |
 | `tests-required` | spec-kit | plan-template.md, tasks-template.md |
 | `sessions` | spec-kit | workflow.md, plan-template.md, tasks-template.md; the whole feature-session-skill.md; init option |
 | `dual-research` | spec-kit | workflow.md, plan-template.md, feature-session-skill.md |
@@ -108,30 +123,13 @@ section in `agents-md.md`.
 - **Fill**: what the user is learning, the framework or language, and the
   known concepts (may start empty).
 
-#### `preferences`
-
-Four independent bullets; delete the ones you don't want:
-
-- **Language**: chat, documentation and feature artifacts languages, set
-  separately. **Fill**: the three languages.
-- **User-run commands**: Claude never runs the listed commands, even when
-  the permission mode would allow it; it gives them in one block with a note
-  per command and a docs link, the user runs them, and Claude verifies by
-  reading files. **Fill**: which commands (e.g. package installs).
-- **No AI attribution**: Claude Code adds `Co-Authored-By: Claude` to commits
-  by default; with it, commits carry no AI attribution line.
-- **Subagent model**: Claude picks a subagent's model by how much judgment the
-  task needs: a cheap model for closed, checkable tasks (search, summarize,
-  run and report); a stronger one for design calls or anything hard to undo.
-
 #### `record-decisions`
 
 - **With it**: when a decision is closed, it's recorded in the same change:
   in a `doc/*.md` when it applies to several files, in a comment in the file
   when it's specific to one. Docs describe mechanisms, not inventories of
   what the code already says; a single case never becomes a doc rule.
-- **Where**: `agents-md.md` (Where documentation lives), plus one sentence
-  inside `dual-research` in `workflow.md`.
+- **Where**: `agents-md.md` (Where documentation lives).
 
 #### `tests-required`
 
@@ -178,8 +176,7 @@ Four independent bullets; delete the ones you don't want:
 - **Default**: spec-kit writes `research.md`.
 - **With it**: it also writes `research.workflow.md` with the same decisions
   under the project's rules: cites the official docs, keeps the spec's closed
-  decisions with their rejected alternatives and, with `record-decisions`,
-  says where else each decision is recorded. `/feature-session` reads this
+  decisions with their rejected alternatives. `/feature-session` reads this
   one.
 - **Why**: compare what the project's rules change against spec-kit's
   default. Experimental: drop it when the comparison stops adding anything.
@@ -251,6 +248,8 @@ For each id you drop, using the catalog's "Blocks in" column:
 
 The markers of the customizations you keep can stay: they mark what to
 compare after an upgrade and what to delete later.
+
+Then delete the Preferences bullets you don't want in `doc/workflow.md`.
 
 ### 5. Create the constitution
 

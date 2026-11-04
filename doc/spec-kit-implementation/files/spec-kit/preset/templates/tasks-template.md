@@ -4,12 +4,14 @@ description: "Task list template for feature implementation"
 ---
 
 <!--
-  Project override of the core .specify/templates/tasks-template.md (spec-kit resolves
-  .specify/templates/overrides/ first, and upgrades only replace the core file, so compare
-  both after an upgrade). Each change is wrapped in custom:<id> markers; the ids are
-  described in doc/spec-kit-implementation/GUIDE.md → Catalog. A marker marked
-  "replaces-core" stands where the core template has other text (an empty block removed it).
-  Do not copy this comment or any custom:* marker into the generated tasks.md.
+  Replaces the core tasks-template.md (project-workflow preset). After a spec-kit
+  upgrade, compare it with the new core template; the intended differences are:
+  - Tests: required (from plan.md → Testing), in the same phase as the code they
+    cover; no "OPTIONAL", no TDD ("write first and fail").
+  - One developer: user stories run sequentially; the parallel-by-team text, the
+    "Parallel Example" section and "Parallel Team Strategy" are removed.
+  - "Sessions" replaces "Parallel Team Strategy"; no "commit after each task".
+  Do not copy this comment into the generated tasks.md.
 -->
 
 # Tasks: [FEATURE NAME]
@@ -18,9 +20,7 @@ description: "Task list template for feature implementation"
 
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-<!-- custom:tests-required replaces-core -->
 **Tests**: REQUIRED and listed in plan.md → Testing: each row there becomes one test task. TDD is not imposed: each test task goes in the same phase as the code it covers.
-<!-- /custom:tests-required -->
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -91,11 +91,9 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-<!-- custom:tests-required replaces-core -->
 ### Tests for User Story 1
 
 > **NOTE**: Write each test alongside the code it covers, in this same phase.
-<!-- /custom:tests-required -->
 
 - [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
@@ -119,9 +117,7 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-<!-- custom:tests-required replaces-core -->
 ### Tests for User Story 2
-<!-- /custom:tests-required -->
 
 - [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
@@ -143,9 +139,7 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-<!-- custom:tests-required replaces-core -->
 ### Tests for User Story 3
-<!-- /custom:tests-required -->
 
 - [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
@@ -171,9 +165,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Documentation updates in docs/
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-<!-- custom:tests-required replaces-core -->
 - [ ] TXXX [P] Additional unit tests in tests/unit/
-<!-- /custom:tests-required -->
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
 
@@ -186,9 +178,7 @@ Examples of foundational tasks (adjust based on your project):
 - **Setup (Phase 1)**: No dependencies - can start immediately
 - **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
 - **User Stories (Phase 3+)**: All depend on Foundational phase completion
-<!-- custom:sessions replaces-core -->
   - Then sequentially in priority order (P1 → P2 → P3)
-<!-- /custom:sessions -->
 - **Polish (Final Phase)**: Depends on all desired user stories being complete
 
 ### User Story Dependencies
@@ -199,9 +189,7 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Within Each User Story
 
-<!-- custom:tests-required replaces-core -->
 - Each test lives in the same phase as the code it covers
-<!-- /custom:tests-required -->
 - Models before services
 - Services before endpoints
 - Core implementation before integration
@@ -211,12 +199,8 @@ Examples of foundational tasks (adjust based on your project):
 
 - All Setup tasks marked [P] can run in parallel
 - All Foundational tasks marked [P] can run in parallel (within Phase 2)
-<!-- custom:sessions replaces-core -->
-<!-- /custom:sessions -->
 - All tests for a user story marked [P] can run in parallel
 - Models within a story marked [P] can run in parallel
-<!-- custom:sessions replaces-core -->
-<!-- /custom:sessions -->
 
 ---
 
@@ -238,27 +222,24 @@ Examples of foundational tasks (adjust based on your project):
 4. Add User Story 3 → Test independently → Deploy/Demo
 5. Each story adds value without breaking previous stories
 
-<!-- custom:sessions replaces-core -->
 ### Sessions
 
 <!--
   Group the tasks into sessions: each session is one new Claude Code conversation,
-  run with `/feature-session <feature dir> <session id>` (see doc/workflow.md →
-  sessions). Usually one session per phase; split a large phase and merge a
-  tiny one (e.g. a one-task Setup) into the next. Every task belongs to exactly one
-  session, in execution order. "Close" lists the checks that end the session, copied
-  from plan.md → Testing ("Session close checks") and the constitution's quality gate,
-  if any: the e2e check only in sessions that add or change an e2e test or touch code
-  one covers, and always in the last session. "Command" is the exact text the
+  run with `/feature-session <feature dir> <session id>`. Usually one session per
+  phase; split a large phase and merge a tiny one (e.g. a one-task Setup) into the
+  next. Every task belongs to exactly one session, in execution order. "Close" lists
+  the checks that end the session, with their commands, copied from AGENTS.md →
+  Done when: its end-to-end check where that section's condition applies to the
+  session's tasks, and always in the last session. "Command" is the exact text the
   user pastes into the new conversation, with this feature's real directory and the
   session id filled in.
 -->
 
 | Session | Tasks | Close | Command |
 |---|---|---|---|
-| S1 | T001–T00X | <<FILL: the session close checks from the plan template>> | `/feature-session specs/[###-feature-name] S1` |
+| S1 | T001–T00X | [checks from AGENTS.md → Done when] | `/feature-session specs/[###-feature-name] S1` |
 | S2 | ... | ... | ... |
-<!-- /custom:sessions -->
 
 ---
 
@@ -267,10 +248,6 @@ Examples of foundational tasks (adjust based on your project):
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability
 - Each user story should be independently completable and testable
-<!-- custom:tests-required replaces-core -->
-<!-- /custom:tests-required -->
-<!-- custom:sessions replaces-core -->
 - Mark each finished task `[X]` here; Claude commits each session once the user has reviewed it and says it's all OK
-<!-- /custom:sessions -->
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
