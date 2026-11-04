@@ -1,15 +1,18 @@
 ---
-name: "speckit-clarify"
-description: "Identify underspecified areas in the current feature spec by asking up to 5 highly targeted clarification questions and encoding answers back into the spec."
+name: speckit-clarify
+description: Identify underspecified areas in the current feature spec by asking up
+  to 5 highly targeted clarification questions and encoding answers back into the
+  spec.
 argument-hint: "Optional areas to clarify in the spec"
-compatibility: "Requires spec-kit project structure with .specify/ directory"
+compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
-  author: "github-spec-kit"
-  source: "templates/commands/clarify.md"
+  author: github-spec-kit
+  source: preset:project-workflow
 user-invocable: true
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
+# Speckit Clarify Skill
 
 ## User Input
 
@@ -292,3 +295,23 @@ Report completion (after questioning loop ends or early termination):
 - [ ] Spec quality checklist re-validated against updated spec (if `FEATURE_DIR/checklists/requirements.md` exists)
 - [ ] Extension hooks dispatched or skipped according to the rules in Mandatory Post-Execution Hooks above
 - [ ] Completion reported to user with questions answered, sections touched, checklist status, and coverage summary
+
+
+## Project rules for this phase
+
+- Some questions are asked in the long format below instead of the one-line
+  options above: those where an option contradicts or relies on a principle in
+  the constitution or a decision already closed in the spec (its Assumptions
+  or Clarifications), or changes something hard to undo: an external
+  contract, the flow the user sees, or state that persists. Other questions
+  keep the format above. The table, `**Recommended:**`, answering by letter,
+  the limit of 5 questions and writing `spec.md` after each answer stay as
+  described above.
+- Long format, before the table: for each option, what it does and what the
+  official docs of the technology involved recommend about it (check them
+  first), or say explicitly that they have no stance and it's a project
+  decision; what complexity it adds compared with the others (extra state,
+  coordination, files touched); and under which condition another option
+  would win. End with the recommendation.
+- When an instruction outside this command makes you skip or change a step
+  above, say so in one line, naming the step and the instruction.
