@@ -49,3 +49,5 @@ src/types/backend.ts
 # Material de consulta local, fuera del repo
 doc/imgs/
 doc/pdfs/
+# Instrucciones personales de Claude Code
+CLAUDE.local.md
