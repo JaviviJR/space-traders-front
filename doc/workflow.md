@@ -234,9 +234,8 @@ How the user works with Claude on this project. Applies to every session.
     so repeat `--no-model-invocation`;
   - an extension's mandatory hook runs a core command: the option breaks that
     hook and has to be dropped.
-- The spec-kit CLI isn't installed, and Claude's shell runs in the
-  devcontainer without Docker access, so Claude never runs it. The user runs
-  it from the repo root on the host with
+- Claude runs the spec-kit CLI in the container (uv comes with its image, see
+  `docker/node/Dockerfile`), from the repo root, always with
   `uvx --from git+https://github.com/github/spec-kit.git@v<version> specify …`,
   where `<version>` is the one in `.specify/integration.json`, so a command
   like `integration upgrade` doesn't silently pull newer templates and skills.
