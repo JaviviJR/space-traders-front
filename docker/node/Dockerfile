@@ -1,3 +1,9 @@
+# ARG global: antes del primer FROM, solo se puede usar en las líneas FROM
+ARG UV_VERSION=0.13.7
+
+# Etapa de la que solo se copian los binarios de uv (no llega a la imagen final)
+FROM ghcr.io/astral-sh/uv:${UV_VERSION} AS uv
+
 FROM ubuntu:26.04
 
 ARG NODE_MAJOR=24
@@ -30,7 +36,10 @@ USER root
 # Para Claude
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends python3 python3-reportlab poppler-utils \
+    && apt-get install -y --no-install-recommends python3 python3-reportlab python3-yaml poppler-utils \
     && rm -rf /var/lib/apt/lists/*
+
+# uv/uvx para ejecutar el CLI de spec-kit (uvx … specify) con la versión fijada
+COPY --from=uv /uv /uvx /bin/
 
 #EXPOSE 5173

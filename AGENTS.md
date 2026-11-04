@@ -45,7 +45,11 @@ the rules that are judgment calls live in
 `vue-tsc --build` (part of `npm run build` and `npm run type-check`) is the
 type checker. Fix the cause of a type error; don't reach for `any`, a
 non-null assertion (`!`), or `// @ts-ignore` to silence it without asking
-first.
+first. The same goes for lint and format: fix the cause instead of adding,
+without asking first, a new suppression — an `eslint-disable`,
+`oxlint-disable` or `prettier-ignore` comment, a path added to an ignore list
+(`.prettierignore`, the `ignores` in `eslint.config.ts`, the `ignorePatterns`
+in `.oxlintrc.json`), or a rule turned `"off"`. Existing exclusions stay.
 
 ## Discover, don't guess
 
@@ -89,33 +93,6 @@ the task.
 - [doc/ui.md](doc/ui.md): read before working on UI (templates, styles,
   layout), suggesting design improvements, or choosing a UI/component
   library.
-
-## Where documentation lives
-
-- `doc/*.md` and this file describe the generic mechanism and how to add a
-  case (steps, rules, conventions), not an inventory of implementations.
-  Don't copy lists the code already expresses (routes, stores, type fields,
-  endpoints, the components in a folder) or literal config values (URLs,
-  ports, env vars, tool options): say what they do and point to the file.
-- When a decision is closed or changes, record it in the same change that
-  applies it:
-  - A mechanism that applies to several files: the `doc/*.md` whose trigger
-    above covers it.
-  - Something specific to one component, store, composable or module (why
-    this value, what it deliberately doesn't do): a comment in that file — a
-    `/** */` header at the top of the `<script setup>` or the `.ts` file when
-    it's about the whole file,
-    a one-line `//` next to the line when it's a local trap. Only write it
-    when removing it would likely lead a future reader to "simplify" the code
-    back into the problem it avoids.
-- A single case never becomes a `doc/*.md` rule. When a second case appears,
-  propose to the user whether to generalize it into `doc/` or keep a comment
-  in each file.
-- Record only what was decided: what won't be done isn't recorded (a
-  feature's rejected alternatives live in its spec-kit `research.md`). When a
-  decision changes, rewrite the existing text instead of appending a note.
-
-## Working agreements
 
 How the user wants to work with Claude. Loaded automatically every session:
 

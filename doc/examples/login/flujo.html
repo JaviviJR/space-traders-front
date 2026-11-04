@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es" class="app-dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login: flujo completo</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #0f172a; color: #94a3b8; }
+      .url { font-family: monospace; font-size: 13px; background: #020617; color: #cbd5e1; padding: 8px 16px; }
+      header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #1e293b; }
+      header strong { color: #fff; }
+      header.private { background: #111c33; }
+      .hero { max-width: 40rem; margin: 64px auto; padding: 0 16px; text-align: center; }
+      .hero h1 { color: #fff; }
+      .boot { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 30vh; }
+      /* Above PrimeVue's modal mask, so the simulator stays usable with the dialog open. */
+      .sim { z-index: 100000; position: fixed; right: 16px; bottom: 16px; width: 17rem; background: #1e293b; border: 1px dashed #475569; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+      .sim label { display: flex; gap: 6px; align-items: center; }
+      .sim hr { width: 100%; border: 0; border-top: 1px solid #334155; margin: 4px 0; }
+      .stack { display: flex; flex-direction: column; gap: 16px; }
+      .field { display: flex; flex-direction: column; gap: 8px; }
+      .field label { font-size: 14px; }
+      .center { text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <!-- Same versions as package-lock.json; theme script must load after PrimeVue (v4.primevue.org/cdn.md). -->
+    <script src="https://unpkg.com/vue@3.5.43/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/primevue@4.5.5/umd/primevue.min.js"></script>
+    <script src="https://unpkg.com/@primevue/themes@4.5.4/umd/aura.min.js"></script>
+    <script>
+      const { createApp, ref, computed } = Vue
+
+      const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+      // --- Fake back: the simulator decides what /auth/login answers and whether the refresh cookie exists ---
+      const loginOutcome = ref('ok') // ok | invalid_credentials | email_not_verified | network_error
+      const refreshCookie = ref(false) // httpOnly in the real app: the front can't see it, only /auth/refresh can
+
+      async function fakeLogin() {
+        await wait(900)
+        if (loginOutcome.value !== 'ok') throw loginOutcome.value
+        refreshCookie.value = true
+        return 'access-token'
+      }
+      async function fakeRefresh() {
+        await wait(900)
+        if (!refreshCookie.value) throw 'invalid_refresh_token'
+        return 'access-token'
+      }
+      async function fakeLogout() {
+        await wait(400)
+        refreshCookie.value = false
+      }
+      const fakeResend = () => wait(900)
+
+      // --- Session: the access token lives only in memory ---
+      const accessToken = ref(null)
+      const checkingSession = ref(false)
+
+      // --- Fake router: path + query, with the two guards ---
+      const route = ref({ path: '/', redirect: null })
+      const url = computed(() =>
+        'localhost:5173' + route.value.path + (route.value.redirect ? '?redirect=' + encodeURIComponent(route.value.redirect) : ''),
+      )
+
+      const authVisible = ref(false)
+      const authTab = ref('login')
+      function openAuth(tab) {
+        authTab.value = tab
+        authVisible.value = true
+      }
+
+      function navigate(path, redirect = null) {
+        // Private zone without session -> landing with login open, remembering where it wanted to go.
+        if (path === '/panel' && !accessToken.value) {
+          route.value = { path: '/', redirect: '/panel' }
+          openAuth('login')
+          return
+        }
+        // Landing with session -> private zone.
+        if (path === '/' && accessToken.value) {
+          route.value = { path: '/panel', redirect: null }
+          return
+        }
+        route.value = { path, redirect }
+      }
+
+      // A reload (or a new tab) loses the in-memory token: ask /auth/refresh before the guards decide.
+      async function reload(path, redirect = null) {
+        accessToken.value = null
+        authVisible.value = false
+        checkingSession.value = true
+        try {
+          accessToken.value = await fakeRefresh()
+        } catch {
+          // No valid cookie: just no session.
+        }
+        checkingSession.value = false
+        navigate(path, redirect)
+      }
+
+      // --- Shared shell: BaseDialog, like the app's ---
+      const BaseDialog = {
+        props: { visible: Boolean, header: String },
+        emits: ['update:visible', 'after-hide'],
+        template: `
+          <Dialog :visible="visible" @update:visible="$emit('update:visible', $event)" @after-hide="$emit('after-hide')"
+                  modal :draggable="false" :style="{ width: '28rem' }" :breakpoints="{ '575px': '90vw' }" :header="header">
+            <slot />
+          </Dialog>`,
+      }
+
+      const LoginForm = {
+        setup() {
+          const email = ref('ripley@nostromo.test')
+          const password = ref('alien1979')
+          const loading = ref(false)
+          const error = ref(null)
+          const resend = ref('idle') // idle | sending | sent
+
+          const errorText = {
+            invalid_credentials: 'Email o contraseña incorrectos.',
+            email_not_verified: 'Tu email aún no está confirmado. Revisa tu correo o pide un enlace nuevo.',
+            network_error: 'No hemos podido iniciar sesión. Comprueba tu conexión e inténtalo de nuevo.',
+          }
+
+          async function submit() {
+            if (loading.value) return
+            loading.value = true
+            error.value = null
+            resend.value = 'idle'
+            try {
+              accessToken.value = await fakeLogin()
+              const target = route.value.redirect ?? '/panel'
+              authVisible.value = false
+              navigate(target)
+            } catch (code) {
+              error.value = code
+            } finally {
+              loading.value = false
+            }
+          }
+
+          async function resendLink() {
+            resend.value = 'sending'
+            await fakeResend() // always 202 in the back
+            resend.value = 'sent'
+          }
+
+          return { email, password, loading, error, errorText, resend, submit, resendLink }
+        },
+        template: `
+          <form class="stack" novalidate @submit.prevent="submit">
+            <Message v-if="error" severity="error" :closable="false">{{ errorText[error] }}</Message>
+            <template v-if="error === 'email_not_verified'">
+              <Message v-if="resend === 'sent'" severity="success" :closable="false">
+                Te hemos enviado un enlace nuevo a {{ email }}. Caduca en una hora.
+              </Message>
+              <Button v-else type="button" severity="secondary" :loading="resend === 'sending'"
+                      :label="resend === 'sending' ? 'Enviando…' : 'Reenviar enlace'" @click="resendLink" />
+            </template>
+            <div class="field">
+              <label for="login-email">Email</label>
+              <InputText id="login-email" v-model="email" type="email" autocomplete="email" />
+            </div>
+            <div class="field">
+              <label for="login-password">Contraseña</label>
+              <Password v-model="password" input-id="login-password" :feedback="false" toggle-mask
+                        autocomplete="current-password" fluid />
+            </div>
+            <Button type="submit" :disabled="loading" :label="loading ? 'Entrando…' : 'Iniciar sesión'" />
+          </form>`,
+      }
+
+      const AuthDialog = {
+        components: { BaseDialog, LoginForm },
+        setup: () => ({ authVisible, authTab }),
+        template: `
+          <BaseDialog v-model:visible="authVisible" header="Accede a SpaceTraders">
+            <Tabs v-model:value="authTab">
+              <TabList><Tab value="login" style="flex: 1">Iniciar sesión</Tab><Tab value="register" style="flex: 1">Crear cuenta</Tab></TabList>
+              <TabPanels>
+                <TabPanel value="login"><LoginForm /></TabPanel>
+                <TabPanel value="register"><p class="center">(El registro de 001, sin cambios.)</p></TabPanel>
+              </TabPanels>
+            </Tabs>
+          </BaseDialog>`,
+      }
+
+      const PublicLayout = {
+        components: { AuthDialog },
+        setup: () => ({ openAuth }),
+        template: `
+          <header><strong>SpaceTraders</strong><Button label="Iniciar sesión" @click="openAuth('login')" /></header>
+          <section class="hero"><h1>Landing pública</h1>
+            <p>Sin sesión. "Iniciar sesión" abre el modal; al entrar, vas a la zona privada.</p>
+          </section>
+          <AuthDialog />`,
+      }
+
+      const PrivateLayout = {
+        setup() {
+          const leaving = ref(false)
+          async function logout() {
+            leaving.value = true
+            await fakeLogout()
+            accessToken.value = null
+            leaving.value = false
+            navigate('/')
+          }
+          return { leaving, logout }
+        },
+        template: `
+          <header class="private"><strong>SpaceTraders · Panel</strong>
+            <Button severity="secondary" :loading="leaving" :label="leaving ? 'Cerrando sesión…' : 'Cerrar sesión'" @click="logout" />
+          </header>
+          <section class="hero"><h1>Has iniciado sesión</h1>
+            <p>Página dummy de la zona privada.</p>
+          </section>`,
+      }
+
+      const App = {
+        components: { PublicLayout, PrivateLayout },
+        setup() {
+          function expireCookie() {
+            refreshCookie.value = false
+          }
+          return { url, route, checkingSession, accessToken, refreshCookie, loginOutcome, navigate, reload, expireCookie }
+        },
+        template: `
+          <div class="url">{{ url }}</div>
+          <div v-if="checkingSession" class="boot">
+            <ProgressSpinner style="width: 40px; height: 40px" />
+            <span>Comprobando sesión…</span>
+          </div>
+          <PrivateLayout v-else-if="route.path === '/panel'" />
+          <PublicLayout v-else />
+
+          <div class="sim"><strong>Simulador</strong>
+            <span>/auth/login responde:</span>
+            <label><input type="radio" v-model="loginOutcome" value="ok" /> 200 (ok)</label>
+            <label><input type="radio" v-model="loginOutcome" value="invalid_credentials" /> 401 invalid_credentials</label>
+            <label><input type="radio" v-model="loginOutcome" value="email_not_verified" /> 403 email_not_verified</label>
+            <label><input type="radio" v-model="loginOutcome" value="network_error" /> sin red</label>
+            <hr />
+            <span>Token en memoria: <strong>{{ accessToken ? 'sí' : 'no' }}</strong> · Cookie refresh: <strong>{{ refreshCookie ? 'sí' : 'no' }}</strong></span>
+            <Button size="small" severity="secondary" label="Caducar la cookie" :disabled="!refreshCookie" @click="expireCookie" />
+            <hr />
+            <span>Barra de direcciones:</span>
+            <Button size="small" label="Recargar (F5)" @click="reload(route.path, route.redirect)" />
+            <Button size="small" severity="secondary" label="Escribir /panel" @click="reload('/panel')" />
+            <Button size="small" severity="secondary" label="Escribir /" @click="reload('/')" />
+          </div>`,
+      }
+
+      const app = createApp(App)
+      app.use(PrimeVue.Config, { theme: { preset: PrimeVue.Themes.Aura, options: { darkModeSelector: '.app-dark' } } })
+      for (const name of ['Dialog', 'Button', 'InputText', 'Password', 'Message', 'ProgressSpinner', 'Tabs', 'TabList', 'Tab', 'TabPanels', 'TabPanel']) {
+        app.component(name, PrimeVue[name])
+      }
+      app.mount('#app')
+    </script>
+  </body>
+</html>

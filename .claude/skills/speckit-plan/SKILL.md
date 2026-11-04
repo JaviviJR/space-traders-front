@@ -1,15 +1,17 @@
 ---
-name: "speckit-plan"
-description: "Execute the implementation planning workflow using the plan template to generate design artifacts."
+name: speckit-plan
+description: Execute the implementation planning workflow using the plan template
+  to generate design artifacts.
 argument-hint: "Optional guidance for the planning phase"
-compatibility: "Requires spec-kit project structure with .specify/ directory"
+compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
-  author: "github-spec-kit"
-  source: "templates/commands/plan.md"
+  author: github-spec-kit
+  source: preset:project-workflow
 user-invocable: true
 disable-model-invocation: false
 ---
 
+# Speckit Plan Skill
 
 ## User Input
 
@@ -167,3 +169,18 @@ Command ends after Phase 1 design. Report branch, IMPL_PLAN path, and generated 
 - [ ] Plan workflow executed and design artifacts generated
 - [ ] Extension hooks dispatched or skipped according to the rules in Mandatory Post-Execution Hooks above
 - [ ] Completion reported to user with branch, plan path, and generated artifacts
+
+
+## Project rules for this phase
+
+- Decisions: before writing `research.md`, present in chat each decision that
+  has several viable approaches, one at a time, and wait for the user's
+  answer. `research.md` then records the closed decisions.
+- For each approach: what it does and what the official docs of the
+  technology involved recommend about it (check them first), or say
+  explicitly that they have no stance and it's a project decision; what
+  complexity it adds compared with the others (extra state, coordination,
+  files touched); and under which condition another approach would win. End
+  with the recommendation.
+- When an instruction outside this command makes you skip or change a step
+  above, say so in one line, naming the step and the instruction.
