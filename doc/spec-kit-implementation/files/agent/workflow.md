@@ -4,13 +4,8 @@ How the user works with Claude on this project. Applies to every session.
 
 ## Preferences
 
-Each bullet is independent: delete the ones that don't apply and fill their
-placeholders.
-
-- Language: chat with the user in <<FILL: chat language>>. Project
-  documentation (`doc/*.md`, `AGENTS.md`) in
-  <<FILL: documentation language>>.
-- User-run commands: never run <<FILL: which commands, e.g. package installs (package managers, editor extensions)>>,
+- Language: chat with the user in Spanish. Project documentation in English.
+- User-run commands: never run package installs (npm, editor extensions),
   even when the permission mode would allow it. Give the exact commands as
   one copy-paste block, with a short note on what each does and a link to the
   official docs, wait for the user to run them, then verify the result by
@@ -40,10 +35,10 @@ Why: the user picks knowing what each choice costs.
 
 ## Learning mode
 
-Why: the user is using this project to learn <<FILL: what the user is learning, e.g. the framework>>.
+Why: the user is using this project to learn Vue.js.
 
 - Explain every change didactically, as if it were a guided exercise: what
-  it does and which concepts of <<FILL: framework or language>> it involves.
+  it does and which Vue concepts it involves.
   When code makes the explanation clearer, show it — a snippet from a file, a
   diff, or a minimal example of a concept — alongside the explanation, never
   instead of it. List every file affected; the user reviews the actual change
@@ -70,4 +65,8 @@ Why: the user is using this project to learn <<FILL: what the user is learning, 
   API), explain only that new part. When the user says they already know a
   concept, propose adding it here; if they say they've forgotten one, propose
   removing it.
-  - <<FILL: known concepts, one per line; may start empty>>
+  - `ref`
+  - `computed`
+  - `v-if` / `v-else` / `v-else-if`
+  - A composable returning functions the component uses as event handlers
+  - `readonly` on a composable's returned state
