@@ -1,99 +1,130 @@
 # AGENTS.md
 
-This is a Vue 3 + Vite + TypeScript SPA. Don't assume a library is available
-unless it's listed in `package.json`.
+This is a Vue 3 + Vite + TypeScript SPA: the front end of a SpaceTraders
+client.
 
 ## Ask before generating
 
 If the task doesn't specify, ask rather than guess:
 
-- State: a new Pinia store, a composable, or local component state?
-- Data flow: does this need a new `src/api/` module, or does an existing one
-  cover it?
-- Styling: Tailwind utility classes, or does this warrant a new `@theme`
+- State: local component state, a composable, or a Pinia store?
+- Data: a new `src/api/` module, or does an existing one cover it?
+- UI: a PrimeVue component, plain markup with Tailwind, or a new `@theme`
   token?
 
-If you can't ask, state the assumption you're making and pick the smallest
-option (e.g. local `ref` over a Pinia store) rather than scaffolding more than
-asked.
+If you can't ask, say what you're assuming and pick the smallest option
+(a local `ref` over a store).
+
+## Adding features: a library, not hand-rolling
+
+New capabilities come from an npm package, configured the way its own docs show
+(Vite plugin, Vue plugin…). Don't skip a good-fit library because it isn't
+installed yet; installing it is one command.
+
+Read [doc/libraries.md](doc/libraries.md) before looking up a library's API,
+choosing or suggesting a library (UI ones included), adding or upgrading a
+dependency, or diagnosing a bug inside a third-party library. It lists where
+each library's docs live and the research order for bugs.
+
+## Architecture
+
+- The back lives in another repository and is a BFF: the front only knows its
+  contract (`src/types/backend.ts`), never the SpaceTraders API. Its CORS
+  config (which front origins it allows) lives there too, so a CORS error is
+  fixed in the back, not here.
+- Dependencies flow one way: view → component → composable/store →
+  `src/api/` → `fetch`. Components never call the API; `src/api/client.ts` is
+  the only place that calls `fetch`.
+- Views are thin: they read route params and compose components.
+- Logic stays in its component unless it calls `src/api/` or has its own state
+  and side effects; then it goes to a composable. A Pinia store (setup syntax,
+  read with `storeToRefs`) only when several views share the state.
+
+## API layer and error handling
+
+- Plain TypeScript: imports nothing from Vue or Pinia. Each function returns
+  typed data or throws `ApiError`.
+- `ApiError` (in `src/api/errors/`) is the base; each contract error schema
+  that extends it gets a subclass with the same name and its extra fields, and
+  `toApiError.ts` picks the subclass from the response's `code`.
+- Error handling branches on `ApiError`'s `code`, never on `status` or the text
+  of `message`. Callers catch `ApiError` and use `instanceof` on a subclass
+  only when they need its extra fields.
+- Import error modules from their own file, not through a re-exporting index.
+- When writing an endpoint function, check in the generated types which error
+  schema it returns for each status.
+- To add an error extension: the back adds it to its contract, run
+  `npm run generate:types`, then add the subclass next to `ApiError` and its
+  `code` mapping in `toApiError.ts`.
+
+## Conventions
+
+- `<script setup lang="ts">` in every component.
+- Use what the stack already does: Vue Router for navigation (by route name,
+  not hardcoded paths), PrimeVue components for UI widgets (dialogs, tabs,
+  inputs, messages…), Pinia for shared state.
+- Before hand-writing a composable around a browser API or a common reactive
+  pattern (storage, events, timers, media queries…), check whether VueUse
+  covers it. It usually does.
+- Style with Tailwind utility classes in templates. New design tokens go in the
+  `@theme` block of `src/assets/main.css`, not a new config file. Global CSS
+  goes in `main.css` too.
+- Don't style a child component's internals with descendant variants
+  (`[&_p]:…`, `*:…`); use its props or styling API.
+- Prefer `computed` over a watcher that only derives a value; use
+  `watch`/`watchEffect` only for side effects.
+- UI text is in Spanish (there is no i18n yet).
+- `primevue` and `@primevue/themes` stay on major 4, the last MIT-licensed
+  one; never upgrade the major. Its docs are the frozen mirror at
+  `v4.primevue.org`, not `primevue.org`.
+
+## Design principles (SOLID)
+
+All code follows SOLID, applied to components, composables and stores:
+
+- **Single responsibility**: a component renders; a composable or store holds
+  the logic.
+- **Open/closed**: add a new component or composable instead of branching an
+  existing one on a type/mode prop when the branches don't share markup.
+- **Liskov substitution**: every variant of a slot- or prop-driven component
+  honors the same contract; no variant needs extra required props.
+- **Interface segregation**: props and composable return types are minimal
+  and role-specific; a component never accepts props it ignores.
+- **Dependency inversion**: components depend on composables and stores, never
+  on `src/api/` or `fetch` directly; composables depend on injected state
+  (provide/inject, arguments), not global singletons.
 
 ## Everyday workflow
 
-- You're inside the container: run the npm scripts directly, not `./dev` or
-  `docker compose` (those are for the host).
-- The scripts live in `package.json`. What their names don't tell you:
-  - `npm run lint` and `npm run format` rewrite files in place.
-  - `npm run format` only covers `src/`.
-  - `npm run generate:types` regenerates the back's contract types
-    (gitignored) from its OpenAPI spec. Run it after the back's API contract
-    changes; it needs the back reachable at the URL in the script.
-  - Tests: see [doc/testing.md](doc/testing.md#commands).
+- You're inside the dev container: run the npm scripts directly; `./dev` and
+  `docker/compose.yml` are for the host.
+- `npm run type-check` (`vue-tsc --build`) checks types; `npm run build` runs
+  it plus `vite build`.
+- When the back's contract changes, run `npm run generate:types` to regenerate
+  `src/types/backend.ts`. It reads `http://localhost/api/doc.json`, so the
+  back must be running.
+
+## Testing
+
+- Unit: `npx vitest run` (single run; `npm run test:unit` is watch mode), one
+  file with `npx vitest run src/__tests__/App.spec.ts`, by name with
+  `-t "name"`.
+- e2e: there's no display here, so run headless against the preview build:
+  `CI=1 npm run build && CI=1 npx playwright test`; one file and browser with
+  `CI=1 npx playwright test e2e/register.spec.ts --project=chromium`.
+- Unit tests mock the `src/api/` modules with `vi.mock`; e2e tests intercept
+  requests to the back with `page.route()`. Mocks follow the back's contract
+  (the generated types), not SpaceTraders' API or an invented shape.
+- Unit tests that mount `App` need the router plugin, `await router.isReady()`
+  and `flushPromises()`, because views are lazy-loaded.
+
+A feature isn't done until it has a test that exercises it the way a user
+would (mount the component and interact with it, or an e2e flow for a user
+journey), not just "it didn't throw."
 
 ## Code style
 
-oxlint and ESLint (`npm run lint`), Prettier (`npm run format`). A change
-isn't done until lint, format and type-check are clean. `eslint-plugin-oxlint`
-turns off the ESLint rules oxlint already covers, so a lint config change may
-need edits in both `.oxlintrc.json` and `eslint.config.ts`.
-
-Lint and Prettier enforce the parts of the Vue style guide a tool can check;
-the rules that are judgment calls live in
-[doc/conventions.md](doc/conventions.md#conventions).
-
-## Static analysis
-
-`vue-tsc --build` (part of `npm run build` and `npm run type-check`) is the
-type checker. Fix the cause of a type error; don't reach for `any`, a
-non-null assertion (`!`), or `// @ts-ignore` to silence it without asking
-first. The same goes for lint and format: fix the cause instead of adding,
-without asking first, a new suppression — an `eslint-disable`,
-`oxlint-disable` or `prettier-ignore` comment, a path added to an ignore list
-(`.prettierignore`, the `ignores` in `eslint.config.ts`, the `ignorePatterns`
-in `.oxlintrc.json`), or a rule turned `"off"`. Existing exclusions stay.
-
-## Discover, don't guess
-
-Framework APIs change between major versions (Vue 2→3, Vue Router 3→4→5,
-Pinia options→setup stores) and your training data may be stale. Look things
-up instead of relying on memory:
-
-- `package.json` / `package-lock.json`: exact installed versions — check
-  before assuming an API shape.
-- Vue Devtools (bundled via `vite-plugin-vue-devtools` in `vite.config.ts`):
-  inspect the live component tree, props, Pinia state, router state and
-  emitted events at runtime, instead of guessing what a component renders.
-- `npm run type-check`: the real type error, not a guessed one — read it
-  before changing code.
-- Browser console and DevTools Network tab: when something fails, check them
-  before changing code — a thrown error, a rejected fetch, or a response
-  shape that doesn't match the generated types usually shows up there before
-  it shows up in the source.
-
-## Conflicts between sources
-
-When two sources disagree (two skills, a skill and this file, or either of them and the official docs), tell the user before acting: name both sources, quote what each says, and say which one you will follow and why.
-
-## Decision docs
-
-They are not loaded automatically: read only the ones whose trigger matches
-the task.
-
-- [doc/architecture.md](doc/architecture.md): read before creating a file or
-  folder under `src/`, adding a view, store, composable or `src/api/` module,
-  deciding which layer owns a piece of logic, or changing how the front talks
-  to the back (base URL, CORS, error format).
-- [doc/conventions.md](doc/conventions.md): read before writing or reviewing
-  a `.vue` component, a Pinia store or a composable, or naming a component.
-- [doc/testing.md](doc/testing.md): read before writing or changing a test,
-  mocking `src/api/` or the back, running Vitest or Playwright, or writing
-  the testing part of a proposal.
-- [doc/dependencies.md](doc/dependencies.md): read before adding or upgrading
-  a dependency, using a library in code for the first time, looking up a
-  library's API or docs, or diagnosing a bug inside a third-party library.
-- [doc/ui.md](doc/ui.md): read before working on UI (templates, styles,
-  layout), suggesting design improvements, or choosing a UI/component
-  library.
-
-How the user wants to work with Claude. Loaded automatically every session:
-
-@doc/workflow.md
+`npm run lint` and `npm run format` rewrite files in place; `format` only
+covers `src/`. `eslint-plugin-oxlint` turns off the ESLint rules oxlint
+covers, so a lint rule change may need edits in both `.oxlintrc.json` and
+`eslint.config.ts`.
